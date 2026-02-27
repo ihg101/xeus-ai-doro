@@ -633,7 +633,7 @@ if(GMXMAP != null && GMXLAYER != null && GMXLEGEND != null){
 
 		    if (layer && features) {
 		    	var layerProp = layer.getProperties();
-		    	if (window.AIDORO && (layerProp["id"] === "v_mon_evet_list" || layerProp["id"] === "v_mon_evet_fall"  || layerProp["id"] === "v_mon_evet_blackice") && features.values_) {
+		    	if (window.AIDORO && (layerProp["id"] === "v_mon_evet_excavator" || layerProp["id"] === "v_mon_evet_fall"  || layerProp["id"] === "v_mon_evet_blackice") && features.values_) {
 		    		
 		    		// 블랙아이스(006), 수막현상(007)인 경우 아무것도 띄우지 않음
 		    		var evtTypCd = features.values_.evt_typ_cd;

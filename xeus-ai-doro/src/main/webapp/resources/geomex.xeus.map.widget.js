@@ -422,7 +422,7 @@ var WIDGET = {
 				}
 			});
 			
-			GMXMAP.reloadLayerData('v_mon_evet_list');
+			GMXMAP.reloadLayerData('v_mon_evet_excavator');
 			GMXMAP.reloadLayerData('v_mon_evet_fall');
 			GMXMAP.reloadLayerData('v_mon_evet_blackice');
 			//AIDORO.createAIDoroEventLayer(collectedEventData);
@@ -578,7 +578,7 @@ var AIPOPUP = {
 					// 이벤트 리스트 다시 로드
 					WIDGET.getPastEventListWidget();
 					//레이어 리로드
-					GMXMAP.reloadLayerData('v_mon_evet_list');
+					GMXMAP.reloadLayerData('v_mon_evet_excavator');
 					GMXMAP.reloadLayerData('v_mon_evet_fall');
 				}
 			});

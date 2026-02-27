@@ -672,7 +672,7 @@ if(GMXMAP != null && GMXLAYER != null){
 
 				var vectorSource = GMXMAP.getLayer(_LayerId).getSource();
 				
-				if(_LayerId === "v_mon_evet_list" || _LayerId === "v_mon_evet_fall" ||_LayerId === "v_mon_evet_blackice"){
+				if(_LayerId === "v_mon_evet_excavator" || _LayerId === "v_mon_evet_fall" ||_LayerId === "v_mon_evet_blackice"){
 					vectorSource.refresh({ force: true });
 					return;
 				} 

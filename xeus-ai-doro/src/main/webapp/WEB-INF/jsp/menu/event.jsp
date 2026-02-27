@@ -39,7 +39,7 @@ $(document).ready(function(){
 		$("#btn-monitor-view").attr("k",a)
 		// 0인 경우에는 다시 그리지 않는다. 다시 그리니까 이상함.
 		if(a != 0){
-			GMXMAP.reloadLayerData('v_mon_evet_list');
+			GMXMAP.reloadLayerData('v_mon_evet_excavator');
 			GMXMAP.reloadLayerData('v_mon_evet_fall');
 			GMXMAP.reloadLayerData('v_mon_evet_blackice');
 		}
@@ -48,7 +48,7 @@ $(document).ready(function(){
 	
 	$("#btn-event-list-view").click(function(){
 		sessionStorage.setItem('NOW_MENU', 'btn-event-list-view');
-		GMXMAP.reloadLayerData('v_mon_evet_list');
+		GMXMAP.reloadLayerData('v_mon_evet_excavator');
 		GMXMAP.reloadLayerData('v_mon_evet_fall');
 		GMXMAP.reloadLayerData('v_mon_evet_blackice');
 	});

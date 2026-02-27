@@ -541,7 +541,7 @@ if(window.GMXLAYER == null) var GMXLAYER = {
 				}
 				
 				//처음 로드시, 이벤트 모니터링 메뉴는 type 가 LIST 인것만 요청
-				if((_Data.layer.tblId ==="v_mon_evet_list"  || _Data.layer.tblId ==="v_mon_evet_fall"  || _Data.layer.tblId ==="v_mon_evet_blackice") &&  !_Filter){
+				if((_Data.layer.tblId ==="v_mon_evet_excavator"  || _Data.layer.tblId ==="v_mon_evet_fall"  || _Data.layer.tblId ==="v_mon_evet_blackice") &&  !_Filter){
 					var paramSet = [{type : 'LIST'}];
 					_wfsParam["filter"] = GMXLAYER.makeFilters(paramSet);
 					delete _wfsParam["bbox"];
@@ -560,7 +560,7 @@ if(window.GMXLAYER == null) var GMXLAYER = {
 		var isHeatMap = $('#isHeatMap').hasClass('active');
 		if ( isHeatMap && filterId.includes(_Data.layer.tblId)  ) return _source;
 		
-		if(_Data.layer.lyrTyp === "P" && _Data.layer.tblId !== "v_mon_evet_list"  && _Data.layer.tblId !== "v_mon_evet_fall"  &&_Data.layer.tblId !== "v_mon_evet_blackice" ){
+		if(_Data.layer.lyrTyp === "P" && _Data.layer.tblId !== "v_mon_evet_excavator"  && _Data.layer.tblId !== "v_mon_evet_fall"  &&_Data.layer.tblId !== "v_mon_evet_blackice" ){
 			var clusterDistance = 200;
 			
 			if(filterId.includes(_Data.layer.tblId)){
@@ -726,7 +726,7 @@ if(window.GMXLAYER == null) var GMXLAYER = {
 	                    return _this.checkEocsDate(item); 
 	                }
 	                //굴삭기 dist 값에 따라서 표출 되는게 달라짐.
-	                if (item.id_.includes("v_mon_evet_list")) {
+	                if (item.id_.includes("v_mon_evet_excavator")) {
 	                    return _this.checkEventDist(item); 
 	                }
 					if (item.id_.includes("v_mon_evet_fall")) {
@@ -1111,7 +1111,7 @@ if(window.GMXLAYER == null) var GMXLAYER = {
 		}
 		
 		// v_mon_evet_list: evt_json.dist 반경 파란 원 추가
-		if(_Data.layer.tblId === "v_mon_evet_list" || _Data.layer.tblId === "v_mon_evet_fall" || _Data.layer.tblId === "v_mon_evet_blackice"){
+		if(_Data.layer.tblId === "v_mon_evet_excavator" || _Data.layer.tblId === "v_mon_evet_fall" || _Data.layer.tblId === "v_mon_evet_blackice"){
 			var distCircleStyleTheme = new ol.style.Style({
 				geometry: function(feature){
 					// 축척에 따른 표시/비표시
