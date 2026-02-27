@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gmx.gis.layer.service.GMT_LayerIconMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerIconVo">
+		SELECT mgr_seq, img_base64, use_yn, mk_user, mk_dat
+
+		FROM xeus.gis_lyr_icon
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="imgBase64 != null and imgBase64 != ''">
+				AND img_base64 = #{imgBase64}
+			</if>
+
+			<if test="useYn != null and useYn != ''">
+				AND use_yn = #{useYn}
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq desc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerIconVo">
+		SELECT mgr_seq, img_base64, use_yn, mk_user, mk_dat
+
+		FROM xeus.gis_lyr_icon
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="imgBase64 != null and imgBase64 != ''">
+				AND img_base64 = #{imgBase64}
+			</if>
+
+			<if test="useYn != null and useYn != ''">
+				AND use_yn = #{useYn}
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.gis_lyr_icon
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="imgBase64 != null and imgBase64 != ''">
+				AND img_base64 = #{imgBase64}
+			</if>
+
+			<if test="useYn != null and useYn != ''">
+				AND use_yn = #{useYn}
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="String">
+		DELETE FROM xeus.gis_lyr_icon WHERE mgr_seq = #{mgrSeq}::numeric AND mk_user = #{userId}
+	</delete>
+
+
+	<insert id="add" parameterType="gmx.gis.layer.service.GMT_LayerIconVo">
+		INSERT INTO xeus.gis_lyr_icon(
+			img_base64, mk_user
+		) VALUES (
+			#{imgBase64}, #{mkUser}
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="gmx.gis.layer.service.GMT_LayerIconVo">
+		UPDATE xeus.gis_lyr_icon SET
+			mgr_seq = #{mgrSeq}
+
+			<if test="imgBase64 != null and imgBase64 != ''">
+				, img_base64 = #{imgBase64}
+			</if>
+
+			<if test="useYn != null and useYn != ''">
+				, use_yn = #{useYn}
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				, mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				, mk_dat = #{mkDat}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}
+
+	</update>
+
+
+</mapper>

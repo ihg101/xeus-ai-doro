@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.SiteMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="SiteVo">
+		SELECT site.mgr_no, site.org_mgr_no, rep_mgr_no, site.inst_dat, site_nm, poll_gbn_cd,
+               inst_mgr_no, com_mgr_no, com_line_no, com_open_dat, com_expr_dat,
+               line_gbn_cd, kepco_cust_no, site.loc_desc, site.rmark
+
+               , (SELECT orgz.org_nm FROM xeus.mt_orgz_desc AS orgz WHERE site.com_mgr_no = orgz.org_mgr_no) AS com_mgr_nm
+               , (SELECT count(cctv.*) FROM xeus.asset_cctv AS cctv WHERE site.mgr_no = cctv.site_mgr_no) AS cctv_cnt
+               , (SELECT count(inf.*) FROM xeus.asset_infra AS inf WHERE site.mgr_no = inf.site_mgr_no) AS inf_cnt
+               , (SELECT count(acry.*) FROM xeus.asset_acsry AS acry WHERE site.mgr_no = acry.site_mgr_no) AS acry_cnt
+
+        FROM xeus.asset_site AS site
+        LEFT JOIN xeus.asset_cctv AS cctv ON site.rep_mgr_no = cctv.mgr_no
+
+		<if test="emdCd != null and emdCd != ''">
+            , xeus.kais_emd_as AS emd
+        </if>
+
+        <where>
+
+            <if test="emdCd != null and emdCd != ''">
+                st_intersects(emd._geometry, cctv._geometry)
+
+                AND emd.emd_cd = #{emdCd}
+            </if>
+
+            <if test="mgrNo != null and mgrNo != ''">
+                AND site.mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND site.org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="repMgrNo != null and repMgrNo != ''">
+                AND rep_mgr_no = #{repMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND site.inst_dat = #{instDat}
+            </if>
+
+            <if test="siteNm != null and siteNm != ''">
+                AND site_nm like '%'||#{siteNm}||'%'
+            </if>
+
+            <if test="pollGbnCd != null and pollGbnCd != ''">
+                AND poll_gbn_cd = #{pollGbnCd}
+            </if>
+
+            <if test="instMgrNo != null and instMgrNo != ''">
+                AND inst_mgr_no = #{instMgrNo}
+            </if>
+
+            <if test="comMgrNo != null and comMgrNo != ''">
+                AND com_mgr_no = #{comMgrNo}
+            </if>
+
+            <if test="comLineNo != null and comLineNo != ''">
+                AND com_line_no = #{comLineNo}
+            </if>
+
+            <if test="comOpenDat != null and comOpenDat != ''">
+                AND com_open_dat = #{comOpenDat}
+            </if>
+
+            <if test="comExprDat != null and comExprDat != ''">
+                AND com_expr_dat = #{comExprDat}
+            </if>
+
+            <if test="lineGbnCd != null and lineGbnCd != ''">
+                AND line_gbn_cd = #{lineGbnCd}
+            </if>
+
+            <if test="kepcoCustNo != null and kepcoCustNo != ''">
+                AND kepco_cust_no = #{kepcoCustNo}
+            </if>
+
+            <if test="locDesc != null and locDesc != ''">
+                AND site.loc_desc = #{locDesc}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND site.rmark = #{rmark}
+            </if>
+        </where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+
+			<if test="sortCol == null and sortTyp == null">
+				site.mgr_no asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="SiteVo">
+        SELECT mgr_no, org_mgr_no, rep_mgr_no, inst_dat, site_nm, poll_gbn_cd,
+               inst_mgr_no, com_mgr_no, com_line_no, com_open_dat, com_expr_dat,
+               line_gbn_cd, kepco_cust_no, loc_desc, rmark
+
+               , (SELECT orgz.org_nm FROM xeus.mt_orgz_desc AS orgz WHERE site.com_mgr_no = orgz.org_mgr_no) AS com_mgr_nm
+               , (SELECT count(cctv.*) FROM xeus.asset_cctv AS cctv WHERE site.mgr_no = cctv.site_mgr_no) AS cctv_cnt
+               , (SELECT count(inf.*) FROM xeus.asset_infra AS inf WHERE site.mgr_no = inf.site_mgr_no) AS inf_cnt
+               , (SELECT count(acry.*) FROM xeus.asset_acsry AS acry WHERE site.mgr_no = acry.site_mgr_no) AS acry_cnt
+
+        FROM xeus.asset_site AS site
+
+        <where>
+            <if test="mgrNo != null and mgrNo != ''">
+                AND mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="repMgrNo != null and repMgrNo != ''">
+                AND rep_mgr_no = #{repMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND inst_dat = #{instDat}
+            </if>
+
+            <if test="siteNm != null and siteNm != ''">
+                AND site_nm like '%'||#{siteNm}||'%'
+            </if>
+
+            <if test="pollGbnCd != null and pollGbnCd != ''">
+                AND poll_gbn_cd = #{pollGbnCd}
+            </if>
+
+            <if test="instMgrNo != null and instMgrNo != ''">
+                AND inst_mgr_no = #{instMgrNo}
+            </if>
+
+            <if test="comMgrNo != null and comMgrNo != ''">
+                AND com_mgr_no = #{comMgrNo}
+            </if>
+
+            <if test="comLineNo != null and comLineNo != ''">
+                AND com_line_no = #{comLineNo}
+            </if>
+
+            <if test="comOpenDat != null and comOpenDat != ''">
+                AND com_open_dat = #{comOpenDat}
+            </if>
+
+            <if test="comExprDat != null and comExprDat != ''">
+                AND com_expr_dat = #{comExprDat}
+            </if>
+
+            <if test="lineGbnCd != null and lineGbnCd != ''">
+                AND line_gbn_cd = #{lineGbnCd}
+            </if>
+
+            <if test="kepcoCustNo != null and kepcoCustNo != ''">
+                AND kepco_cust_no = #{kepcoCustNo}
+            </if>
+
+            <if test="locDesc != null and locDesc != ''">
+                AND loc_desc = #{locDesc}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND rmark = #{rmark}
+            </if>
+        </where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+        FROM xeus.asset_site
+
+        <where>
+            <if test="mgrNo != null and mgrNo != ''">
+                AND mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="repMgrNo != null and repMgrNo != ''">
+                AND rep_mgr_no = #{repMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND inst_dat = #{instDat}
+            </if>
+
+            <if test="siteNm != null and siteNm != ''">
+                AND site_nm like '%'||#{siteNm}||'%'
+            </if>
+
+            <if test="pollGbnCd != null and pollGbnCd != ''">
+                AND poll_gbn_cd = #{pollGbnCd}
+            </if>
+
+            <if test="instMgrNo != null and instMgrNo != ''">
+                AND inst_mgr_no = #{instMgrNo}
+            </if>
+
+            <if test="comMgrNo != null and comMgrNo != ''">
+                AND com_mgr_no = #{comMgrNo}
+            </if>
+
+            <if test="comLineNo != null and comLineNo != ''">
+                AND com_line_no = #{comLineNo}
+            </if>
+
+            <if test="comOpenDat != null and comOpenDat != ''">
+                AND com_open_dat = #{comOpenDat}
+            </if>
+
+            <if test="comExprDat != null and comExprDat != ''">
+                AND com_expr_dat = #{comExprDat}
+            </if>
+
+            <if test="lineGbnCd != null and lineGbnCd != ''">
+                AND line_gbn_cd = #{lineGbnCd}
+            </if>
+
+            <if test="kepcoCustNo != null and kepcoCustNo != ''">
+                AND kepco_cust_no = #{kepcoCustNo}
+            </if>
+
+            <if test="locDesc != null and locDesc != ''">
+                AND loc_desc = #{locDesc}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND rmark = #{rmark}
+            </if>
+        </where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.asset_site WHERE mgr_no = #{mgrNo}
+	</delete>
+
+
+	<insert id="add" parameterType="SiteVo">
+		INSERT INTO xeus.asset_site(
+            mgr_no, org_mgr_no, rep_mgr_no, inst_dat, site_nm, poll_gbn_cd,
+            inst_mgr_no, com_mgr_no, com_line_no, com_open_dat, com_expr_dat,
+            line_gbn_cd, kepco_cust_no, loc_desc, rmark
+        ) VALUES (
+            (SELECT
+              'SIT' ||
+              (case length((num + 1)::text)::integer
+                when 1 then '000000'
+                when 2 then '00000'
+                when 3 then '0000'
+                when 4 then '000'
+                when 5 then '00'
+                when 6 then '0'
+              end) || num + 1 AS val
+            FROM generate_series(
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_site),
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_site)
+            ) AS num),
+
+            #{orgMgrNo}, #{repMgrNo}, #{instDat}, #{siteNm}, #{pollGbnCd}, #{instMgrNo},
+            #{comMgrNo}, #{comLineNo}, #{comOpenDat}, #{comExprDat},
+            #{lineGbnCd}, #{kepcoCustNo}, #{locDesc}, #{rmark}
+        );
+	</insert>
+
+
+	<update id="edit" parameterType="SiteVo">
+		UPDATE xeus.asset_site
+
+		SET
+            mgr_no = #{mgrNo}
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                , org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="repMgrNo != null and repMgrNo != ''">
+                , rep_mgr_no = #{repMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                , inst_dat = #{instDat}
+            </if>
+
+            <if test="siteNm != null and siteNm != ''">
+                , site_nm = #{siteNm}
+            </if>
+
+            <if test="pollGbnCd != null and pollGbnCd != ''">
+                , poll_gbn_cd = #{pollGbnCd}
+            </if>
+
+            <if test="instMgrNo != null and instMgrNo != ''">
+                , inst_mgr_no = #{instMgrNo}
+            </if>
+
+            <if test="comMgrNo != null and comMgrNo != ''">
+                , com_mgr_no = #{comMgrNo}
+            </if>
+
+            <if test="comLineNo != null and comLineNo != ''">
+                , com_line_no = #{comLineNo}
+            </if>
+
+            <if test="comOpenDat != null and comOpenDat != ''">
+                , com_open_dat = #{comOpenDat}
+            </if>
+
+            <if test="comExprDat != null and comExprDat != ''">
+                , com_expr_dat = #{comExprDat}
+            </if>
+
+            <if test="lineGbnCd != null and lineGbnCd != ''">
+                , line_gbn_cd = #{lineGbnCd}
+            </if>
+
+            <if test="kepcoCustNo != null and kepcoCustNo != ''">
+                , kepco_cust_no = #{kepcoCustNo}
+            </if>
+
+            <if test="locDesc != null and locDesc != ''">
+                , loc_desc = #{locDesc}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                , rmark = #{rmark}
+            </if>
+
+		WHERE mgr_no = #{mgrNo}
+	</update>
+
+</mapper>

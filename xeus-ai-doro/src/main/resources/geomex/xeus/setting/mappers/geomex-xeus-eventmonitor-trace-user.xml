@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.eventmonitor.service.UserTraceMapper">
+    <select id="getList" parameterType="HashMap" resultType="UserTraceVo">
+        SELECT user_id, user_nm, mobile_num, birth_year, grdn_nm, grdn_mobile, mon_yn
+
+        FROM xeus.trace_rqst_usr
+
+        <where>
+
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND user_nm = #{userNm}
+            </if>
+
+            <if test="mobileNum != null and mobileNum != ''">
+                AND mobile_num = #{mobileNum}
+            </if>
+
+            <if test="birthYear != null and birthYear != ''">
+                AND birth_year = #{birthYear}
+            </if>
+
+            <if test="grdnNm != null and grdnNm != ''">
+                AND grdn_nm = #{grdnNm}
+            </if>
+
+            <if test="grdnMobile != null and grdnMobile != ''">
+                AND grdn_mobile = #{grdnMobile}
+            </if>
+
+            <if test="monYn != null and monYn != ''">
+                AND mon_yn = #{monYn}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                user_id asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="UserTraceVo">
+        SELECT user_id, user_nm, mobile_num, birth_year, grdn_nm, grdn_mobile, mon_yn
+
+        FROM xeus.trace_rqst_usr
+
+        <where>
+
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND user_nm = #{userNm}
+            </if>
+
+            <if test="mobileNum != null and mobileNum != ''">
+                AND mobile_num = #{mobileNum}
+            </if>
+
+            <if test="birthYear != null and birthYear != ''">
+                AND birth_year = #{birthYear}
+            </if>
+
+            <if test="grdnNm != null and grdnNm != ''">
+                AND grdn_nm = #{grdnNm}
+            </if>
+
+            <if test="grdnMobile != null and grdnMobile != ''">
+                AND grdn_mobile = #{grdnMobile}
+            </if>
+
+            <if test="monYn != null and monYn != ''">
+                AND mon_yn = #{monYn}
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.trace_rqst_usr
+
+        <where>
+
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND user_nm = #{userNm}
+            </if>
+
+            <if test="mobileNum != null and mobileNum != ''">
+                AND mobile_num = #{mobileNum}
+            </if>
+
+            <if test="birthYear != null and birthYear != ''">
+                AND birth_year = #{birthYear}
+            </if>
+
+            <if test="grdnNm != null and grdnNm != ''">
+                AND grdn_nm = #{grdnNm}
+            </if>
+
+            <if test="grdnMobile != null and grdnMobile != ''">
+                AND grdn_mobile = #{grdnMobile}
+            </if>
+
+            <if test="monYn != null and monYn != ''">
+                AND mon_yn = #{monYn}
+            </if>
+
+        </where>
+    </select>
+
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.trace_rqst_usr WHERE user_id = #{userId}
+    </delete>
+
+
+    <insert id="add" parameterType="UserTraceVo">
+        INSERT INTO xeus.trace_rqst_usr(
+            user_id, user_nm, mobile_num, birth_year, grdn_nm, grdn_mobile, mon_yn
+        ) VALUES (
+            #{userId}, #{userNm}, #{mobileNum}, #{birthYear}, #{grdnNm}, #{grdnMobile}, #{monYn}
+        );
+    </insert>
+
+
+    <update id="edit" parameterType="UserTraceVo">
+        UPDATE xeus.trace_rqst_usr SET
+            user_id = #{userId}
+
+            <if test="userNm != null and userNm != ''">
+                , user_nm = #{userNm}
+            </if>
+
+            <if test="mobileNum != null and mobileNum != ''">
+                , mobile_num = #{mobileNum}
+            </if>
+
+            <if test="birthYear != null and birthYear != ''">
+                , birth_year = #{birthYear}
+            </if>
+
+            <if test="grdnNm != null and grdnNm != ''">
+                , grdn_nm = #{grdnNm}
+            </if>
+
+            <if test="grdnMobile != null and grdnMobile != ''">
+                , grdn_mobile = #{grdnMobile}
+            </if>
+
+            <if test="monYn != null and monYn != ''">
+                , mon_yn = #{monYn}
+            </if>
+
+        WHERE user_id = #{userId}
+
+    </update>
+</mapper>

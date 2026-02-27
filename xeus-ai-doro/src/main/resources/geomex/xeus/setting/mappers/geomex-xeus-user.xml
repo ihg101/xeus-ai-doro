@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.user.service.UserMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="UserVo">
+		SELECT usr.user_id, usr.user_nm, usr.user_pwd, usr.birth_day, usr.auth_grp_no, usr.org_mgr_no,
+               usr.tel_num, usr.email, usr.auth_stat_cd, usr.req_dat, usr.acpt_dat, usr.lock_dat, usr.expr_dat,
+               usr.acpt_user_id, usr.oath_file_nm, usr.oath_file_path, usr.auth_atmt_cnt, usr.auth_conn_ip,
+               usr.mobile_num, usr.depart_nm, usr.pos_nm, usr.out_sign, usr.out_stream, usr.login_sms
+
+               ,grp.auth_grp_nm ,orgz.org_nm
+
+        FROM xeus.mt_usr_desc AS usr
+        LEFT JOIN xeus.mt_auth_grp AS grp ON usr.auth_grp_no = grp.auth_grp_no
+        LEFT JOIN xeus.mt_orgz_desc AS orgz ON usr.org_mgr_no = orgz.org_mgr_no
+
+		<where>
+			<if test="userId != null and userId != ''">
+                AND usr.user_id = #{userId}
+            </if>
+
+            <if test="userPwd != null and userPwd != ''">
+                AND usr.user_pwd = #{userPwd}
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND usr.user_nm = #{userNm}
+            </if>
+
+            <if test="telNum != null and telNum != ''">
+                AND usr.tel_num = #{telNum}
+            </if>
+
+            <if test="birthDay != null and birthDay != ''">
+                AND usr.birth_day = #{birthDay}
+            </if>
+
+            <if test="email != null and email != ''">
+                AND usr.email = #{email}
+            </if>
+
+            <if test="mobileNum != null and mobileNum != ''">
+                AND usr.mobile_num = #{mobileNum}
+            </if>
+
+            <if test="authStatCd != null and authStatCd != ''">
+                AND usr.auth_stat_cd = #{authStatCd}
+            </if>
+
+            <if test="authGrpNo != null and authGrpNo != ''">
+                <choose>
+                    <when test="(authGrpNo eq '119'.toString()) or (authGrpNo eq '112'.toString()) or (authGrpNo eq 'dsc'.toString()) or (authGrpNo eq 'tvus'.toString())">
+                        AND usr.auth_grp_no in
+                            (
+                                SELECT distinct grp.auth_grp_no
+                        		FROM xeus.mt_auth_grp AS grp
+                        		LEFT JOIN xeus.mt_auth_join AS auth_join ON grp.auth_grp_no = auth_join.auth_grp_no
+                        		LEFT JOIN xeus.mt_auth_list AS list ON auth_join.auth_mgr_no = list.auth_mgr_no
+                        		WHERE list.auth_data LIKE '%'||#{authGrpNo}||'%'
+                                        OR list.auth_data LIKE '%'||upper(#{authGrpNo})||'%'
+                        	)
+                    </when>
+                    <otherwise>
+                        AND usr.auth_grp_no = #{authGrpNo}
+                    </otherwise>
+                </choose>
+            </if>
+
+            <if test="ipChk != null and (ipChk eq 'Y'.toString())">
+                AND usr.auth_conn_ip is null OR usr.auth_conn_ip =''
+            </if>
+
+            <if test="userIdOrNm != null and userIdOrNm != ''">
+                <!-- (usr.user_id = #{userIdOrNm} OR usr.user_nm = #{userIdOrNm}) -->
+                AND (usr.user_id LIKE '%'||#{userIdOrNm}||'%' OR usr.user_nm LIKE '%'||#{userIdOrNm}||'%')
+            </if>
+
+            <if test="loginLockCnt != null and loginLockCnt != ''">
+                AND usr.auth_atmt_cnt <![CDATA[ >= ]]> #{loginLockCnt}::numeric
+            </if>
+
+            <if test="discardChk != null and (discardChk eq 'Y'.toString())">
+                AND usr.auth_stat_cd <![CDATA[ <> ]]> '15'
+            </if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortCol != 'auth_grp_no' and sortCol != 'org_mgr_no' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+
+			<if test="sortCol == 'auth_grp_no' and sortTyp != null and sortTyp != ''">
+				grp.auth_grp_nm ${sortTyp}
+			</if>
+
+			<if test="sortCol == 'org_mgr_no' and sortTyp != null and sortTyp != ''">
+				orgz.org_nm ${sortTyp}
+			</if>
+
+			<if test="sortCol == null and sortTyp == null">
+				user_id asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="UserVo">
+        SELECT usr.user_id, usr.user_nm, usr.user_pwd, usr.birth_day, usr.auth_grp_no, usr.org_mgr_no,
+               usr.tel_num, usr.email, usr.auth_stat_cd, usr.req_dat, usr.acpt_dat, usr.lock_dat, usr.expr_dat,
+               usr.acpt_user_id, usr.oath_file_nm, usr.oath_file_path, usr.auth_atmt_cnt, usr.auth_conn_ip,
+               usr.mobile_num, usr.depart_nm, usr.pos_nm, usr.board_info, usr.out_sign, usr.out_stream, usr.login_sms
+
+               ,grp.auth_grp_nm ,orgz.org_nm
+
+        FROM xeus.mt_usr_desc AS usr
+        LEFT JOIN xeus.mt_auth_grp AS grp ON usr.auth_grp_no = grp.auth_grp_no
+        LEFT JOIN xeus.mt_orgz_desc AS orgz ON usr.org_mgr_no = orgz.org_mgr_no
+
+		<where>
+			<if test="userId != null and userId != ''">
+				AND usr.user_id = #{userId}
+			</if>
+
+			<if test="userPwd != null and userPwd != ''">
+				AND usr.user_pwd = #{userPwd}
+			</if>
+
+			<if test="userNm != null and userNm != ''">
+				AND usr.user_nm = #{userNm}
+			</if>
+
+			<if test="telNum != null and telNum != ''">
+				AND usr.tel_num = #{telNum}
+			</if>
+
+			<if test="mobileNum != null and mobileNum != ''">
+                AND usr.mobile_num = #{mobileNum}
+            </if>
+
+			<if test="birthDay != null and birthDay != ''">
+				AND usr.birth_day = #{birthDay}
+			</if>
+
+			<if test="email != null and email != ''">
+				AND usr.email = #{email}
+			</if>
+
+            <if test="userIdOrNm != null and userIdOrNm != ''">
+                (usr.user_id = #{userIdOrNm} OR usr.user_nm = #{userIdOrNm})
+            </if>
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*) FROM xeus.mt_usr_desc
+
+		<where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="userPwd != null and userPwd != ''">
+                AND user_pwd = #{userPwd}
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND user_nm = #{userNm}
+            </if>
+
+            <if test="telNum != null and telNum != ''">
+                AND tel_num = #{telNum}
+            </if>
+
+            <if test="birthDay != null and birthDay != ''">
+                AND birth_day = #{birthDay}
+            </if>
+
+            <if test="email != null and email != ''">
+                AND email = #{email}
+            </if>
+
+            <if test="mobileNum != null and mobileNum != ''">
+                AND mobile_num = #{mobileNum}
+            </if>
+
+            <if test="authStatCd != null and authStatCd != ''">
+                AND auth_stat_cd = #{authStatCd}
+            </if>
+
+            <if test="authGrpNo != null and authGrpNo != ''">
+                <choose>
+                    <when test="(authGrpNo eq '119'.toString()) or (authGrpNo eq '112'.toString()) or (authGrpNo eq 'dsc'.toString()) or (authGrpNo eq 'tvus'.toString())">
+                        AND auth_grp_no in
+                            (
+                                SELECT distinct grp.auth_grp_no
+                        		FROM xeus.mt_auth_grp AS grp
+                        		LEFT JOIN xeus.mt_auth_join AS auth_join ON grp.auth_grp_no = auth_join.auth_grp_no
+                        		LEFT JOIN xeus.mt_auth_list AS list ON auth_join.auth_mgr_no = list.auth_mgr_no
+                        		WHERE list.auth_data LIKE '%'||#{authGrpNo}||'%'
+                                        OR list.auth_data LIKE '%'||upper(#{authGrpNo})||'%'
+                        	)
+                    </when>
+                    <otherwise>
+                        AND auth_grp_no = #{authGrpNo}
+                    </otherwise>
+                </choose>
+            </if>
+
+            <if test="ipChk != null and (ipChk eq 'Y'.toString())">
+                AND auth_conn_ip is null OR auth_conn_ip =''
+            </if>
+
+            <if test="userIdOrNm != null and userIdOrNm != ''">
+                <!-- (user_id = #{userIdOrNm} OR user_nm = #{userIdOrNm}) -->
+                AND (user_id LIKE '%'||#{userIdOrNm}||'%' OR user_nm LIKE '%'||#{userIdOrNm}||'%')
+            </if>
+
+            <if test="loginLockCnt != null and loginLockCnt != ''">
+                AND auth_atmt_cnt <![CDATA[ >= ]]> #{loginLockCnt}::numeric
+            </if>
+
+            <if test="discardChk != null and (discardChk eq 'Y'.toString())">
+                AND auth_stat_cd <![CDATA[ <> ]]> '15'
+            </if>
+        </where>
+	</select>
+
+
+	<select id="getAgeStat" parameterType="HashMap" resultType="UserVo">
+        SELECT age.age AS age, COUNT(age.age) AS count
+		FROM (SELECT case
+			WHEN
+			   substring(birth_day from 1 for 2) <![CDATA[ >= ]]> '00' AND substring(birth_day from 1 for 2) <![CDATA[ <= ]]> #{subyear} THEN #{year}::numeric - (20||substring(birth_day from 1 for 2))::numeric
+			ELSE
+			   #{year}::numeric - (19||substring(birth_day from 1 for 2))::numeric
+			END AS age
+
+			FROM xeus.mt_usr_desc) AS age
+
+		GROUP BY age
+		ORDER BY age
+
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.mt_usr_desc WHERE user_id = #{userId}
+	</delete>
+
+
+	<insert id="add" parameterType="UserVo">
+		INSERT INTO xeus.mt_usr_desc(
+                user_id, user_nm, user_pwd, birth_day, auth_grp_no, org_mgr_no,
+                tel_num, mobile_num, depart_nm, pos_nm, email, auth_stat_cd, req_dat, acpt_dat, lock_dat, expr_dat,
+                acpt_user_id, oath_file_nm, oath_file_path, auth_atmt_cnt, auth_conn_ip, out_sign, out_stream, login_sms)
+	    VALUES (#{userId}, #{userNm}, #{userPwd}, #{birthDay}, #{authGrpNo}, #{orgMgrNo},
+                #{telNum}, #{mobileNum}, #{departNm}, #{posNm}, #{email}, #{authStatCd}, #{reqDat}, #{acptDat}, #{lockDat}, #{exprDat},
+                #{acptUserId}, #{oathFileNm}, #{oathFilePath}, #{authAtmtCnt}::numeric, #{authConnIp}, #{outSign}, #{outStream}, #{loginSms} );
+	</insert>
+
+
+	<update id="edit" parameterType="UserVo">
+		UPDATE xeus.mt_usr_desc
+
+		SET
+			user_id = #{userId}
+
+			<if test="userNm != null and userNm != ''">
+				,user_nm = #{userNm}
+			</if>
+
+			<if test="birthDay != null and birthDay != ''">
+				,birth_day = #{birthDay}
+			</if>
+
+			<if test="authGrpNo != null and authGrpNo != ''">
+				,auth_grp_no = #{authGrpNo}
+			</if>
+
+			<if test="orgMgrNo != null and orgMgrNo != ''">
+				,org_mgr_no = #{orgMgrNo}
+			</if>
+
+			<if test="telNum != null and telNum != ''">
+				,tel_num = #{telNum}
+			</if>
+
+            <if test="mobileNum != null and mobileNum != ''">
+                ,mobile_num = #{mobileNum}
+            </if>
+
+            <if test="departNm != null and departNm != ''">
+                ,depart_nm = #{departNm}
+            </if>
+
+            <if test="posNm != null and posNm != ''">
+                ,pos_nm = #{posNm}
+            </if>
+
+			<if test="email != null and email != ''">
+				,email = #{email}
+			</if>
+
+			<if test="authStatCd != null and authStatCd != ''">
+				,auth_stat_cd = #{authStatCd}
+			</if>
+
+				,acpt_dat = #{acptDat}
+
+				,lock_dat = #{lockDat}
+
+				,expr_dat = #{exprDat}
+
+			<if test="acptUserId != null and acptUserId != ''">
+				,acpt_user_id = #{acptUserId}
+			</if>
+
+			<if test="oathFileNm != null and oathFileNm != ''">
+				,oath_file_nm = #{oathFileNm}
+			</if>
+
+			<if test="oathFilePath != null and oathFilePath != ''">
+				,oath_file_path = #{oathFilePath}
+			</if>
+
+            <if test="authAtmtCnt != null and authAtmtCnt != ''">
+                ,auth_atmt_cnt = #{authAtmtCnt}::numeric
+            </if>
+
+            <if test="authConnIp != null and authConnIp != ''">
+                ,auth_conn_ip = #{authConnIp}
+            </if>
+
+            <if test="outSign != null and outSign != ''">
+                ,out_sign = #{outSign}
+            </if>
+
+            <if test="outStream != null and outStream != ''">
+                ,out_stream = #{outStream}
+            </if>
+
+             <if test="loginSms != null and loginSms != ''">
+                ,login_sms = #{loginSms}
+            </if>
+
+		WHERE user_id = #{userId}
+	</update>
+
+
+	<update id="editBoardInfo" parameterType="HashMap">
+		UPDATE xeus.mt_usr_desc
+
+		SET
+			board_info = #{boardInfo}
+
+		WHERE user_id = #{userId}
+	</update>
+
+
+	<update id="editPassword" parameterType="HashMap">
+		UPDATE xeus.mt_usr_desc
+
+		SET
+			user_pwd = #{newUserPwd}
+
+		WHERE user_id = #{userId}
+		AND user_pwd = #{userPwd}
+	</update>
+
+	<update id="editPasswordAdmin" parameterType="HashMap">
+		UPDATE xeus.mt_usr_desc
+
+		SET
+			user_pwd = #{newUserPwd}
+
+		WHERE user_id = #{userId}
+	</update>
+
+    <update id="editAuthAtmtCnt" parameterType="HashMap">
+        UPDATE xeus.mt_usr_desc
+
+        SET
+            auth_atmt_cnt = #{authAtmtCnt}::numeric
+
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="editPledge" parameterType="HashMap">
+        UPDATE xeus.mt_usr_desc
+
+        SET
+            oath_file_nm = #{oathFileNm}
+            , oath_file_path = #{oathFilePath}
+
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>

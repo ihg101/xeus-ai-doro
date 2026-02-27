@@ -1,0 +1,1107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.smartcity.service.EventMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="EventHistVo">
+   
+      <![CDATA[
+        WITH first_events AS (
+            SELECT e.*,
+                ROW_NUMBER() OVER (
+                  PARTITION BY outb_posx, outb_posy, evt_typ_cd
+                  ORDER BY evt_outb_dtm ASC
+              ) AS rn
+            FROM xeus.v_mon_evet_list e
+            WHERE 1=1
+           ]]>
+               <if test="doroEvtTypCd != null and doroEvtTypCd != ''">
+               AND (
+	               e.evt_typ_cd = #{GUL}
+	               OR e.evt_typ_cd = #{PORT}
+	               OR e.evt_typ_cd = #{CORN}
+	               OR e.evt_typ_cd = #{CRACK}
+	               OR e.evt_typ_cd = #{NAK}
+               )
+            </if>
+
+			<if test="usvcOutbId != null and usvcOutbId != ''">
+				AND e.usvc_outb_id = #{usvcOutbId}
+			</if>
+			<if test="uSvcOutbId != null and uSvcOutbId != ''">
+				AND e.usvc_outb_id = #{uSvcOutbId}
+			</if>
+
+			<if test="evtSvcNm != null and evtSvcNm != ''">
+				AND e.evt_svc_nm = #{evtSvcNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND e.evt_svc_nm = #{statEvetNm}
+			</if>
+
+			<if test="evtTyp != null and evtTyp != ''">
+				AND e.evt_typ = #{evtTyp}
+			</if>
+			<if test="statEvetType != null and statEvetType != ''">
+				AND e.evt_typ = #{statEvetType}
+			</if>
+			<if test="evtTypCd != null and evtTypCd != ''">
+				 AND e.evt_typ_cd = ANY(string_to_array(#{evtTypCd}, ','))
+			</if>
+			<if test="statEvetTypCd != null and statEvetTypCd != ''">
+				AND e.evt_typ_cd = #{statEvetTypCd}
+			</if>
+
+			<if test="msgTypCd != null and msgTypCd != ''">
+				AND e.msg_typ_cd = #{msgTypCd}
+			</if>
+			<if test="statMsgTypCd != null and statMsgTypCd != ''">
+				AND e.msg_typ_cd = #{statMsgTypCd}
+			</if>
+
+			<if test="evtNm != null and evtNm != ''">
+				AND e.evt_nm = #{evtNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND e.evt_nm = #{statEvetNm}
+			</if>
+
+			<if test="evtCntn != null and evtCntn != ''">
+				AND e.evt_cntn = #{evtCntn}
+			</if>
+			<if test="statEvetCntn != null and statEvetCntn != ''">
+				AND e.evt_cntn = #{statEvetCntn}
+			</if>
+
+			<if test="outbPosNm != null and outbPosNm != ''">
+				AND e.outb_pos_nm = #{outbPosNm}
+			</if>
+
+			<if test="outbPosx != null and outbPosx != ''">
+				AND e.outb_posx = #{outbPosx}::numeric
+			</if>
+
+			<if test="outbPosy != null and outbPosy != ''">
+				AND e.outb_posy = #{outbPosy}::numeric
+			</if>
+
+			<if test="evtOutbDtm != null and evtOutbDtm != ''">
+				AND e.evt_outb_dtm = #{evtOutbDtm}
+			</if>
+         
+			<if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+			</if>
+
+            <if test="startDat != null and startDat != ''">
+               AND RPAD(evt_outb_dtm, 17, '0')::numeric <![CDATA[ >= ]]> RPAD(#{startDat}, 17, '0')::numeric
+            </if>
+            <if test="endDat != null and endDat != ''">
+               AND RPAD(evt_outb_dtm, 17, '0')::numeric <![CDATA[ <= ]]> RPAD(#{endDat}, 17, '0')::numeric
+            </if>
+
+			<if test="evtClrDtm != null and evtClrDtm != ''">
+				AND e.evt_clr_dtm = #{evtClrDtm}
+			</if>
+			<if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+				AND e.evt_clr_dtm = #{statEvetClrDtm}
+			</if>
+
+			<if test="evtProcCd != null and evtProcCd != ''">
+				AND e.evt_proc_cd = #{evtProcCd}
+			</if>
+			<if test="procSt != null and procSt != ''">
+				AND e.evt_proc_cd = #{procSt}
+			</if>
+
+			<if test="evtActnDtm != null and evtActnDtm != ''">
+				AND e.evt_actn_dtm = #{evtActnDtm}
+			</if>
+			<if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+				AND e.evt_actn_dtm = #{statEvetActnDtm}
+			</if>
+
+			<if test="evtActnUsrid != null and evtActnUsrid != ''">
+				AND e.evt_actn_usrid = #{evtActnUsrid}
+			</if>
+			<if test="statEvetActnMn != null and statEvetActnMn != ''">
+				AND e.evt_actn_usrid = #{statEvetActnMn}
+			</if>
+
+			<if test="evtActnCntn != null and evtActnCntn != ''">
+				AND e.evt_actn_cntn = #{evtActnCntn}
+			</if>
+			<if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+				AND e.evt_actn_cntn = #{statEvetActnCntn}
+			</if>
+
+			<if test="testYn != null and testYn != ''">
+				AND e.test_yn = #{testYn}
+			</if>
+			<if test="isTest != null and isTest != ''">
+				AND e.test_yn = #{isTest}
+			</if>
+
+			<if test="evtJson != null and evtJson != ''">
+				AND e.evt_json = #{evtJson}
+			</if>
+			<if test="etcCntn != null and etcCntn != ''">
+				AND e.evt_json = #{etcCntn}
+			</if>
+         
+            <if test="type != null and type != ''">
+               AND e.type = #{type}
+            </if>
+         
+            <![CDATA[
+            ),
+            keep_events AS (
+                SELECT fe.*
+                FROM first_events fe
+                WHERE rn = 1
+            ),
+               excluded_events AS (
+                SELECT k.usvc_outb_id AS keeper_id,
+                       sub.usvc_outb_id AS excluded_id
+                FROM keep_events k
+                JOIN keep_events sub
+                  ON sub.usvc_outb_id <> k.usvc_outb_id
+                 AND (sub.outb_posx, sub.outb_posy) <> (k.outb_posx, k.outb_posy)
+                 AND trim(sub.evt_typ_cd) = trim(k.evt_typ_cd)
+                 AND ST_DWithin(
+                       ST_Transform(k._geometry, 5186),
+                       ST_Transform(sub._geometry, 5186),
+                       COALESCE((k.evt_json::json->>'dist')::numeric, 0)
+                 )
+            )
+            SELECT ke.*
+            FROM keep_events ke
+            WHERE ke.usvc_outb_id NOT IN (
+                SELECT excluded_id
+                FROM excluded_events
+            )
+            ]]>
+            <trim prefix="ORDER BY">
+               <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                  ${sortCol} ${sortTyp}
+               </if>
+               <if test="sortCol == null and sortTyp == null">
+                  evt_outb_dtm desc
+               </if>
+            </trim>
+   
+         <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+         </if>
+	<!-- 	SELECT
+			evetlist.usvc_outb_id
+			, evetlist.evt_svc_nm
+			, evetlist.evt_typ
+			, evetlist.evt_typ_cd
+			, evetlist.msg_typ_cd
+			, evetlist.evt_nm
+			, evetlist.evt_cntn
+			, evetlist.outb_pos_nm
+			, evetlist.outb_posx
+			, evetlist.outb_posy
+			, evetlist.evt_outb_dtm
+			, evetlist.evt_clr_dtm
+			, evetlist.evt_proc_cd
+			, evetlist.evt_actn_dtm
+			, evetlist.evt_actn_usrid
+			, evetlist.evt_actn_cntn
+			, evetlist.test_yn
+			, evetlist.evt_json
+
+		FROM xeus.mon_evet_list as evetlist
+
+		<include refid="common.hasAuthEventList"/>
+
+		<where>
+
+            <if test="doroEvtTypCd != null and doroEvtTypCd != ''">
+               AND (
+	               evetlist.evt_typ_cd = #{GUL}
+	               OR evetlist.evt_typ_cd = #{PORT}
+	               OR evetlist.evt_typ_cd = #{CORN}
+	               OR evetlist.evt_typ_cd = #{CRACK}
+	               OR evetlist.evt_typ_cd = #{NAK}
+               )
+            </if>
+
+			<if test="usvcOutbId != null and usvcOutbId != ''">
+				AND evetlist.usvc_outb_id = #{usvcOutbId}
+			</if>
+			<if test="uSvcOutbId != null and uSvcOutbId != ''">
+				AND evetlist.usvc_outb_id = #{uSvcOutbId}
+			</if>
+
+
+			<if test="evtSvcNm != null and evtSvcNm != ''">
+				AND evetlist.evt_svc_nm = #{evtSvcNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evetlist.evt_svc_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtTyp != null and evtTyp != ''">
+				AND evetlist.evt_typ = #{evtTyp}
+			</if>
+			<if test="statEvetType != null and statEvetType != ''">
+				AND evetlist.evt_typ = #{statEvetType}
+			</if>
+
+
+			<if test="evtTypCd != null and evtTypCd != ''">
+				AND evetlist.evt_typ_cd = #{evtTypCd}
+			</if>
+			<if test="statEvetTypCd != null and statEvetTypCd != ''">
+				AND evetlist.evt_typ_cd = #{statEvetTypCd}
+			</if>
+
+
+			<if test="msgTypCd != null and msgTypCd != ''">
+				AND evetlist.msg_typ_cd = #{msgTypCd}
+			</if>
+			<if test="statMsgTypCd != null and statMsgTypCd != ''">
+				AND evetlist.msg_typ_cd = #{statMsgTypCd}
+			</if>
+
+
+			<if test="evtNm != null and evtNm != ''">
+				AND evetlist.evt_nm = #{evtNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evetlist.evt_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtCntn != null and evtCntn != ''">
+				AND evetlist.evt_cntn = #{evtCntn}
+			</if>
+			<if test="statEvetCntn != null and statEvetCntn != ''">
+				AND evetlist.evt_cntn = #{statEvetCntn}
+			</if>
+
+
+			<if test="outbPosNm != null and outbPosNm != ''">
+				AND evetlist.outb_pos_nm = #{outbPosNm}
+			</if>
+
+
+			<if test="outbPosx != null and outbPosx != ''">
+				AND evetlist.outb_posx = #{outbPosx}::numeric
+			</if>
+
+
+			<if test="outbPosy != null and outbPosy != ''">
+				AND evetlist.outb_posy = #{outbPosy}::numeric
+			</if>
+
+
+			<if test="evtOutbDtm != null and evtOutbDtm != ''">
+				AND evetlist.evt_outb_dtm = #{evtOutbDtm}
+			</if>
+			<if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+				AND evetlist.evt_outb_dtm = #{statEvetOutbDtm}
+			</if>
+
+            <if test="startDat != null and startDat != ''">
+               AND RPAD(evt_outb_dtm, 17, '0')::numeric <![CDATA[ >= ]]> RPAD(#{startDat}, 17, '0')::numeric
+            </if>
+            <if test="endDat != null and endDat != ''">
+               AND RPAD(evt_outb_dtm, 17, '0')::numeric <![CDATA[ <= ]]> RPAD(#{endDat}, 17, '0')::numeric
+            </if>
+
+			<if test="evtClrDtm != null and evtClrDtm != ''">
+				AND evetlist.evt_clr_dtm = #{evtClrDtm}
+			</if>
+			<if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+				AND evetlist.evt_clr_dtm = #{statEvetClrDtm}
+			</if>
+
+
+			<if test="evtProcCd != null and evtProcCd != ''">
+				AND evetlist.evt_proc_cd = #{evtProcCd}
+			</if>
+			<if test="procSt != null and procSt != ''">
+				AND evetlist.evt_proc_cd = #{procSt}
+			</if>
+
+
+			<if test="evtActnDtm != null and evtActnDtm != ''">
+				AND evetlist.evt_actn_dtm = #{evtActnDtm}
+			</if>
+			<if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+				AND evetlist.evt_actn_dtm = #{statEvetActnDtm}
+			</if>
+
+
+			<if test="evtActnUsrid != null and evtActnUsrid != ''">
+				AND evetlist.evt_actn_usrid = #{evtActnUsrid}
+			</if>
+			<if test="statEvetActnMn != null and statEvetActnMn != ''">
+				AND evetlist.evt_actn_usrid = #{statEvetActnMn}
+			</if>
+
+
+			<if test="evtActnCntn != null and evtActnCntn != ''">
+				AND evetlist.evt_actn_cntn = #{evtActnCntn}
+			</if>
+			<if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+				AND evetlist.evt_actn_cntn = #{statEvetActnCntn}
+			</if>
+
+
+			<if test="testYn != null and testYn != ''">
+				AND evetlist.test_yn = #{testYn}
+			</if>
+			<if test="isTest != null and isTest != ''">
+				AND evetlist.test_yn = #{isTest}
+			</if>
+
+
+			<if test="evtJson != null and evtJson != ''">
+				AND evetlist.evt_json = #{evtJson}
+			</if>
+			<if test="etcCntn != null and etcCntn != ''">
+				AND evetlist.evt_json = #{etcCntn}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				evt_outb_dtm desc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if> -->
+
+	</select>
+   
+   <select id="checkContain" parameterType="HashMap" resultType="EventHistVo">
+      <![CDATA[
+          SELECT
+              usvc_outb_id,
+              outb_posx,
+              outb_posy
+          FROM (
+              SELECT
+                  usvc_outb_id,
+                  outb_posx,
+                  outb_posy,
+                  ST_Distance(
+                      ST_SetSRID(ST_MakePoint(#{lon}::numeric, #{lat}::numeric), 4326)::geography,
+                      ST_SetSRID(ST_MakePoint(outb_posx, outb_posy), 4326)::geography
+                  ) AS calc_distance_m,
+                  evt_json
+              FROM xeus.mon_evet_list
+              WHERE (evt_json::jsonb ->> 'dist') IS NOT NULL
+                AND usvc_outb_id <> #{usvcOutbId}
+                AND evt_typ_cd = #{evtTypCd}
+          ) AS t
+          WHERE calc_distance_m <= (evt_json::jsonb ->> 'dist')::numeric
+      ]]>
+   </select>
+   
+   <select id="getBlackIceList" parameterType="HashMap" resultType="EventHistVo">
+      SELECT * 
+      FROM xeus.v_mon_evet_blackice
+      <where>
+           type = 'LIST'
+         <if test="usvcOutbId != null and usvcOutbId != ''">
+            AND usvc_outb_id = #{usvcOutbId}
+         </if>
+         <if test="uSvcOutbId != null and uSvcOutbId != ''">
+            AND usvc_outb_id = #{uSvcOutbId}
+         </if>
+
+
+         <if test="evtSvcNm != null and evtSvcNm != ''">
+            AND evt_svc_nm = #{evtSvcNm}
+         </if>
+         <if test="statEvetNm != null and statEvetNm != ''">
+            AND evt_svc_nm = #{statEvetNm}
+         </if>
+
+
+         <if test="evtTyp != null and evtTyp != ''">
+            AND evt_typ = #{evtTyp}
+         </if>
+         <if test="statEvetType != null and statEvetType != ''">
+            AND evt_typ = #{statEvetType}
+         </if>
+
+
+         <if test="evtTypCd != null and evtTypCd != ''">
+            AND evt_typ_cd = #{evtTypCd}
+         </if>
+         <if test="statEvetTypCd != null and statEvetTypCd != ''">
+            AND evt_typ_cd = #{statEvetTypCd}
+         </if>
+
+
+         <if test="msgTypCd != null and msgTypCd != ''">
+            AND msg_typ_cd = #{msgTypCd}
+         </if>
+         <if test="statMsgTypCd != null and statMsgTypCd != ''">
+            AND msg_typ_cd = #{statMsgTypCd}
+         </if>
+
+
+         <if test="evtNm != null and evtNm != ''">
+            AND evt_nm = #{evtNm}
+         </if>
+         <if test="statEvetNm != null and statEvetNm != ''">
+            AND evt_nm = #{statEvetNm}
+         </if>
+
+
+         <if test="evtCntn != null and evtCntn != ''">
+            AND evt_cntn = #{evtCntn}
+         </if>
+         <if test="statEvetCntn != null and statEvetCntn != ''">
+            AND evt_cntn = #{statEvetCntn}
+         </if>
+
+
+         <if test="outbPosNm != null and outbPosNm != ''">
+            AND outb_pos_nm = #{outbPosNm}
+         </if>
+
+
+         <if test="outbPosx != null and outbPosx != ''">
+            AND outb_posx = #{outbPosx}::numeric
+         </if>
+
+
+         <if test="outbPosy != null and outbPosy != ''">
+            AND outb_posy = #{outbPosy}::numeric
+         </if>
+
+
+         <if test="evtOutbDtm != null and evtOutbDtm != ''">
+            AND evt_outb_dtm = #{evtOutbDtm}
+         </if>
+         <if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+            AND evt_outb_dtm = #{statEvetOutbDtm}
+         </if>
+
+
+         <if test="evtClrDtm != null and evtClrDtm != ''">
+            AND evt_clr_dtm = #{evtClrDtm}
+         </if>
+         <if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+            AND evt_clr_dtm = #{statEvetClrDtm}
+         </if>
+
+
+         <if test="evtProcCd != null and evtProcCd != ''">
+            AND evt_proc_cd = #{evtProcCd}
+         </if>
+         <if test="procSt != null and procSt != ''">
+            AND evt_proc_cd = #{procSt}
+         </if>
+
+
+         <if test="evtActnDtm != null and evtActnDtm != ''">
+            AND evt_actn_dtm = #{evtActnDtm}
+         </if>
+         <if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+            AND evt_actn_dtm = #{statEvetActnDtm}
+         </if>
+
+
+         <if test="evtActnUsrid != null and evtActnUsrid != ''">
+            AND evt_actn_usrid = #{evtActnUsrid}
+         </if>
+         <if test="statEvetActnMn != null and statEvetActnMn != ''">
+            AND evt_actn_usrid = #{statEvetActnMn}
+         </if>
+
+
+         <if test="evtActnCntn != null and evtActnCntn != ''">
+            AND evt_actn_cntn = #{evtActnCntn}
+         </if>
+         <if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+            AND evt_actn_cntn = #{statEvetActnCntn}
+         </if>
+
+
+         <if test="testYn != null and testYn != ''">
+            AND test_yn = #{testYn}
+         </if>
+         <if test="isTest != null and isTest != ''">
+            AND test_yn = #{isTest}
+         </if>
+
+
+         <if test="evtJson != null and evtJson != ''">
+            AND evt_json = #{evtJson}
+         </if>
+         <if test="etcCntn != null and etcCntn != ''">
+            AND evt_json = #{etcCntn}
+         </if>
+
+      </where>
+   </select>
+   <select id="getRealList" parameterType="HashMap" resultType="EventHistVo">
+      SELECT usvc_outb_id, evt_svc_nm, evt_typ, evt_typ_cd, msg_typ_cd, evt_nm, evt_cntn, outb_pos_nm, outb_posx, outb_posy, evt_outb_dtm, evt_clr_dtm, evt_proc_cd, evt_actn_dtm, evt_actn_usrid, evt_actn_cntn, test_yn, evt_json
+
+      FROM xeus.mon_evet_list
+      
+      <where>
+           1=1
+         <if test="usvcOutbId != null and usvcOutbId != ''">
+            AND usvc_outb_id = #{usvcOutbId}
+         </if>
+         <if test="uSvcOutbId != null and uSvcOutbId != ''">
+            AND usvc_outb_id = #{uSvcOutbId}
+         </if>
+
+
+         <if test="evtSvcNm != null and evtSvcNm != ''">
+            AND evt_svc_nm = #{evtSvcNm}
+         </if>
+         <if test="statEvetNm != null and statEvetNm != ''">
+            AND evt_svc_nm = #{statEvetNm}
+         </if>
+
+
+         <if test="evtTyp != null and evtTyp != ''">
+            AND evt_typ = #{evtTyp}
+         </if>
+         <if test="statEvetType != null and statEvetType != ''">
+            AND evt_typ = #{statEvetType}
+         </if>
+
+
+         <if test="evtTypCd != null and evtTypCd != ''">
+            AND evt_typ_cd = #{evtTypCd}
+         </if>
+         <if test="statEvetTypCd != null and statEvetTypCd != ''">
+            AND evt_typ_cd = #{statEvetTypCd}
+         </if>
+
+
+         <if test="msgTypCd != null and msgTypCd != ''">
+            AND msg_typ_cd = #{msgTypCd}
+         </if>
+         <if test="statMsgTypCd != null and statMsgTypCd != ''">
+            AND msg_typ_cd = #{statMsgTypCd}
+         </if>
+
+
+         <if test="evtNm != null and evtNm != ''">
+            AND evt_nm = #{evtNm}
+         </if>
+         <if test="statEvetNm != null and statEvetNm != ''">
+            AND evt_nm = #{statEvetNm}
+         </if>
+
+
+         <if test="evtCntn != null and evtCntn != ''">
+            AND evt_cntn = #{evtCntn}
+         </if>
+         <if test="statEvetCntn != null and statEvetCntn != ''">
+            AND evt_cntn = #{statEvetCntn}
+         </if>
+
+
+         <if test="outbPosNm != null and outbPosNm != ''">
+            AND outb_pos_nm = #{outbPosNm}
+         </if>
+
+
+         <if test="outbPosx != null and outbPosx != ''">
+            AND outb_posx = #{outbPosx}::numeric
+         </if>
+
+
+         <if test="outbPosy != null and outbPosy != ''">
+            AND outb_posy = #{outbPosy}::numeric
+         </if>
+
+
+         <if test="evtOutbDtm != null and evtOutbDtm != ''">
+            AND evt_outb_dtm = #{evtOutbDtm}
+         </if>
+         <if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+            AND evt_outb_dtm = #{statEvetOutbDtm}
+         </if>
+
+
+         <if test="evtClrDtm != null and evtClrDtm != ''">
+            AND evt_clr_dtm = #{evtClrDtm}
+         </if>
+         <if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+            AND evt_clr_dtm = #{statEvetClrDtm}
+         </if>
+
+
+         <if test="evtProcCd != null and evtProcCd != ''">
+            AND evt_proc_cd = #{evtProcCd}
+         </if>
+         <if test="procSt != null and procSt != ''">
+            AND evt_proc_cd = #{procSt}
+         </if>
+
+
+         <if test="evtActnDtm != null and evtActnDtm != ''">
+            AND evt_actn_dtm = #{evtActnDtm}
+         </if>
+         <if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+            AND evt_actn_dtm = #{statEvetActnDtm}
+         </if>
+
+
+         <if test="evtActnUsrid != null and evtActnUsrid != ''">
+            AND evt_actn_usrid = #{evtActnUsrid}
+         </if>
+         <if test="statEvetActnMn != null and statEvetActnMn != ''">
+            AND evt_actn_usrid = #{statEvetActnMn}
+         </if>
+
+
+         <if test="evtActnCntn != null and evtActnCntn != ''">
+            AND evt_actn_cntn = #{evtActnCntn}
+         </if>
+         <if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+            AND evt_actn_cntn = #{statEvetActnCntn}
+         </if>
+
+
+         <if test="testYn != null and testYn != ''">
+            AND test_yn = #{testYn}
+         </if>
+         <if test="isTest != null and isTest != ''">
+            AND test_yn = #{isTest}
+         </if>
+
+
+         <if test="evtJson != null and evtJson != ''">
+            AND evt_json = #{evtJson}
+         </if>
+         <if test="etcCntn != null and etcCntn != ''">
+            AND evt_json = #{etcCntn}
+         </if>
+         
+           <if test="endDate != null and endDate != ''">
+            AND SUBSTRING(evt_outb_dtm FROM 5) <![CDATA[<=]]> #{endDate}
+         </if>
+
+      </where>
+   
+   </select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="EventHistVo">
+		SELECT usvc_outb_id, evt_svc_nm, evt_typ, evt_typ_cd, msg_typ_cd, evt_nm, evt_cntn, outb_pos_nm, outb_posx, outb_posy, evt_outb_dtm, evt_clr_dtm, evt_proc_cd, evt_actn_dtm, evt_actn_usrid, evt_actn_cntn, test_yn, evt_json
+
+		FROM xeus.mon_evet_list
+
+		<where>
+
+			<if test="usvcOutbId != null and usvcOutbId != ''">
+				AND usvc_outb_id = #{usvcOutbId}
+			</if>
+			<if test="uSvcOutbId != null and uSvcOutbId != ''">
+				AND usvc_outb_id = #{uSvcOutbId}
+			</if>
+
+
+			<if test="evtSvcNm != null and evtSvcNm != ''">
+				AND evt_svc_nm = #{evtSvcNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evt_svc_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtTyp != null and evtTyp != ''">
+				AND evt_typ = #{evtTyp}
+			</if>
+			<if test="statEvetType != null and statEvetType != ''">
+				AND evt_typ = #{statEvetType}
+			</if>
+
+
+			<if test="evtTypCd != null and evtTypCd != ''">
+				AND evt_typ_cd = #{evtTypCd}
+			</if>
+			<if test="statEvetTypCd != null and statEvetTypCd != ''">
+				AND evt_typ_cd = #{statEvetTypCd}
+			</if>
+
+
+			<if test="msgTypCd != null and msgTypCd != ''">
+				AND msg_typ_cd = #{msgTypCd}
+			</if>
+			<if test="statMsgTypCd != null and statMsgTypCd != ''">
+				AND msg_typ_cd = #{statMsgTypCd}
+			</if>
+
+
+			<if test="evtNm != null and evtNm != ''">
+				AND evt_nm = #{evtNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evt_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtCntn != null and evtCntn != ''">
+				AND evt_cntn = #{evtCntn}
+			</if>
+			<if test="statEvetCntn != null and statEvetCntn != ''">
+				AND evt_cntn = #{statEvetCntn}
+			</if>
+
+
+			<if test="outbPosNm != null and outbPosNm != ''">
+				AND outb_pos_nm = #{outbPosNm}
+			</if>
+
+
+			<if test="outbPosx != null and outbPosx != ''">
+				AND outb_posx = #{outbPosx}::numeric
+			</if>
+
+
+			<if test="outbPosy != null and outbPosy != ''">
+				AND outb_posy = #{outbPosy}::numeric
+			</if>
+
+
+			<if test="evtOutbDtm != null and evtOutbDtm != ''">
+				AND evt_outb_dtm = #{evtOutbDtm}
+			</if>
+			<if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+				AND evt_outb_dtm = #{statEvetOutbDtm}
+			</if>
+
+
+			<if test="evtClrDtm != null and evtClrDtm != ''">
+				AND evt_clr_dtm = #{evtClrDtm}
+			</if>
+			<if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+				AND evt_clr_dtm = #{statEvetClrDtm}
+			</if>
+
+
+			<if test="evtProcCd != null and evtProcCd != ''">
+				AND evt_proc_cd = #{evtProcCd}
+			</if>
+			<if test="procSt != null and procSt != ''">
+				AND evt_proc_cd = #{procSt}
+			</if>
+
+
+			<if test="evtActnDtm != null and evtActnDtm != ''">
+				AND evt_actn_dtm = #{evtActnDtm}
+			</if>
+			<if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+				AND evt_actn_dtm = #{statEvetActnDtm}
+			</if>
+
+
+			<if test="evtActnUsrid != null and evtActnUsrid != ''">
+				AND evt_actn_usrid = #{evtActnUsrid}
+			</if>
+			<if test="statEvetActnMn != null and statEvetActnMn != ''">
+				AND evt_actn_usrid = #{statEvetActnMn}
+			</if>
+
+
+			<if test="evtActnCntn != null and evtActnCntn != ''">
+				AND evt_actn_cntn = #{evtActnCntn}
+			</if>
+			<if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+				AND evt_actn_cntn = #{statEvetActnCntn}
+			</if>
+
+
+			<if test="testYn != null and testYn != ''">
+				AND test_yn = #{testYn}
+			</if>
+			<if test="isTest != null and isTest != ''">
+				AND test_yn = #{isTest}
+			</if>
+
+
+			<if test="evtJson != null and evtJson != ''">
+				AND evt_json = #{evtJson}
+			</if>
+			<if test="etcCntn != null and etcCntn != ''">
+				AND evt_json = #{etcCntn}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.mon_evet_list as evetlist
+
+		<include refid="common.hasAuthEventList"/>
+
+		<where>
+
+			<if test="usvcOutbId != null and usvcOutbId != ''">
+				AND evetlist.usvc_outb_id = #{usvcOutbId}
+			</if>
+			<if test="uSvcOutbId != null and uSvcOutbId != ''">
+				AND evetlist.usvc_outb_id = #{uSvcOutbId}
+			</if>
+
+
+			<if test="evtSvcNm != null and evtSvcNm != ''">
+				AND evetlist.evt_svc_nm = #{evtSvcNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evetlist.evt_svc_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtTyp != null and evtTyp != ''">
+				AND evetlist.evt_typ = #{evtTyp}
+			</if>
+			<if test="statEvetType != null and statEvetType != ''">
+				AND evetlist.evt_typ = #{statEvetType}
+			</if>
+
+
+			<if test="evtTypCd != null and evtTypCd != ''">
+				AND evetlist.evt_typ_cd = #{evtTypCd}
+			</if>
+			<if test="statEvetTypCd != null and statEvetTypCd != ''">
+				AND evetlist.evt_typ_cd = #{statEvetTypCd}
+			</if>
+
+
+			<if test="msgTypCd != null and msgTypCd != ''">
+				AND evetlist.msg_typ_cd = #{msgTypCd}
+			</if>
+			<if test="statMsgTypCd != null and statMsgTypCd != ''">
+				AND evetlist.msg_typ_cd = #{statMsgTypCd}
+			</if>
+
+
+			<if test="evtNm != null and evtNm != ''">
+				AND evetlist.evt_nm = #{evtNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evetlist.evt_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtCntn != null and evtCntn != ''">
+				AND evetlist.evt_cntn = #{evtCntn}
+			</if>
+			<if test="statEvetCntn != null and statEvetCntn != ''">
+				AND evetlist.evt_cntn = #{statEvetCntn}
+			</if>
+
+
+			<if test="outbPosNm != null and outbPosNm != ''">
+				AND evetlist.outb_pos_nm = #{outbPosNm}
+			</if>
+
+
+			<if test="outbPosx != null and outbPosx != ''">
+				AND evetlist.outb_posx = #{outbPosx}::numeric
+			</if>
+
+
+			<if test="outbPosy != null and outbPosy != ''">
+				AND evetlist.outb_posy = #{outbPosy}::numeric
+			</if>
+
+
+			<if test="evtOutbDtm != null and evtOutbDtm != ''">
+				AND evetlist.evt_outb_dtm = #{evtOutbDtm}
+			</if>
+			<if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+				AND evetlist.evt_outb_dtm = #{statEvetOutbDtm}
+			</if>
+
+
+			<if test="evtClrDtm != null and evtClrDtm != ''">
+				AND evetlist.evt_clr_dtm = #{evtClrDtm}
+			</if>
+			<if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+				AND evetlist.evt_clr_dtm = #{statEvetClrDtm}
+			</if>
+
+
+			<if test="evtProcCd != null and evtProcCd != ''">
+				AND evetlist.evt_proc_cd = #{evtProcCd}
+			</if>
+			<if test="procSt != null and procSt != ''">
+				AND evetlist.evt_proc_cd = #{procSt}
+			</if>
+
+
+			<if test="evtActnDtm != null and evtActnDtm != ''">
+				AND evetlist.evt_actn_dtm = #{evtActnDtm}
+			</if>
+			<if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+				AND evetlist.evt_actn_dtm = #{statEvetActnDtm}
+			</if>
+
+
+			<if test="evtActnUsrid != null and evtActnUsrid != ''">
+				AND evetlist.evt_actn_usrid = #{evtActnUsrid}
+			</if>
+			<if test="statEvetActnMn != null and statEvetActnMn != ''">
+				AND evetlist.evt_actn_usrid = #{statEvetActnMn}
+			</if>
+
+
+			<if test="evtActnCntn != null and evtActnCntn != ''">
+				AND evetlist.evt_actn_cntn = #{evtActnCntn}
+			</if>
+			<if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+				AND evetlist.evt_actn_cntn = #{statEvetActnCntn}
+			</if>
+
+
+			<if test="testYn != null and testYn != ''">
+				AND evetlist.test_yn = #{testYn}
+			</if>
+			<if test="isTest != null and isTest != ''">
+				AND evetlist.test_yn = #{isTest}
+			</if>
+
+
+			<if test="evtJson != null and evtJson != ''">
+				AND evetlist.evt_json = #{evtJson}
+			</if>
+			<if test="etcCntn != null and etcCntn != ''">
+				AND evetlist.evt_json = #{etcCntn}
+			</if>
+
+		</where>
+
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.mon_evet_list WHERE usvc_outb_id = #{usvcOutbId}
+	</delete>
+
+
+	<insert id="add" parameterType="EventHistVo">
+		INSERT INTO xeus.mon_evet_list(
+			usvc_outb_id, evt_svc_nm, evt_typ, evt_typ_cd, msg_typ_cd, evt_nm, evt_cntn, outb_pos_nm, outb_posx, outb_posy, evt_outb_dtm, evt_clr_dtm, evt_proc_cd, evt_actn_dtm, evt_actn_usrid, evt_actn_cntn, test_yn, evt_json,_geometry,dist
+		) VALUES (
+			#{usvcOutbId}, #{evtSvcNm}, #{evtTyp}, #{evtTypCd}, #{msgTypCd}, #{evtNm}, #{evtCntn}, #{outbPosNm}, #{outbPosx}::numeric, #{outbPosy}::numeric, #{evtOutbDtm}, #{evtClrDtm}, #{evtProcCd}, #{evtActnDtm}, #{evtActnUsrid}, #{evtActnCntn}, #{testYn}, #{evtJson},
+            ST_SetSRID(ST_MakePoint(#{outbPosx}::numeric, #{outbPosy}::numeric), 5186), ((#{evtJson}::jsonb)->>'dist')::numeric
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="EventHistVo">
+		UPDATE xeus.mon_evet_list SET
+
+				usvc_outb_id = #{usvcOutbId}
+
+			<if test="evtSvcNm != null and evtSvcNm != ''">
+				, evt_svc_nm = #{evtSvcNm}
+			</if>
+
+
+			<if test="evtTyp != null and evtTyp != ''">
+				, evt_typ = #{evtTyp}
+			</if>
+
+
+			<if test="evtTypCd != null and evtTypCd != ''">
+				, evt_typ_cd = #{evtTypCd}
+			</if>
+
+
+			<if test="msgTypCd != null and msgTypCd != ''">
+				, msg_typ_cd = #{msgTypCd}
+			</if>
+
+
+			<if test="evtNm != null and evtNm != ''">
+				, evt_nm = #{evtNm}
+			</if>
+
+
+			<if test="evtCntn != null and evtCntn != ''">
+				, evt_cntn = #{evtCntn}
+			</if>
+
+
+			<if test="outbPosNm != null and outbPosNm != ''">
+				, outb_pos_nm = #{outbPosNm}
+			</if>
+
+
+			<if test="outbPosx != null and outbPosx != ''">
+				, outb_posx = #{outbPosx}::numeric
+			</if>
+
+
+			<if test="outbPosy != null and outbPosy != ''">
+				, outb_posy = #{outbPosy}::numeric
+			</if>
+
+
+			<if test="evtOutbDtm != null and evtOutbDtm != ''">
+				, evt_outb_dtm = #{evtOutbDtm}
+			</if>
+
+
+			<if test="evtClrDtm != null and evtClrDtm != ''">
+				, evt_clr_dtm = #{evtClrDtm}
+			</if>
+
+
+			<if test="evtProcCd != null and evtProcCd != ''">
+				, evt_proc_cd = #{evtProcCd}
+			</if>
+
+
+			<if test="evtActnDtm != null and evtActnDtm != ''">
+				, evt_actn_dtm = #{evtActnDtm}
+			</if>
+
+
+			<if test="evtActnUsrid != null and evtActnUsrid != ''">
+				, evt_actn_usrid = #{evtActnUsrid}
+			</if>
+
+
+			<if test="evtActnCntn != null and evtActnCntn != ''">
+				, evt_actn_cntn = #{evtActnCntn}
+			</if>
+
+
+			<if test="testYn != null and testYn != ''">
+				, test_yn = #{testYn}
+			</if>
+
+
+			<if test="evtJson != null and evtJson != ''">
+				, evt_json = #{evtJson}
+			</if>
+
+		WHERE usvc_outb_id = #{usvcOutbId}
+
+	</update>
+
+</mapper>

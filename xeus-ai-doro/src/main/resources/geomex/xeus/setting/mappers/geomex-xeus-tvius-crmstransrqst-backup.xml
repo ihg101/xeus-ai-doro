@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsTransRqstBackupMapper">
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+
+        FROM public.crms_trans_rqst AS rqst
+
+		LEFT JOIN (
+			SELECT crms_user.user_id,
+					crms_user.user_nm
+			FROM xeus.mt_usr_desc AS crms_user
+			LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+		)  AS reqst_id_rel         ON reqst_id_rel.user_id = rqst.reqst_id
+		LEFT JOIN xeus.mt_cmm_cde   AS proc_stat_cd_rel     ON proc_stat_cd_rel.grp_cde = 'C52' AND proc_stat_cd_rel.cde_cde = rqst.proc_stat_cd
+		LEFT JOIN xeus.mt_cmm_cde   AS req_gbn_cd_rel       ON req_gbn_cd_rel.grp_cde = 'C58' AND req_gbn_cd_rel.cde_cde = rqst.req_gbn_cd
+
+        <where>
+
+        	<if test="mgrSeq != null and mgrSeq != ''">
+                AND rqst.mgr_seq::text LIKE '%'||#{mgrSeq}||'%'
+            </if>
+
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="reqstDat != null and reqstDat != ''">
+                AND rqst.reqst_dat = #{reqstDat}
+            </if>
+
+            <if test="cctvList != null and cctvList != ''">
+                AND rqst.cctv_list = #{cctvList}
+            </if>
+
+            <if test="procStatCd != null and procStatCd != ''">
+                AND rqst.proc_stat_cd = #{procStatCd}
+            </if>
+
+            <if test="reqGbnCd != null and reqGbnCd != ''">
+                AND rqst.req_gbn_cd = #{reqGbnCd}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+        </where>
+
+    </select>
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsTransRqstVo">
+        SELECT rqst.mgr_seq AS mgr_seq, rqst.reqst_id AS reqst_id, reqst_id_rel.user_nm AS reqst_id_rel_cde_nm, rqst.reqst_dat AS reqst_dat
+			, rqst.cctv_list AS cctv_list, proc_stat_cd_rel.cde_nm AS proc_stat_cd_rel_cde_nm
+			, req_gbn_cd_rel.cde_nm AS req_gbn_cd_rel_cde_nm
+
+		FROM public.crms_trans_rqst AS rqst
+
+		LEFT JOIN (
+			SELECT crms_user.user_id,
+					crms_user.user_nm
+			FROM xeus.mt_usr_desc AS crms_user
+			LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+		)  AS reqst_id_rel         ON reqst_id_rel.user_id = rqst.reqst_id
+		LEFT JOIN xeus.mt_cmm_cde   AS proc_stat_cd_rel     ON proc_stat_cd_rel.grp_cde = 'C52' AND proc_stat_cd_rel.cde_cde = rqst.proc_stat_cd
+		LEFT JOIN xeus.mt_cmm_cde   AS req_gbn_cd_rel       ON req_gbn_cd_rel.grp_cde = 'C58' AND req_gbn_cd_rel.cde_cde = rqst.req_gbn_cd
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND rqst.mgr_seq::text LIKE '%'||#{mgrSeq}||'%'
+            </if>
+
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="reqstDat != null and reqstDat != ''">
+                AND rqst.reqst_dat = #{reqstDat}
+            </if>
+
+            <if test="cctvList != null and cctvList != ''">
+                AND rqst.cctv_list = #{cctvList}
+            </if>
+
+            <if test="procStatCd != null and procStatCd != ''">
+                AND rqst.proc_stat_cd = #{procStatCd}
+            </if>
+
+            <if test="reqGbnCd != null and reqGbnCd != ''">
+                AND rqst.req_gbn_cd = #{reqGbnCd}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                rqst.mgr_seq DESC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+</mapper>

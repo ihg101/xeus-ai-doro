@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.log.service.MonPrevLogMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="MonPrevLogVo">
+		SELECT mgr_seq, req_user_id, req_resn, acci_num, cctv_mgr_no_rel.cctv_nm AS cctv_mgr_no, req_dat, acpt_nm
+
+        FROM xeus.mon_preview AS prev
+
+		LEFT JOIN xeus.asset_cctv AS cctv_mgr_no_rel ON cctv_mgr_no_rel.mgr_no = prev.cctv_mgr_no
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}
+            </if>
+
+            <if test="reqUserId != null and reqUserId != ''">
+                AND req_user_id LIKE '%'||#{reqUserId}||'%'
+            </if>
+
+            <if test="reqResn != null and reqResn != ''">
+                AND req_resn = #{reqResn}
+            </if>
+
+            <if test="acciNum != null and acciNum != ''">
+                AND acci_num = #{acciNum}
+            </if>
+
+            <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND cctv_mgr_no = #{cctvMgrNo}
+            </if>
+
+ 			<if test="reqDat != null and reqDat != ''">
+                AND req_dat = #{reqDat}
+            </if>
+
+            <if test="acptNm != null and acptNm != ''">
+                AND acpt_nm = #{acptNm}
+            </if>
+        </where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq desc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="MonPrevLogVo">
+		SELECT mgr_seq, req_user_id, req_resn, acci_num, cctv_mgr_no, req_dat, acpt_nm
+
+        FROM xeus.mon_preview
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}
+            </if>
+
+            <if test="reqUserId != null and reqUserId != ''">
+                AND req_user_id LIKE '%'||#{reqUserId}||'%'
+            </if>
+
+            <if test="reqResn != null and reqResn != ''">
+                AND req_resn = #{reqResn}
+            </if>
+
+            <if test="acciNum != null and acciNum != ''">
+                AND acci_num = #{acciNum}
+            </if>
+
+            <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND cctv_mgr_no = #{cctvMgrNo}
+            </if>
+
+ 			<if test="reqDat != null and reqDat != ''">
+                AND req_dat = #{reqDat}
+            </if>
+
+            <if test="acptNm != null and acptNm != ''">
+                AND acpt_nm = #{acptNm}
+            </if>
+        </where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*) FROM xeus.mon_preview
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}
+            </if>
+
+            <if test="reqUserId != null and reqUserId != ''">
+                AND req_user_id LIKE '%'||#{reqUserId}||'%'
+            </if>
+
+            <if test="reqResn != null and reqResn != ''">
+                AND req_resn = #{reqResn}
+            </if>
+
+            <if test="acciNum != null and acciNum != ''">
+                AND acci_num = #{acciNum}
+            </if>
+
+            <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND cctv_mgr_no = #{cctvMgrNo}
+            </if>
+
+ 			<if test="reqDat != null and reqDat != ''">
+                AND req_dat = #{reqDat}
+            </if>
+
+            <if test="acptNm != null and acptNm != ''">
+                AND acpt_nm = #{acptNm}
+            </if>
+        </where>
+	</select>
+
+	<insert id="add" parameterType="MonPrevLogVo">
+		INSERT INTO xeus.mon_preview(req_user_id, req_resn, acci_num, cctv_mgr_no, req_dat, acpt_nm)
+	    VALUES (#{reqUserId}, #{reqResn}, #{acciNum}, #{cctvMgrNo}, #{reqDat}, #{acptNm});
+	</insert>
+
+</mapper>

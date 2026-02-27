@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:websocket="http://www.springframework.org/schema/websocket"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-4.0.xsd
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+                http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd
+                http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+    <mvc:annotation-driven />
+
+    <!-- @Scheduled 어노테이션 활성화 -->
+    <task:annotation-driven />
+
+    <!-- Mapper | Controller | Service | Repository | PostConstruct -->
+    <context:component-scan base-package="geomex.mapservice, geomex.xeus, gmx.gis">
+        <context:include-filter type="annotation" expression="egovframework.rte.psl.dataaccess.mapper.Mapper" />
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+        <context:include-filter type="annotation" expression="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+    </context:component-scan>
+
+    <!-- 인터셉터 -->
+    <!-- 컴포넌트 스캔 후에 Bean 생성이 되야 DI 되므로 하단부에 추가됨. (의존성으로 인한 lazy-init 무효됨) -->
+    <mvc:interceptors>
+
+        <!-- <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <bean class="geomex.xeus.security.interceptor.IpInterceptor"></bean>
+        </mvc:interceptor> -->
+
+        <!-- <mvc:interceptor>
+            <mvc:mapping path="/**/login.do" />
+            <bean class="geomex.xeus.security.interceptor.BrowserInterceptor"></bean>
+        </mvc:interceptor> -->
+
+<!--         <mvc:interceptor> -->
+<!--             <mvc:mapping path="/**/*.do" /> -->
+<!--             <bean class="geomex.xeus.security.interceptor.DomainInterceptor"></bean> -->
+<!--         </mvc:interceptor> -->
+
+        <!-- <mvc:interceptor>
+            <mvc:mapping path="/tvius/mobile/**" />
+            <bean class="geomex.xeus.security.interceptor.DeviceInterceptor"></bean>
+        </mvc:interceptor> -->
+
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <bean class="geomex.xeus.security.interceptor.SessionInterceptor"></bean>
+        </mvc:interceptor>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <bean class="geomex.xeus.security.interceptor.SQLInterceptor"></bean>
+        </mvc:interceptor>
+
+        <!-- <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <bean class="geomex.xeus.security.interceptor.AccessLogInterceptor"></bean>
+        </mvc:interceptor> -->
+
+    </mvc:interceptors>
+
+	<!-- 웹소켓 셋팅 -->
+	<!-- eventWebSocketHandler 를 사용하는 시점에 HttpSessionHandshakeInterceptor 클래스를 매핑시켜 HttpSession 사용. -->
+    <websocket:handlers>
+		<websocket:mapping handler="eventWebSocketHandler" path="/event"/>
+		<websocket:mapping handler="sessionWebSocketHandler" path="/session"/>
+		<websocket:mapping handler="tviusWebSocketHandler" path="/tviusWs"/>
+		<websocket:handshake-interceptors>
+			<bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"></bean>
+		</websocket:handshake-interceptors>
+	</websocket:handlers>
+
+    <!-- Bean Name 요청에 대한 뷰리졸버 (1순위) -->
+    <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="0" />
+
+    <!-- jsp 파일이외에 resource파일을 찾지 못할때 아래 추가 -->
+    <mvc:resources location="/common/" mapping="/common/**" />
+    <mvc:resources location="/resources/" mapping="/res/**" />
+
+    <!-- ViewResolver -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:viewClass="org.springframework.web.servlet.view.JstlView"
+        p:prefix="/WEB-INF/jsp/"
+        p:suffix=".jsp"
+        p:order="3" />
+
+
+    <!-- Controller 오류발생시 처리 -->
+    <!--
+        또 다른 방법으로는,
+        @Controller 가 명시된 Controller에서 @ExceptionHandler(Exception.class)을 표시한 메서드를 구현하면
+        실질적으로 그 컨트롤러 안에 예외가 발생하였을 경우 해당 메서드가 실행되게 된다.
+        @ExceptionHandler(Exception.class)
+        public void testException(Exception ex) {
+        // ...
+        }
+    -->
+    <!-- <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView" value="exception/exception" /> defaul errorview 페이지 지정
+        Exception 유형에 따라 errorView페이지를 지정함
+        <property name="exceptionMappings">
+            <props>
+                <prop key="egovframework.rte.fdl.cmmn.exception.EgovBizException">exception/exception</prop>
+                <prop key="org.springframework.dao.DataAccessException">exception/exception</prop>
+                <prop key="org.springframework.transaction.TransactionException">exception/exception</prop>
+            </props>
+        </property>
+    </bean> -->
+
+    <!-- (/message/message-common, message-common_en_US, message-common_ko_KR를 확인할 것) -->
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:/geomex/xeus/setting/message/message-common</value><!-- 메시지 Resource Property파일 -->
+                <value>classpath:/egovframework/rte/fdl/idgnr/messages/idgnr</value>
+                <value>classpath:/egovframework/rte/fdl/property/messages/properties</value>
+            </list>
+        </property>
+        <property name="cacheSeconds">
+            <value>60</value>
+        </property>
+    </bean>
+
+    <!--  리소스 Properties -->
+    <bean name="propService" class="egovframework.rte.fdl.property.impl.EgovPropertyServiceImpl" destroy-method="destroy">
+         <property name="extFileName">
+            <value>classpath:/geomex/xeus/setting/property/config.properties</value>
+         </property>
+    </bean>
+
+    <!-- Controller 메소드 내부의 파라미터 빈 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
+
+    <!-- Controller 내부의 URL Mapper -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
+
+    <!-- 마샬링 리졸버 (*.json) -->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="order" value="1" />
+        <property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+                    <property name="prefixJson" value="false"/>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <!-- JSON 마샬러 -->
+    <bean name="rest/json" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+
+    <!-- 멀티파트 리졸버 (파일업로드) -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
+    <!-- Configure the file upload directory-->
+    <bean id="uploadDirResource" class="org.springframework.core.io.FileSystemResource">
+        <constructor-arg>
+            <value>/temp</value>
+        </constructor-arg>
+    </bean>
+
+    <!-- 스프링 디바이스 인터셉터 -->
+    <bean class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor" />
+
+</beans>

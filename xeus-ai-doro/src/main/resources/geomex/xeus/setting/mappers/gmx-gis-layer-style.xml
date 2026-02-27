@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gmx.gis.layer.service.GMT_LayerStyleMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerStyleVo">
+		SELECT mgr_seq, lyr_mgr_seq, stroke_color, stroke_width, stroke_line_dash, fill_color,
+				text_text_align, text_text_baseline, text_font, text_text,
+				text_fill_color, text_stroke_color, text_stroke_width,
+				text_min_resolution, text_max_resolution,
+				text_offset_x, text_offset_y, text_rotation, circle_radius, icon_mgr_seq
+
+				, (SELECT img_base64 FROM xeus.gis_lyr_icon WHERE mgr_seq = icon_mgr_seq) AS img_base64
+
+		FROM xeus.gis_lyr_style
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="lyrMgrSeq != null and lyrMgrSeq != ''">
+				AND lyr_mgr_seq = #{lyrMgrSeq}::numeric
+			</if>
+
+			<if test="strokeColor != null and strokeColor != ''">
+				AND stroke_color = #{strokeColor}
+			</if>
+
+			<if test="strokeWidth != null and strokeWidth != ''">
+				AND stroke_width = #{strokeWidth}
+			</if>
+
+			<if test="strokeLineDash != null and strokeLineDash != ''">
+				AND stroke_line_dash = #{strokeLineDash}
+			</if>
+
+			<if test="fillColor != null and fillColor != ''">
+				AND fill_color = #{fillColor}
+			</if>
+
+			<if test="textTextAlign != null and textTextAlign != ''">
+				AND text_text_align = #{textTextAlign}
+			</if>
+
+			<if test="textTextBaseline != null and textTextBaseline != ''">
+				AND text_text_baseline = #{textTextBaseline}
+			</if>
+
+			<if test="textFont != null and textFont != ''">
+				AND text_font = #{textFont}
+			</if>
+
+			<if test="textText != null and textText != ''">
+				AND text_text = #{textText}
+			</if>
+
+			<if test="textFillColor != null and textFillColor != ''">
+				AND text_fill_color = #{textFillColor}
+			</if>
+
+			<if test="textStrokeColor != null and textStrokeColor != ''">
+				AND text_stroke_color = #{textStrokeColor}
+			</if>
+
+			<if test="textStrokeWidth != null and textStrokeWidth != ''">
+				AND text_stroke_width = #{textStrokeWidth}
+			</if>
+
+			<if test="textOffsetX != null and textOffsetX != ''">
+				AND text_offset_x = #{textOffsetX}::numeric
+			</if>
+
+			<if test="textOffsetY != null and textOffsetY != ''">
+				AND text_offset_y = #{textOffsetY}::numeric
+			</if>
+
+			<if test="textRotation != null and textRotation != ''">
+				AND text_rotation = #{textRotation}::numeric
+			</if>
+
+			<if test="circleRadius != null and circleRadius != ''">
+				AND circle_radius = #{circleRadius}::numeric
+			</if>
+
+			<if test="iconMgrSeq != null and iconMgrSeq != ''">
+				AND icon_mgr_seq = #{iconMgrSeq}::numeric
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerStyleVo">
+		SELECT mgr_seq, lyr_mgr_seq, stroke_color, stroke_width, stroke_line_dash, fill_color,
+				text_text_align, text_text_baseline, text_font, text_text,
+				text_fill_color, text_stroke_color, text_stroke_width,
+				text_min_resolution, text_max_resolution,
+				text_offset_x, text_offset_y, text_rotation, circle_radius, icon_mgr_seq
+
+				, (SELECT img_base64 FROM xeus.gis_lyr_icon WHERE mgr_seq = icon_mgr_seq) AS img_base64
+
+		FROM xeus.gis_lyr_style
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="lyrMgrSeq != null and lyrMgrSeq != ''">
+				AND lyr_mgr_seq = #{lyrMgrSeq}::numeric
+			</if>
+
+			<if test="strokeColor != null and strokeColor != ''">
+				AND stroke_color = #{strokeColor}
+			</if>
+
+			<if test="strokeWidth != null and strokeWidth != ''">
+				AND stroke_width = #{strokeWidth}
+			</if>
+
+			<if test="strokeLineDash != null and strokeLineDash != ''">
+				AND stroke_line_dash = #{strokeLineDash}
+			</if>
+
+			<if test="fillColor != null and fillColor != ''">
+				AND fill_color = #{fillColor}
+			</if>
+
+			<if test="textTextAlign != null and textTextAlign != ''">
+				AND text_text_align = #{textTextAlign}
+			</if>
+
+			<if test="textTextBaseline != null and textTextBaseline != ''">
+				AND text_text_baseline = #{textTextBaseline}
+			</if>
+
+			<if test="textFont != null and textFont != ''">
+				AND text_font = #{textFont}
+			</if>
+
+			<if test="textText != null and textText != ''">
+				AND text_text = #{textText}
+			</if>
+
+			<if test="textFillColor != null and textFillColor != ''">
+				AND text_fill_color = #{textFillColor}
+			</if>
+
+			<if test="textStrokeColor != null and textStrokeColor != ''">
+				AND text_stroke_color = #{textStrokeColor}
+			</if>
+
+			<if test="textStrokeWidth != null and textStrokeWidth != ''">
+				AND text_stroke_width = #{textStrokeWidth}
+			</if>
+
+			<if test="textOffsetX != null and textOffsetX != ''">
+				AND text_offset_x = #{textOffsetX}::numeric
+			</if>
+
+			<if test="textOffsetY != null and textOffsetY != ''">
+				AND text_offset_y = #{textOffsetY}::numeric
+			</if>
+
+			<if test="textRotation != null and textRotation != ''">
+				AND text_rotation = #{textRotation}::numeric
+			</if>
+
+			<if test="circleRadius != null and circleRadius != ''">
+				AND circle_radius = #{circleRadius}::numeric
+			</if>
+
+			<if test="iconMgrSeq != null and iconMgrSeq != ''">
+				AND icon_mgr_seq = #{iconMgrSeq}::numeric
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.gis_lyr_style
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="lyrMgrSeq != null and lyrMgrSeq != ''">
+				AND lyr_mgr_seq = #{lyrMgrSeq}::numeric
+			</if>
+
+			<if test="strokeColor != null and strokeColor != ''">
+				AND stroke_color = #{strokeColor}
+			</if>
+
+			<if test="strokeWidth != null and strokeWidth != ''">
+				AND stroke_width = #{strokeWidth}
+			</if>
+
+			<if test="strokeLineDash != null and strokeLineDash != ''">
+				AND stroke_line_dash = #{strokeLineDash}
+			</if>
+
+			<if test="fillColor != null and fillColor != ''">
+				AND fill_color = #{fillColor}
+			</if>
+
+			<if test="textTextAlign != null and textTextAlign != ''">
+				AND text_text_align = #{textTextAlign}
+			</if>
+
+			<if test="textTextBaseline != null and textTextBaseline != ''">
+				AND text_text_baseline = #{textTextBaseline}
+			</if>
+
+			<if test="textFont != null and textFont != ''">
+				AND text_font = #{textFont}
+			</if>
+
+			<if test="textText != null and textText != ''">
+				AND text_text = #{textText}
+			</if>
+
+			<if test="textFillColor != null and textFillColor != ''">
+				AND text_fill_color = #{textFillColor}
+			</if>
+
+			<if test="textStrokeColor != null and textStrokeColor != ''">
+				AND text_stroke_color = #{textStrokeColor}
+			</if>
+
+			<if test="textStrokeWidth != null and textStrokeWidth != ''">
+				AND text_stroke_width = #{textStrokeWidth}
+			</if>
+
+			<if test="textOffsetX != null and textOffsetX != ''">
+				AND text_offset_x = #{textOffsetX}::numeric
+			</if>
+
+			<if test="textOffsetY != null and textOffsetY != ''">
+				AND text_offset_y = #{textOffsetY}::numeric
+			</if>
+
+			<if test="textRotation != null and textRotation != ''">
+				AND text_rotation = #{textRotation}::numeric
+			</if>
+
+			<if test="circleRadius != null and circleRadius != ''">
+				AND circle_radius = #{circleRadius}::numeric
+			</if>
+
+			<if test="iconMgrSeq != null and iconMgrSeq != ''">
+				AND icon_mgr_seq = #{iconMgrSeq}::numeric
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.gis_lyr_style WHERE mgr_seq = #{mgrSeq}::numeric
+	</delete>
+
+
+	<insert id="add" parameterType="gmx.gis.layer.service.GMT_LayerStyleVo">
+		INSERT INTO xeus.gis_lyr_style(
+			lyr_mgr_seq
+		)
+		VALUES (
+			#{lyrMgrSeq}::numeric
+		)
+	</insert>
+
+
+	<update id="edit" parameterType="gmx.gis.layer.service.GMT_LayerStyleVo">
+		UPDATE xeus.gis_lyr_style SET
+			mgr_seq = #{mgrSeq}::numeric
+
+			<if test="lyrMgrSeq != null and lyrMgrSeq != ''">
+				, lyr_mgr_seq = #{lyrMgrSeq}::numeric
+			</if>
+
+			<if test="strokeColor != null and strokeColor != ''">
+				, stroke_color = #{strokeColor}
+			</if>
+
+			<if test="strokeWidth != null and strokeWidth != ''">
+				, stroke_width = #{strokeWidth}
+			</if>
+
+			<if test="strokeLineDash != null and strokeLineDash != ''">
+				, stroke_line_dash = #{strokeLineDash}
+			</if>
+
+			<if test="fillColor != null and fillColor != ''">
+				, fill_color = #{fillColor}
+			</if>
+
+			<if test="textTextAlign != null and textTextAlign != ''">
+				, text_text_align = #{textTextAlign}
+			</if>
+
+			<if test="textTextBaseline != null and textTextBaseline != ''">
+				, text_text_baseline = #{textTextBaseline}
+			</if>
+
+			<if test="textFont != null and textFont != ''">
+				, text_font = #{textFont}
+			</if>
+
+				, text_text = #{textText}
+
+			<if test="textFillColor != null and textFillColor != ''">
+				, text_fill_color = #{textFillColor}
+			</if>
+
+			<if test="textStrokeColor != null and textStrokeColor != ''">
+				, text_stroke_color = #{textStrokeColor}
+			</if>
+
+			<if test="textStrokeWidth != null and textStrokeWidth != ''">
+				, text_stroke_width = #{textStrokeWidth}
+			</if>
+
+			<if test="textOffsetX != null and textOffsetX != ''">
+				, text_offset_x = #{textOffsetX}::numeric
+			</if>
+
+			<if test="textOffsetY != null and textOffsetY != ''">
+				, text_offset_y = #{textOffsetY}::numeric
+			</if>
+
+			<if test="textRotation != null and textRotation != ''">
+				, text_rotation = #{textRotation}::numeric
+			</if>
+
+			<if test="textMinResolution != null and textMinResolution != ''">
+				, text_min_resolution = #{textMinResolution}
+			</if>
+
+			<if test="textMaxResolution != null and textMaxResolution != ''">
+				, text_max_resolution = #{textMaxResolution}
+			</if>
+
+			<if test="circleRadius != null and circleRadius != ''">
+				, circle_radius = #{circleRadius}::numeric
+			</if>
+
+			, icon_mgr_seq = #{iconMgrSeq}::numeric
+
+		WHERE mgr_seq = #{mgrSeq}::numeric
+
+	</update>
+
+</mapper>

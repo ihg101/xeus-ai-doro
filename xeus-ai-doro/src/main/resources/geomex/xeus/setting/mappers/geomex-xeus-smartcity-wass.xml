@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.smartcity.service.WassMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="geomex.xeus.smartcity.service.WassVo">
+		SELECT mgr_seq, svc_ty, evt_ocr_time, vehc_nbr, instt_cd, req_basis, usr_id, usr_nm, usr_asgn, fclt_id, crdnt_x, crdnt_y, crdnt_z, ocr_plc, trflane, speed, full_img_file_nm, nbr_img_file_nm, result, msg, rqst_dat
+
+		FROM xeus.smartcity_wass_event_list
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="svcTy != null and svcTy != ''">
+				AND svc_ty = #{svcTy}
+			</if>
+
+			<if test="evtOcrTime != null and evtOcrTime != ''">
+				AND evt_ocr_time = #{evtOcrTime}
+			</if>
+
+			<if test="vehcNbr != null and vehcNbr != ''">
+				AND vehc_nbr = #{vehcNbr}
+			</if>
+
+			<if test="insttCd != null and insttCd != ''">
+				AND instt_cd = #{insttCd}
+			</if>
+
+			<if test="reqBasis != null and reqBasis != ''">
+				AND req_basis = #{reqBasis}
+			</if>
+
+			<if test="usrId != null and usrId != ''">
+				AND usr_id = #{usrId}
+			</if>
+
+			<if test="usrNm != null and usrNm != ''">
+				AND usr_nm = #{usrNm}
+			</if>
+
+			<if test="usrAsgn != null and usrAsgn != ''">
+				AND usr_asgn = #{usrAsgn}
+			</if>
+
+			<if test="fcltId != null and fcltId != ''">
+				AND fclt_id = #{fcltId}
+			</if>
+
+			<if test="crdntX != null and crdntX != ''">
+				AND crdnt_x = #{crdntX}
+			</if>
+
+			<if test="crdntY != null and crdntY != ''">
+				AND crdnt_y = #{crdntY}
+			</if>
+
+			<if test="crdntZ != null and crdntZ != ''">
+				AND crdnt_z = #{crdntZ}
+			</if>
+
+			<if test="ocrPlc != null and ocrPlc != ''">
+				AND ocr_plc = #{ocrPlc}
+			</if>
+
+			<if test="trflane != null and trflane != ''">
+				AND trflane = #{trflane}
+			</if>
+
+			<if test="speed != null and speed != ''">
+				AND speed = #{speed}
+			</if>
+
+			<if test="fullImgFileNm != null and fullImgFileNm != ''">
+				AND full_img_file_nm = #{fullImgFileNm}
+			</if>
+
+			<if test="nbrImgFileNm != null and nbrImgFileNm != ''">
+				AND nbr_img_file_nm = #{nbrImgFileNm}
+			</if>
+
+			<if test="result != null and result != ''">
+				AND result = #{result}
+			</if>
+
+			<if test="msg != null and msg != ''">
+				AND msg = #{msg}
+			</if>
+
+			<if test="rqstDat != null and rqstDat != ''">
+				AND rqst_dat = #{rqstDat}
+			</if>
+
+			<if test="startDat != null and startDat != ''">
+				AND rqst_dat <![CDATA[ >= ]]> #{startDat}
+			</if>
+
+			<if test="endDat != null and endDat != ''">
+				AND rqst_dat <![CDATA[ <= ]]> #{endDat}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq desc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="geomex.xeus.smartcity.service.WassVo">
+		SELECT mgr_seq, svc_ty, evt_ocr_time, vehc_nbr, instt_cd, req_basis, usr_id, usr_nm, usr_asgn, fclt_id, crdnt_x, crdnt_y, crdnt_z, ocr_plc, trflane, speed, full_img_file_nm, nbr_img_file_nm, result, msg, rqst_dat
+
+		FROM xeus.smartcity_wass_event_list
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="svcTy != null and svcTy != ''">
+				AND svc_ty = #{svcTy}
+			</if>
+
+			<if test="evtOcrTime != null and evtOcrTime != ''">
+				AND evt_ocr_time = #{evtOcrTime}
+			</if>
+
+			<if test="vehcNbr != null and vehcNbr != ''">
+				AND vehc_nbr = #{vehcNbr}
+			</if>
+
+			<if test="insttCd != null and insttCd != ''">
+				AND instt_cd = #{insttCd}
+			</if>
+
+			<if test="reqBasis != null and reqBasis != ''">
+				AND req_basis = #{reqBasis}
+			</if>
+
+			<if test="usrId != null and usrId != ''">
+				AND usr_id = #{usrId}
+			</if>
+
+			<if test="usrNm != null and usrNm != ''">
+				AND usr_nm = #{usrNm}
+			</if>
+
+			<if test="usrAsgn != null and usrAsgn != ''">
+				AND usr_asgn = #{usrAsgn}
+			</if>
+
+			<if test="fcltId != null and fcltId != ''">
+				AND fclt_id = #{fcltId}
+			</if>
+
+			<if test="crdntX != null and crdntX != ''">
+				AND crdnt_x = #{crdntX}
+			</if>
+
+			<if test="crdntY != null and crdntY != ''">
+				AND crdnt_y = #{crdntY}
+			</if>
+
+			<if test="crdntZ != null and crdntZ != ''">
+				AND crdnt_z = #{crdntZ}
+			</if>
+
+			<if test="ocrPlc != null and ocrPlc != ''">
+				AND ocr_plc = #{ocrPlc}
+			</if>
+
+			<if test="trflane != null and trflane != ''">
+				AND trflane = #{trflane}
+			</if>
+
+			<if test="speed != null and speed != ''">
+				AND speed = #{speed}
+			</if>
+
+			<if test="fullImgFileNm != null and fullImgFileNm != ''">
+				AND full_img_file_nm = #{fullImgFileNm}
+			</if>
+
+			<if test="nbrImgFileNm != null and nbrImgFileNm != ''">
+				AND nbr_img_file_nm = #{nbrImgFileNm}
+			</if>
+
+			<if test="result != null and result != ''">
+				AND result = #{result}
+			</if>
+
+			<if test="msg != null and msg != ''">
+				AND msg = #{msg}
+			</if>
+
+			<if test="rqstDat != null and rqstDat != ''">
+				AND rqst_dat = #{rqstDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.smartcity_wass_event_list
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="svcTy != null and svcTy != ''">
+				AND svc_ty = #{svcTy}
+			</if>
+
+			<if test="evtOcrTime != null and evtOcrTime != ''">
+				AND evt_ocr_time = #{evtOcrTime}
+			</if>
+
+			<if test="vehcNbr != null and vehcNbr != ''">
+				AND vehc_nbr = #{vehcNbr}
+			</if>
+
+			<if test="insttCd != null and insttCd != ''">
+				AND instt_cd = #{insttCd}
+			</if>
+
+			<if test="reqBasis != null and reqBasis != ''">
+				AND req_basis = #{reqBasis}
+			</if>
+
+			<if test="usrId != null and usrId != ''">
+				AND usr_id = #{usrId}
+			</if>
+
+			<if test="usrNm != null and usrNm != ''">
+				AND usr_nm = #{usrNm}
+			</if>
+
+			<if test="usrAsgn != null and usrAsgn != ''">
+				AND usr_asgn = #{usrAsgn}
+			</if>
+
+			<if test="fcltId != null and fcltId != ''">
+				AND fclt_id = #{fcltId}
+			</if>
+
+			<if test="crdntX != null and crdntX != ''">
+				AND crdnt_x = #{crdntX}
+			</if>
+
+			<if test="crdntY != null and crdntY != ''">
+				AND crdnt_y = #{crdntY}
+			</if>
+
+			<if test="crdntZ != null and crdntZ != ''">
+				AND crdnt_z = #{crdntZ}
+			</if>
+
+			<if test="ocrPlc != null and ocrPlc != ''">
+				AND ocr_plc = #{ocrPlc}
+			</if>
+
+			<if test="trflane != null and trflane != ''">
+				AND trflane = #{trflane}
+			</if>
+
+			<if test="speed != null and speed != ''">
+				AND speed = #{speed}
+			</if>
+
+			<if test="fullImgFileNm != null and fullImgFileNm != ''">
+				AND full_img_file_nm = #{fullImgFileNm}
+			</if>
+
+			<if test="nbrImgFileNm != null and nbrImgFileNm != ''">
+				AND nbr_img_file_nm = #{nbrImgFileNm}
+			</if>
+
+			<if test="result != null and result != ''">
+				AND result = #{result}
+			</if>
+
+			<if test="msg != null and msg != ''">
+				AND msg = #{msg}
+			</if>
+
+			<if test="rqstDat != null and rqstDat != ''">
+				AND rqst_dat = #{rqstDat}
+			</if>
+
+			<if test="startDat != null and startDat != ''">
+				AND rqst_dat <![CDATA[ >= ]]> #{startDat}
+			</if>
+
+			<if test="endDat != null and endDat != ''">
+				AND rqst_dat <![CDATA[ <= ]]> #{endDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.smartcity_wass_event_list WHERE mgr_seq = #{mgrSeq}
+	</delete>
+
+
+	<insert id="add" parameterType="geomex.xeus.smartcity.service.WassVo">
+		INSERT INTO xeus.smartcity_wass_event_list(
+			svc_ty, evt_ocr_time, vehc_nbr, instt_cd, req_basis, usr_id, usr_nm, usr_asgn, fclt_id, crdnt_x, crdnt_y, crdnt_z, ocr_plc, trflane, speed, full_img_file_nm, nbr_img_file_nm, result, msg, rqst_dat
+		) VALUES (
+			#{svcTy}, #{evtOcrTime}, #{vehcNbr}, #{insttCd}, #{reqBasis}, #{usrId}, #{usrNm}, #{usrAsgn}, #{fcltId}, #{crdntX}, #{crdntY}, #{crdntZ}, #{ocrPlc}, #{trflane}, #{speed}, #{fullImgFileNm}, #{nbrImgFileNm}, #{result}, #{msg}, #{rqstDat}
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="geomex.xeus.smartcity.service.WassVo">
+		UPDATE xeus.smartcity_wass_event_list SET
+			mgr_seq = #{mgrSeq}
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				, mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="svcTy != null and svcTy != ''">
+				, svc_ty = #{svcTy}
+			</if>
+
+			<if test="evtOcrTime != null and evtOcrTime != ''">
+				, evt_ocr_time = #{evtOcrTime}
+			</if>
+
+			<if test="vehcNbr != null and vehcNbr != ''">
+				, vehc_nbr = #{vehcNbr}
+			</if>
+
+			<if test="insttCd != null and insttCd != ''">
+				, instt_cd = #{insttCd}
+			</if>
+
+			<if test="reqBasis != null and reqBasis != ''">
+				, req_basis = #{reqBasis}
+			</if>
+
+			<if test="usrId != null and usrId != ''">
+				, usr_id = #{usrId}
+			</if>
+
+			<if test="usrNm != null and usrNm != ''">
+				, usr_nm = #{usrNm}
+			</if>
+
+			<if test="usrAsgn != null and usrAsgn != ''">
+				, usr_asgn = #{usrAsgn}
+			</if>
+
+			<if test="fcltId != null and fcltId != ''">
+				, fclt_id = #{fcltId}
+			</if>
+
+			<if test="crdntX != null and crdntX != ''">
+				, crdnt_x = #{crdntX}
+			</if>
+
+			<if test="crdntY != null and crdntY != ''">
+				, crdnt_y = #{crdntY}
+			</if>
+
+			<if test="crdntZ != null and crdntZ != ''">
+				, crdnt_z = #{crdntZ}
+			</if>
+
+			<if test="ocrPlc != null and ocrPlc != ''">
+				, ocr_plc = #{ocrPlc}
+			</if>
+
+			<if test="trflane != null and trflane != ''">
+				, trflane = #{trflane}
+			</if>
+
+			<if test="speed != null and speed != ''">
+				, speed = #{speed}
+			</if>
+
+			<if test="fullImgFileNm != null and fullImgFileNm != ''">
+				, full_img_file_nm = #{fullImgFileNm}
+			</if>
+
+			<if test="nbrImgFileNm != null and nbrImgFileNm != ''">
+				, nbr_img_file_nm = #{nbrImgFileNm}
+			</if>
+
+			<if test="result != null and result != ''">
+				, result = #{result}
+			</if>
+
+			<if test="msg != null and msg != ''">
+				, msg = #{msg}
+			</if>
+
+			<if test="rqstDat != null and rqstDat != ''">
+				, rqst_dat = #{rqstDat}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}
+
+	</update>
+
+</mapper>

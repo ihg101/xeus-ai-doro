@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd">
+
+    <!-- Test용 InMenory DataSource 설정 -->
+    <!-- <jdbc:embedded-database id="dataSource" type="HSQL">
+        <jdbc:script location="classpath:testdata/sample_schema_hsql.sql" />
+        </jdbc:embedded-database>
+     -->
+
+    <!-- DataSource 설정 확인 -->
+    <!-- context-comm.xml에서 아래 내용이 있어야 함 -->
+    <context:property-placeholder location="classpath:/geomex/xeus/setting/property/config.properties" />
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	    <property name="driverClassName" value="${jdbc.driver}" />
+	    <property name="url" value="${jdbc.type}${jdbc.url}:${jdbc.port}/${jdbc.sid}" />
+	    <property name="username" value="${jdbc.user}" />
+	    <property name="password" value="${jdbc.passwd}" />
+	    <property name="maxIdle" value="5" />
+		<property name="minIdle" value="3" />
+
+		<property name="validationQuery" value="select 1" />
+		<property name="testWhileIdle" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="7200000" />
+    </bean>
+
+    <bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	    <property name="driverClassName" value="${jdbc.saenoon.driver}" />
+	    <property name="url" value="${jdbc.saenoon.type}${jdbc.saenoon.url}:${jdbc.saenoon.port}/${jdbc.saenoon.sid}" />
+	    <property name="username" value="${jdbc.saenoon.user}" />
+	    <property name="password" value="${jdbc.saenoon.passwd}" />
+	    <property name="maxIdle" value="5" />
+		<property name="minIdle" value="3" />
+
+		<property name="validationQuery" value="select 1" />
+		<property name="testWhileIdle" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="7200000" />
+    </bean>
+
+    <!-- <bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.mysql.driver}" />
+        <property name="url" value="${jdbc.mysql.url}" />
+        <property name="username" value="${jdbc.mysql.user}" />
+        <property name="password" value="${jdbc.mysql.passwd}" />
+    </bean> -->
+
+
+    <!-- Local Apache Commons DBCP DataSource -->
+    <!--
+        <bean id="defaultDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${JDBC.Driver}"/>
+        <property name="url" value="${JDBC.ConnectionURL}"/>
+        <property name="username" value="${JDBC.Username}"/>
+        <property name="password" value="${JDBC.Password}"/>
+        <property name="maxActive" value="15" />
+        <property name="initialSize" value="15" />
+        <property name="maxIdle" value="15" />
+        <property name="minIdle" value="15" />
+        <property name="testOnBorrow" value="false" />
+        <property name="validationQuery" value="SELECT 1 FROM DUAL" />
+        <property name="timeBetweenEvictionRunsMillis" value="10000" />
+        <property name="testWhileIdle" value="true" />
+        <property name="numTestsPerEvictionRun" value="3" />
+        <property name="minEvictableIdleTimeMillis" value="-1" />
+        </bean>
+    -->
+</beans>

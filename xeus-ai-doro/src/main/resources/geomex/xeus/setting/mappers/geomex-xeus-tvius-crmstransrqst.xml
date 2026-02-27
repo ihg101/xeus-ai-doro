@@ -1,0 +1,1082 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsTransRqstMapper">
+
+
+    <!-- getHeatCount 생략 -->
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+
+        FROM xeus.crms_trans_rqst AS rqst
+
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS reqst_id_rel ON reqst_id_rel.user_id = rqst.reqst_id
+
+        <where>
+
+        	<if test="mgrSeq != null and mgrSeq != ''">
+                <!-- AND rqst.mgr_seq = #{mgrSeq}::numeric -->
+                AND rqst.mgr_seq::text LIKE '%'||#{mgrSeq}||'%'
+            </if>
+
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="reqstDat != null and reqstDat != ''">
+                AND rqst.reqst_dat = #{reqstDat}
+            </if>
+
+            <if test="reqstResn != null and reqstResn != ''">
+                AND rqst.reqst_resn = #{reqstResn}
+            </if>
+
+            <if test="reqstDetail != null and reqstDetail != ''">
+                AND rqst.reqst_detail = #{reqstDetail}
+            </if>
+
+            <if test="crimeTyp != null and crimeTyp != ''">
+                AND rqst.crime_typ = #{crimeTyp}
+            </if>
+
+            <if test="docNo != null and docNo != ''">
+                AND rqst.doc_no = #{docNo}
+            </if>
+
+            <if test="docFileNm != null and docFileNm != ''">
+                AND rqst.doc_file_nm = #{docFileNm}
+            </if>
+
+            <if test="docFilePath != null and docFilePath != ''">
+                AND rqst.doc_file_path = #{docFilePath}
+            </if>
+
+            <if test="crimeLoc != null and crimeLoc != ''">
+                AND rqst.crime_loc = #{crimeLoc}
+            </if>
+
+            <if test="cctvList != null and cctvList != ''">
+                AND rqst.cctv_list = #{cctvList}
+            </if>
+
+            <if test="procStatCd != null and procStatCd != ''">
+                AND rqst.proc_stat_cd = #{procStatCd}
+            </if>
+
+            <if test="acptUserId != null and acptUserId != ''">
+                AND rqst.acpt_user_id LIKE '%'||#{acptUserId}||'%'
+            </if>
+
+            <if test="acptDat != null and acptDat != ''">
+                AND rqst.acpt_dat = #{acptDat}
+            </if>
+
+            <if test="rejtTyp != null and rejtTyp != ''">
+                AND rqst.rejt_typ = #{rejtTyp}
+            </if>
+
+            <if test="rejtResn != null and rejtResn != ''">
+                AND rqst.rejt_resn = #{rejtResn}
+            </if>
+
+            <if test="fnshDat != null and fnshDat != ''">
+                AND rqst.fnsh_dat = #{fnshDat}
+            </if>
+
+            <if test="recvMthd != null and recvMthd != ''">
+                AND rqst.recv_mthd = #{recvMthd}
+            </if>
+
+            <if test="useRsCd != null and useRsCd != ''">
+                AND rqst.use_rs_cd = #{useRsCd}
+            </if>
+
+            <if test="reqGbnCd != null and reqGbnCd != ''">
+                AND rqst.req_gbn_cd = #{reqGbnCd}
+            </if>
+
+            <if test="docChngYn != null and docChngYn != ''">
+                AND rqst.doc_chng_yn = #{docChngYn}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <!-- <if test="(useRsCdNullChk eq 'Y'.toString())">
+                AND rqst.use_rs_cd is null
+            </if> -->
+
+        </where>
+
+    </select>
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsTransRqstVo">
+    SELECT
+			rqst.acpt_dat AS acpt_dat,
+			rqst.mgr_seq AS mgr_seq,
+
+			CASE
+			WHEN ( SELECT COUNT ( * ) FROM xeus.crms_rqst_renew WHERE rqst_mgr_seq = rqst.mgr_seq ) != 0
+			AND ( SELECT COUNT ( * ) FROM xeus.crms_rqst_renew WHERE rqst_mgr_seq = rqst.mgr_seq ) = ( SELECT COUNT ( * ) FROM xeus.crms_rqst_renew WHERE rqst_mgr_seq = rqst.mgr_seq AND acpt_yn is not null )
+			THEN '완료'
+			WHEN ( SELECT COUNT ( * ) FROM xeus.crms_rqst_renew WHERE rqst_mgr_seq = rqst.mgr_seq ) != 0
+			THEN '대기'
+			ELSE null
+			END AS renewAcptYn,
+
+			( SELECT file_nm FROM xeus.crms_trans_work WHERE rqst_mgr_seq = rqst.mgr_seq ORDER BY avi_mgr_seq ASC LIMIT 1 ) AS file_nm,
+			( SELECT COUNT(*) FROM xeus.crms_trans_work WHERE rqst_mgr_seq = rqst.mgr_seq) AS file_cnt,
+			( SELECT sec_st_dat FROM xeus.crms_trans_avi WHERE rqst_mgr_seq = rqst.mgr_seq ORDER BY mgr_seq ASC LIMIT 1 ) AS sec_st_dat,
+			( SELECT sec_ed_dat FROM xeus.crms_trans_avi WHERE rqst_mgr_seq = rqst.mgr_seq ORDER BY mgr_seq ASC LIMIT 1 ) AS sec_ed_dat,
+
+			(SELECT	img_nm FROM	xeus.crms_trans_rqst T1	LEFT JOIN xeus.crms_image_join T2 ON T1.mgr_seq = T2.rqst_mgr_seq	LEFT JOIN xeus.crms_image T3 ON T2.img_mgr_seq = T3.mgr_seq WHERE	T1.mgr_seq = rqst.mgr_seq	ORDER BY T3.mgr_seq ASC LIMIT 1) AS img_nm,
+			(SELECT	COUNT( * ) FROM	xeus.crms_trans_rqst T1	LEFT JOIN xeus.crms_image_join T2 ON T1.mgr_seq = T2.rqst_mgr_seq	LEFT JOIN xeus.crms_image T3 ON T2.img_mgr_seq = T3.mgr_seq WHERE	T1.mgr_seq = rqst.mgr_seq) AS img_cnt,
+
+			split_part(rqst.cctv_list,';',3) AS crime_addr,
+			split_part(rqst.cctv_list,';',1) AS camera_num,
+			reqst_resn_rel.cde_nm AS reqst_resn_rel_cde_nm,
+			'계정명' AS folder_nm,
+			acpt_user_id_rel.office_nm,
+			acpt_user_id_rel.user_nm,
+			acpt_user_id_rel.mobile_num,
+			acpt_user_id_rel.dept_nm,
+			reqst_id_rel.office_nm AS rqst_office_nm,
+			reqst_id_rel.user_nm AS rqst_user_nm,
+			reqst_id_rel.mobile_num AS rqst_mobile_num,
+			reqst_id_rel.dept_nm AS rqst_dept_nm,
+			'47977' AS reg_num,
+			rqst.proc_stat_cd AS proc_stat_cd,
+			proc_stat_cd_rel.cde_nm AS proc_stat_cd_rel_cde_nm,
+			rqst.doc_chng_yn,
+			'관할서 구분' AS gwanhal,
+			rqst.reqst_id AS reqst_id,
+			rqst.reqst_dat AS reqst_dat,
+			rqst.reqst_resn AS reqst_resn,
+			rqst.reqst_detail AS reqst_detail,
+			rqst.crime_typ AS crime_typ,
+			rqst.doc_no AS doc_no,
+			rqst.doc_file_nm AS doc_file_nm,
+			rqst.doc_file_path AS doc_file_path,
+			rqst.crime_loc AS crime_loc,
+			rqst.cctv_list AS cctv_list,
+			rqst.acpt_user_id AS acpt_user_id,
+			rqst.rejt_typ AS rejt_typ,
+			rqst.rejt_resn AS rejt_resn,
+			rqst.fnsh_dat AS fnsh_dat,
+			rqst.recv_mthd AS recv_mthd,
+			rqst.use_rs_cd AS use_rs_cd,
+			rqst.car_info,
+			rqst.req_gbn_cd,
+			reqst_id_rel.user_nm AS reqst_id_rel_cde_nm,
+			crime_typ_rel.cde_nm AS crime_typ_rel_cde_nm,
+			acpt_user_id_rel.user_nm AS acpt_user_id_rel_cde_nm,
+			rejt_typ_rel.cde_nm AS rejt_typ_rel_cde_nm,
+			recv_mthd_rel.cde_nm AS recv_mthd_rel_cde_nm,
+			req_gbn_cd_rel.cde_nm AS req_gbn_cd_rel_cde_nm,
+			use_rs_cd_rel.cde_nm AS use_rs_cd_rel_cde_nm,
+			rqst.video_smy
+		FROM
+			xeus.crms_trans_rqst AS rqst
+			LEFT JOIN (
+		SELECT
+			crms_user.user_id,
+			orgz.org_nm AS office_nm,
+			crms_user.user_nm,
+			crms_user.depart_nm AS dept_nm,
+			crms_user.pos_nm,
+			crms_user.tel_num,
+			crms_user.mobile_num,
+			crms_user.auth_stat_cd AS user_stat_cd
+		FROM
+			xeus.mt_usr_desc crms_user
+			LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+			) AS reqst_id_rel ON reqst_id_rel.user_id = rqst.reqst_id
+			LEFT JOIN xeus.mt_cmm_cde AS reqst_resn_rel ON reqst_resn_rel.grp_cde = 'C50'
+			AND reqst_resn_rel.cde_cde = rqst.reqst_resn
+			LEFT JOIN xeus.mt_cmm_cde AS crime_typ_rel ON crime_typ_rel.grp_cde = 'C51'
+			AND crime_typ_rel.cde_cde = rqst.crime_typ
+			LEFT JOIN xeus.mt_cmm_cde AS proc_stat_cd_rel ON proc_stat_cd_rel.grp_cde = 'C52'
+			AND proc_stat_cd_rel.cde_cde = rqst.proc_stat_cd
+			LEFT JOIN (
+		SELECT
+			crms_user.user_id,
+			orgz.org_nm AS office_nm,
+			crms_user.user_nm,
+			crms_user.depart_nm AS dept_nm,
+			crms_user.pos_nm,
+			crms_user.tel_num,
+			crms_user.mobile_num,
+			crms_user.auth_stat_cd AS user_stat_cd
+		FROM
+			xeus.mt_usr_desc crms_user
+			LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+			) AS acpt_user_id_rel ON acpt_user_id_rel.user_id = rqst.acpt_user_id
+			LEFT JOIN xeus.mt_cmm_cde AS rejt_typ_rel ON rejt_typ_rel.grp_cde = 'C53'
+			AND rejt_typ_rel.cde_cde = rqst.rejt_typ
+			LEFT JOIN xeus.mt_cmm_cde AS recv_mthd_rel ON recv_mthd_rel.grp_cde = 'C54'
+			AND recv_mthd_rel.cde_cde = rqst.recv_mthd
+			LEFT JOIN xeus.mt_cmm_cde AS use_rs_cd_rel ON use_rs_cd_rel.grp_cde = 'C55'
+			AND use_rs_cd_rel.cde_cde = rqst.use_rs_cd
+			LEFT JOIN xeus.mt_cmm_cde AS req_gbn_cd_rel ON req_gbn_cd_rel.grp_cde = 'C58'
+			AND req_gbn_cd_rel.cde_cde = rqst.req_gbn_cd
+
+			<if test="procStatCdOrRenew != null and procStatCdOrRenew != ''">
+				LEFT JOIN xeus.crms_rqst_renew AS renew ON renew.rqst_mgr_seq = rqst.mgr_seq
+			</if>
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                <!-- AND rqst.mgr_seq = #{mgrSeq}::numeric -->
+                AND rqst.mgr_seq::text LIKE '%'||#{mgrSeq}||'%'
+            </if>
+
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="reqstDat != null and reqstDat != ''">
+                AND rqst.reqst_dat = #{reqstDat}
+            </if>
+
+            <if test="reqstResn != null and reqstResn != ''">
+                AND rqst.reqst_resn = #{reqstResn}
+            </if>
+
+            <if test="reqstDetail != null and reqstDetail != ''">
+                AND rqst.reqst_detail = #{reqstDetail}
+            </if>
+
+            <if test="crimeTyp != null and crimeTyp != ''">
+                AND rqst.crime_typ = #{crimeTyp}
+            </if>
+
+            <if test="docNo != null and docNo != ''">
+                AND rqst.doc_no = #{docNo}
+            </if>
+
+            <if test="docFileNm != null and docFileNm != ''">
+                AND rqst.doc_file_nm = #{docFileNm}
+            </if>
+
+            <if test="docFilePath != null and docFilePath != ''">
+                AND rqst.doc_file_path = #{docFilePath}
+            </if>
+
+            <if test="crimeLoc != null and crimeLoc != ''">
+                AND rqst.crime_loc = #{crimeLoc}
+            </if>
+
+            <if test="cctvList != null and cctvList != ''">
+                AND rqst.cctv_list = #{cctvList}
+            </if>
+
+            <if test="procStatCd != null and procStatCd != ''">
+                AND rqst.proc_stat_cd = #{procStatCd}
+            </if>
+
+            <if test="acptUserId != null and acptUserId != ''">
+                AND rqst.acpt_user_id LIKE '%'||#{acptUserId}||'%'
+            </if>
+
+            <if test="acptDat != null and acptDat != ''">
+                AND rqst.acpt_dat = #{acptDat}
+            </if>
+
+            <if test="rejtTyp != null and rejtTyp != ''">
+                AND rqst.rejt_typ = #{rejtTyp}
+            </if>
+
+            <if test="rejtResn != null and rejtResn != ''">
+                AND rqst.rejt_resn = #{rejtResn}
+            </if>
+
+            <if test="fnshDat != null and fnshDat != ''">
+                AND rqst.fnsh_dat = #{fnshDat}
+            </if>
+
+            <if test="recvMthd != null and recvMthd != ''">
+                AND rqst.recv_mthd = #{recvMthd}
+            </if>
+
+            <if test="useRsCd != null and useRsCd != ''">
+                AND rqst.use_rs_cd = #{useRsCd}
+            </if>
+
+            <if test="reqGbnCd != null and reqGbnCd != ''">
+                AND rqst.req_gbn_cd = #{reqGbnCd}
+            </if>
+
+            <if test="docChngYn != null and docChngYn != ''">
+                AND rqst.doc_chng_yn = #{docChngYn}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <!-- <if test="(useRsCdNullChk eq 'Y'.toString())">
+                AND rqst.use_rs_cd is null
+            </if> -->
+
+        </where>
+
+		<if test="procStatCdOrRenew != null and procStatCdOrRenew != ''">
+			GROUP BY rqst.mgr_seq, reqst_resn_rel_cde_nm, acpt_user_id_rel.office_nm, acpt_user_id_rel.user_nm, acpt_user_id_rel.mobile_num, acpt_user_id_rel.dept_nm, reqst_id_rel.office_nm
+			,reqst_id_rel.user_nm, reqst_id_rel.mobile_num,reqst_id_rel.dept_nm,  proc_stat_cd_rel.cde_nm, crime_typ_rel.cde_nm,  rejt_typ_rel.cde_nm,  recv_mthd_rel.cde_nm, req_gbn_cd_rel.cde_nm, use_rs_cd_rel.cde_nm
+
+			HAVING
+			    (COUNT(renew.mgr_seq) <![CDATA[ <> ]]> 0
+				AND COUNT(renew.mgr_seq) <![CDATA[ > ]]> COUNT(renew.acpt_yn))
+				OR
+				rqst.proc_stat_cd =#{procStatCdOrRenew}
+		</if>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp} NULLS LAST
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                rqst.mgr_seq DESC
+            </if>
+            <if test="sortCol == '' and sortTyp == ''">
+                rqst.mgr_seq DESC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <select id="getItem" parameterType="HashMap" resultType="CrmsTransRqstVo">
+        SELECT rqst.mgr_seq AS mgr_seq, rqst.reqst_id AS reqst_id, rqst.reqst_dat AS reqst_dat, rqst.reqst_resn AS reqst_resn, rqst.reqst_detail AS reqst_detail
+                , rqst.crime_typ AS crime_typ, rqst.doc_no AS doc_no, rqst.doc_file_nm AS doc_file_nm, rqst.doc_file_path As doc_file_path, rqst.crime_loc AS crime_loc
+                , rqst.cctv_list AS cctv_list, rqst.proc_stat_cd AS proc_stat_cd, rqst.acpt_user_id AS acpt_user_id, rqst.acpt_dat AS acpt_dat, rqst.rejt_typ AS rejt_typ
+                , rqst.rejt_resn AS rejt_resn, rqst.fnsh_dat AS fnsh_dat, rqst.recv_mthd AS recv_mthd, rqst.use_rs_cd AS use_rs_cd, rqst.car_info, rqst.req_gbn_cd, rqst.doc_chng_yn
+                , rqst.video_smy
+                , reqst_id_rel.user_nm AS reqst_id_rel_cde_nm, reqst_resn_rel.cde_nm AS reqst_resn_rel_cde_nm, crime_typ_rel.cde_nm AS crime_typ_rel_cde_nm
+                , proc_stat_cd_rel.cde_nm AS proc_stat_cd_rel_cde_nm, acpt_user_id_rel.user_nm AS acpt_user_id_rel_cde_nm, rejt_typ_rel.cde_nm AS rejt_typ_rel_cde_nm
+                , recv_mthd_rel.cde_nm AS recv_mthd_rel_cde_nm, use_rs_cd_rel.cde_nm AS use_rs_cd_rel_cde_nm, req_gbn_cd_rel.cde_nm AS req_gbn_cd_rel_cde_nm
+
+        FROM xeus.crms_trans_rqst AS rqst
+
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                )  AS reqst_id_rel         ON reqst_id_rel.user_id = rqst.reqst_id
+        LEFT JOIN xeus.mt_cmm_cde   AS reqst_resn_rel       ON reqst_resn_rel.grp_cde = 'C50' AND reqst_resn_rel.cde_cde = rqst.reqst_resn
+        LEFT JOIN xeus.mt_cmm_cde   AS crime_typ_rel        ON crime_typ_rel.grp_cde = 'C51' AND crime_typ_rel.cde_cde = rqst.crime_typ
+        LEFT JOIN xeus.mt_cmm_cde   AS proc_stat_cd_rel     ON proc_stat_cd_rel.grp_cde = 'C52' AND proc_stat_cd_rel.cde_cde = rqst.proc_stat_cd
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                )  AS acpt_user_id_rel     ON acpt_user_id_rel.user_id = rqst.acpt_user_id
+        LEFT JOIN xeus.mt_cmm_cde   AS rejt_typ_rel         ON rejt_typ_rel.grp_cde = 'C53' AND rejt_typ_rel.cde_cde = rqst.rejt_typ
+        LEFT JOIN xeus.mt_cmm_cde   AS recv_mthd_rel        ON recv_mthd_rel.grp_cde = 'C54' AND recv_mthd_rel.cde_cde = rqst.recv_mthd
+        LEFT JOIN xeus.mt_cmm_cde   AS use_rs_cd_rel        ON use_rs_cd_rel.grp_cde = 'C55' AND use_rs_cd_rel.cde_cde = rqst.use_rs_cd
+        LEFT JOIN xeus.mt_cmm_cde   AS req_gbn_cd_rel       ON req_gbn_cd_rel.grp_cde = 'C58' AND req_gbn_cd_rel.cde_cde = rqst.req_gbn_cd
+
+
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND rqst.mgr_seq::text LIKE '%'||#{mgrSeq}||'%'
+            </if>
+
+			<if test="oneMgrSeq != null and oneMgrSeq != ''">
+                AND rqst.mgr_seq::text = #{oneMgrSeq}
+            </if>
+
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="reqstDat != null and reqstDat != ''">
+                AND rqst.reqst_dat = #{reqstDat}
+            </if>
+
+            <if test="reqstResn != null and reqstResn != ''">
+                AND rqst.reqst_resn = #{reqstResn}
+            </if>
+
+            <if test="reqstDetail != null and reqstDetail != ''">
+                AND rqst.reqst_detail = #{reqstDetail}
+            </if>
+
+            <if test="crimeTyp != null and crimeTyp != ''">
+                AND rqst.crime_typ = #{crimeTyp}
+            </if>
+
+            <if test="docNo != null and docNo != ''">
+                AND rqst.doc_no = #{docNo}
+            </if>
+
+            <if test="docFileNm != null and docFileNm != ''">
+                AND rqst.doc_file_nm = #{docFileNm}
+            </if>
+
+            <if test="docFilePath != null and docFilePath != ''">
+                AND rqst.doc_file_path = #{docFilePath}
+            </if>
+
+            <if test="crimeLoc != null and crimeLoc != ''">
+                AND rqst.crime_loc = #{crimeLoc}
+            </if>
+
+            <if test="cctvList != null and cctvList != ''">
+                AND rqst.cctv_list = #{cctvList}
+            </if>
+
+            <if test="procStatCd != null and procStatCd != ''">
+                AND rqst.proc_stat_cd = #{procStatCd}
+            </if>
+
+            <if test="acptUserId != null and acptUserId != ''">
+                AND rqst.acpt_user_id LIKE '%'||#{acptUserId}||'%'
+            </if>
+
+            <if test="acptDat != null and acptDat != ''">
+                AND rqst.acpt_dat = #{acptDat}
+            </if>
+
+            <if test="rejtTyp != null and rejtTyp != ''">
+                AND rqst.rejt_typ = #{rejtTyp}
+            </if>
+
+            <if test="rejtResn != null and rejtResn != ''">
+                AND rqst.rejt_resn = #{rejtResn}
+            </if>
+
+            <if test="fnshDat != null and fnshDat != ''">
+                AND rqst.fnsh_dat = #{fnshDat}
+            </if>
+
+            <if test="recvMthd != null and recvMthd != ''">
+                AND rqst.recv_mthd = #{recvMthd}
+            </if>
+
+            <if test="useRsCd != null and useRsCd != ''">
+                AND rqst.use_rs_cd = #{useRsCd}
+            </if>
+
+            <if test="reqGbnCd != null and reqGbnCd != ''">
+                AND rqst.req_gbn_cd = #{reqGbnCd}
+            </if>
+
+            <if test="docChngYn != null and docChngYn != ''">
+                AND rqst.doc_chng_yn = #{docChngYn}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+        </where>
+
+    </select>
+
+	<select id="getImgList" parameterType="HashMap" resultType="CrmsImageVo">
+
+        SELECT image.mgr_seq, image.reg_id, image.reg_dat, image.img_desc, image.img_nm, image.img_path
+
+        FROM xeus.crms_trans_rqst rqst
+        LEFT JOIN xeus.crms_image_join imgjoin ON rqst.mgr_seq = imgjoin.rqst_mgr_seq
+        LEFT JOIN xeus.crms_image image ON imgjoin.img_mgr_seq = image.mgr_seq
+
+        <where>
+            image.mgr_seq = imgjoin.img_mgr_seq
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND imgjoin.rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND image.mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="regId != null and regId != ''">
+                AND image.reg_id LIKE '%'||#{regId}||'%'
+            </if>
+
+            <if test="regDat != null and regDat != ''">
+                AND image.reg_dat = #{regDat}
+            </if>
+
+            <if test="imgDesc != null and imgDesc != ''">
+                AND image.img_desc = #{imgDesc}
+            </if>
+
+            <if test="imgNm != null and imgNm != ''">
+                AND image.img_nm = #{imgNm}
+            </if>
+
+            <if test="imgPath != null and imgPath != ''">
+                AND image.img_path = #{imgPath}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                image.mgr_seq ASC
+            </if>
+        </trim>
+
+    </select>
+
+    <select id="getHeatMap" parameterType="HashMap" resultType="CrmsTransRqstVo">
+        SELECT avi.cctv_mgr_no as avi_cctv_mgr_no
+                , cctv._annox as cctv_annox
+                , cctv._annoy as cctv_annoy
+                , count(*) as cctv_count
+
+        FROM xeus.crms_trans_rqst as rqst
+
+        LEFT JOIN xeus.crms_trans_avi    AS avi  ON avi.rqst_mgr_seq = rqst.mgr_seq
+        JOIN xeus.asset_cctv             AS cctv ON cctv.mgr_no = avi.cctv_mgr_no
+        LEFT JOIN xeus.mt_cmm_cde      AS code ON code.cde_cde = rqst.crime_typ AND code.grp_cde = 'C51'
+
+        <where>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <if test="reqGbnCd!= null and reqGbnCd != ''">
+                AND rqst.req_gbn_cd = #{reqGbnCd}
+            </if>
+
+            <if test="crimeTyp!= null and crimeTyp != ''">
+                AND rqst.crime_typ = #{crimeTyp}
+            </if>
+
+        </where>
+
+        GROUP BY avi.cctv_mgr_no, cctv._annox, cctv._annoy
+        ORDER BY cctv_count DESC
+    </select>
+
+    <!-- getRenewList 사용 안함. -->
+    <!-- <select id="getRenewList" parameterType="HashMap" resultType="HashMap">
+        SELECT  avi.cctv_mgr_no AS avi_cctv_mgr_no
+                , rqst.mgr_seq
+
+        FROM xeus.crms_trans_rqst AS rqst
+
+        LEFT JOIN xeus.crms_trans_avi AS avi  ON avi.rqst_mgr_seq =  rqst.mgr_seq
+
+        <where>
+
+            rk관련 그냥 넣어주면 될거같음.
+            <if test="reqstId!= null and reqstId != ''">
+                rqst.reqst_id = #{reqstId}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+
+            <if test="sortCol == null and sortTyp == null">
+                rqst.mgr_seq DESC
+            </if>
+        </trim>
+
+    </select> -->
+
+
+    <!-- getXls 패스, getList로 대체 가능. -->
+
+    <!-- getItem 패스, getList로 대체 가능. 조건절에 mgr_seq만 넣어주면 똑같음...-->
+
+    <!-- rqst 패스, add랑 똑같음.-->
+
+    <insert id="add" parameterType="CrmsTransRqstVo">
+        INSERT INTO xeus.crms_trans_rqst (
+        	mgr_seq, reqst_id, reqst_dat, reqst_resn, reqst_detail, crime_typ
+        	, cctv_list, proc_stat_cd, recv_mthd
+        	, doc_no, doc_file_nm, doc_file_path
+        	, crime_loc
+        	, acpt_user_id, acpt_dat, rejt_typ, rejt_resn
+        	, fnsh_dat, use_rs_cd, req_gbn_cd
+        	, car_info, video_smy
+       	)
+        VALUES (
+        	#{mgrSeq}::numeric, #{reqstId}, #{reqstDat}, #{reqstResn}, #{reqstDetail}, #{crimeTyp}
+        	, #{cctvList}, #{procStatCd}, #{recvMthd}
+        	, #{docNo}, #{docFileNm}, #{docFilePath}
+        	, #{crimeLoc}
+        	, #{acptUserId}, #{acptDat}, #{rejtTyp}, #{rejtResn}
+        	, #{fnshDat}, #{useRsCd}, #{reqGbnCd}
+        	, #{carInfo}, #{videoSmy}
+       	)
+    </insert>
+
+    <update id="update" parameterType="CrmsTransRqstVo">
+        UPDATE xeus.crms_trans_rqst
+        SET
+        	mgr_seq = #{mgrSeq}::numeric
+        	<if test="reqstId != null and reqstId != ''">
+				, reqst_id = #{reqstId}
+			</if>
+			<if test="reqstDat != null and reqstDat != ''">
+            	, reqst_dat = #{reqstDat}
+            </if>
+            <if test="reqstResn != null and reqstResn != ''">
+            	, reqst_resn = #{reqstResn}
+            </if>
+            <if test="reqstDetail != null and reqstDetail != ''">
+            	, reqst_detail = #{reqstDetail}
+            </if>
+            <if test="crimeTyp != null and crimeTyp != ''">
+            	, crime_typ = #{crimeTyp}
+            </if>
+            <if test="docNo != null and docNo != ''">
+            	, doc_no = #{docNo}
+            </if>
+            <if test="docFileNm != null and docFileNm != ''">
+            	, doc_file_nm = #{docFileNm}
+            </if>
+            <if test="docFilePath != null and docFilePath != ''">
+            	, doc_file_path = #{docFilePath}
+            </if>
+            <if test="crimeLoc != null and crimeLoc != ''">
+            	, crime_loc = #{crimeLoc}
+            </if>
+            <if test="cctvList != null and cctvList != ''">
+            	, cctv_list = #{cctvList}
+            </if>
+            <if test="procStatCd != null and procStatCd != ''">
+            	, proc_stat_cd = #{procStatCd}
+            </if>
+            <if test="acptUserId != null and acptUserId != ''">
+            	, acpt_user_id = #{acptUserId}
+            </if>
+            <if test="acptDat != null and acptDat != ''">
+            	, acpt_dat = #{acptDat}
+            </if>
+            <if test="rejtTyp != null and rejtTyp != ''">
+            	, rejt_typ = #{rejtTyp}
+            </if>
+            <if test="rejtResn != null and rejtResn != ''">
+            	, rejt_resn = #{rejtResn}
+            </if>
+            <if test="fnshDat != null and fnshDat != ''">
+            	, fnsh_dat = #{fnshDat}
+            </if>
+            <if test="recvMthd != null and recvMthd != ''">
+            	, recv_mthd = #{recvMthd}
+            </if>
+            <if test="useRsCd != null and useRsCd != ''">
+            	, use_rs_cd = #{useRsCd}
+            </if>
+            <if test="reqGbnCd != null and reqGbnCd != ''">
+            	, req_gbn_cd = #{reqGbnCd}
+            </if>
+            <if test="carInfo != null and carInfo != ''">
+            	, car_info = #{carInfo}
+            </if>
+            <if test="videoSmy != null and videoSmy != ''">
+            	, video_smy = #{videoSmy}
+            </if>
+
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateUrgToUsual" parameterType="HashMap">
+        UPDATE xeus.crms_trans_rqst
+        <set>
+            <if test="reqstId != null and reqstId != ''">
+                reqst_id = #{reqstId},
+            </if>
+            <if test="reqstResn != null and reqstResn != ''">
+                reqst_resn = #{reqstResn},
+            </if>
+            <if test="reqstDetail != null and reqstDetail != ''">
+                reqst_detail = #{reqstDetail},
+            </if>
+            <if test="crimeTyp != null and crimeTyp != ''">
+                crime_typ = #{crimeTyp},
+            </if>
+            <if test="docNo != null and docNo != ''">
+                doc_no = #{docNo},
+            </if>
+            <if test="docFileNm != null and docFileNm != ''">
+                doc_file_nm = #{docFileNm},
+            </if>
+            <if test="docFilePath != null and docFilePath != ''">
+                doc_file_path = #{docFilePath},
+            </if>
+            <if test="reqGbnCd != null and reqGbnCd != ''">
+                req_gbn_cd = #{reqGbnCd},
+            </if>
+        </set>
+            WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <!-- if문 체크 전 -->
+    <!-- <update id="updateProcStatCd" parameterType="HashMap">
+        UPDATE xeus.crms_trans_rqst
+        SET proc_stat_cd = #{procStatCd}
+            , acpt_user_id = #{acptUserId}
+            , acpt_dat = #{acptDat}
+            , rejt_typ = #{rejtTyp}
+            , rejt_resn = #{rejtResn}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+    </update> -->
+
+    <update id="updateProcStatCd" parameterType="HashMap">
+        UPDATE xeus.crms_trans_rqst
+
+        <set>
+            <if test="procStatCd != null and procStatCd != ''">
+                proc_stat_cd = #{procStatCd},
+            </if>
+            <if test="acptUserId != null and acptUserId != ''">
+                acpt_user_id = #{acptUserId},
+            </if>
+            <if test="acptDat != null and acptDat != ''">
+                acpt_dat = #{acptDat},
+            </if>
+            <if test="rejtTyp != null and rejtTyp != ''">
+                rejt_typ = #{rejtTyp},
+            </if>
+            <if test="rejtResn != null and rejtResn != ''">
+                rejt_resn = #{rejtResn},
+            </if>
+        </set>
+
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateUseRsCd" parameterType="HashMap">
+        UPDATE xeus.crms_trans_rqst
+        SET use_rs_cd = #{useRsCd}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateDocNo" parameterType="HashMap">
+        UPDATE xeus.crms_trans_rqst
+        SET
+        	doc_no = #{docNo}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateReqstDetail" parameterType="HashMap">
+        UPDATE xeus.crms_trans_rqst
+        SET
+        	reqst_detail = #{reqstDetail}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateDocFileInfo" parameterType="HashMap">
+        UPDATE xeus.crms_trans_rqst
+        SET
+        	doc_file_nm = #{docFileNm}
+			, doc_file_path = #{docFilePath}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateDocChngYn" parameterType="HashMap">
+        UPDATE xeus.crms_trans_rqst
+        SET
+        	doc_chng_yn = #{docChngYn}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.crms_trans_rqst WHERE mgr_seq = ${mgrSeq}::numeric
+    </delete>
+
+    <!-- <resultMap id="statCount" type="java.util.HashMap">
+        <id property="reqstId" column="rqst.reqst_id" javaType="java.lang.String"></id>
+        <result property="proc_stat_cd" column="proc_stat_cd" javaType="java.lang.String"></result>
+        <result property="cnt" column="cnt" javaType="java.lang.String"></result>
+    </resultMap> -->
+    <select id="getStatCount" parameterType="HashMap" resultType="CrmsTransRqstVo">
+        SELECT proc_stat_cd, COUNT(*)::text AS cnt
+        FROM xeus.crms_trans_rqst AS rqst
+        <where>
+            <if test="reqstId!= null and reqstId != ''">
+                rqst.reqst_id = '${reqstId}'
+            </if>
+        </where>
+        GROUP BY rqst.proc_stat_cd
+    </select>
+
+    <!-- <resultMap id="useRstCount" type="HashMap">
+        <id property="reqstId" column="rqst.reqst_id" javaType="java.lang.String"></id>
+        <result property="use_rs_cd" column="proc_stat_cd" javaType="java.lang.String"></result>
+        <result property="cnt" column="cnt" javaType="java.lang.String"></result>
+    </resultMap> -->
+    <select id="getUseRstCount" parameterType="HashMap" resultType="CrmsTransRqstVo">
+
+        SELECT (CASE WHEN char_length(rqst.use_rs_cd) > 0 THEN rqst.use_rs_cd ELSE 'NON' END) AS use_rs_cd , COUNT(*)::text AS cnt
+        FROM xeus.crms_trans_rqst AS rqst
+        <!--
+        전혀 필요없는 문구라 삭제
+        LEFT JOIN ( SELECT rqst_mgr_seq, MAX(play_limit_dat) AS play_limit_dat
+                    FROM xeus.crms_trans_avi
+                    GROUP BY rqst_mgr_seq                                       ) AS avi ON rqst.mgr_seq = avi.rqst_mgr_seq -->
+        <where>
+            rqst.proc_stat_cd = 'SK'
+            <if test="reqstId!= null and reqstId != ''">
+                AND rqst.reqst_id = '${reqstId}'
+            </if>
+
+        </where>
+         GROUP BY rqst.use_rs_cd
+
+    </select>
+
+    <select id="getYearCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+        FROM xeus.crms_trans_rqst
+        <where>
+            <if test="year!= null and year != ''">
+                AND reqst_dat LIKE #{year}||'%'
+            </if>
+        </where>
+    </select>
+
+    <select id="getMonthCount" parameterType="HashMap" resultType="CrmsTransRqstVo">
+        SELECT a.ym AS reqst_dat, count(b.*) AS cnt
+
+		FROM (select substring(replace(generate_series('${year}-01-01'::timestamp, '${year}-12-01', '1 month')::varchar, '-', ''), 1, 6) AS ym) AS a
+		LEFT JOIN xeus.crms_trans_rqst AS b ON a.ym = substring(b.reqst_dat, 1, 6)
+
+		GROUP BY a.ym
+		ORDER BY a.ym
+    </select>
+
+    <select id="getPageCnt" parameterType="HashMap" resultType="CrmsTransRqstVo">
+        SELECT rqst_sw.rqst_count_sw AS rqst_cnt_sw
+                , rqst_sn.rqst_count_sn AS rqst_cnt_sn
+                , rqst_rs.rqst_count_rs AS rqst_cnt_rs
+                , renew_ext.renew_count_ext AS renew_cnt_ext
+                , renew_evi.renew_count_evi AS renew_cnt_evi
+                , notip.user_id_result AS usr_id_rst
+                , use.user_count AS usr_cnt
+                , use_lock.lock_user AS lock_usr
+
+        FROM (SELECT COUNT(*) AS rqst_count_sw FROM xeus.crms_trans_rqst WHERE proc_stat_cd = 'SW' AND req_gbn_cd <![CDATA[ <> ]]> '15') AS rqst_sw,
+             (SELECT COUNT(*) AS rqst_count_sn FROM xeus.crms_trans_rqst WHERE proc_stat_cd = 'SN' AND req_gbn_cd <![CDATA[ <> ]]> '15') AS rqst_sn,
+             (SELECT COUNT(*) AS rqst_count_rs FROM xeus.crms_trans_rqst WHERE proc_stat_cd = 'SK' AND req_gbn_cd <![CDATA[ <> ]]> '15' AND use_rs_cd = '11') AS rqst_rs,
+             (SELECT COUNT(*) AS renew_count_ext FROM xeus.crms_rqst_renew AS renew
+	             LEFT JOIN xeus.crms_trans_rqst AS rqst ON rqst.mgr_seq = renew.rqst_mgr_seq AND rqst.req_gbn_cd <![CDATA[ <> ]]> '15'
+	             WHERE renew.renew_typ ='11' AND (renew.acpt_yn= '' OR renew.acpt_yn IS NULL)) AS renew_ext,
+             (SELECT COUNT(*) AS renew_count_evi FROM xeus.crms_rqst_renew AS renew
+	             LEFT JOIN xeus.crms_trans_rqst AS rqst ON rqst.mgr_seq = renew.rqst_mgr_seq AND rqst.req_gbn_cd <![CDATA[ <> ]]> '15'
+	             WHERE renew.renew_typ ='12' AND (renew.acpt_yn= '' OR renew.acpt_yn IS NULL)) AS renew_evi LEFT JOIN
+             (SELECT ARRAY_TO_STRING(ARRAY_AGG( COALESCE(user_id, '') ), ',') AS user_id_result FROM xeus.mt_usr_desc WHERE  auth_stat_cd = '12') AS  notip ON 1=1,
+             (SELECT COUNT(*) AS user_count FROM xeus.mt_usr_desc WHERE auth_stat_cd = '11' ) AS use,
+             (SELECT COUNT(*) AS lock_user FROM xeus.mt_usr_desc WHERE auth_stat_cd = '14' ) AS use_lock
+       <!-- ${authAtmtCnt} -->
+    </select>
+
+    <select id="getUserRqstStatCnt" parameterType="HashMap" resultType="CrmsTransRqstVo">
+
+        SELECT tot.cnt AS tot_cnt, sw.cnt AS sw_cnt, non.cnt AS non_cnt
+        FROM
+            (SELECT COUNT(mgr_seq) AS cnt
+             FROM xeus.crms_trans_rqst
+             <where>
+                <if test="reqstId!= null and reqstId != ''">
+                    AND reqst_id = '${reqstId}'
+                </if>
+            </where>
+            ) AS tot,
+
+            (SELECT COUNT(mgr_seq) AS cnt
+             FROM xeus.crms_trans_rqst
+             <where>
+                proc_stat_cd = 'SW'
+                <if test="reqstId!= null and reqstId != ''">
+                    AND reqst_id = '${reqstId}'
+                </if>
+            </where>
+            ) AS sw,
+
+            (SELECT COUNT(mgr_seq) AS cnt
+             FROM xeus.crms_trans_rqst
+             <where>
+                proc_stat_cd = 'SK'
+                AND use_rs_cd = '11'
+                <if test="reqstId!= null and reqstId != ''">
+                    AND reqst_id = '${reqstId}'
+                </if>
+            </where>
+            ) AS non
+    </select>
+
+    <insert id="changeRqst" parameterType="HashMap">
+
+	    <!-- WITH chkExistRqst AS (
+			SELECT * FROM ${before}.crms_trans_rqst WHERE mgr_seq IN (${rqstMgrSeq})
+		)
+		INSERT INTO ${after}.crms_trans_rqst SELECT * FROM xeus.crms_trans_rqst WHERE EXISTS (SELECT * FROM chkExistRqst);
+		DELETE FROM ${before}.crms_trans_rqst WHERE mgr_seq IN (${rqstMgrSeq}) AND EXISTS (SELECT * FROM chkExistRqst); -->
+
+        INSERT INTO ${after}.crms_rqst_renew SELECT * FROM ${before}.crms_rqst_renew WHERE rqst_mgr_seq IN (${rqstMgrSeq});
+		DELETE FROM ${before}.crms_rqst_renew WHERE rqst_mgr_seq IN (${rqstMgrSeq});
+
+		INSERT INTO ${after}.crms_trans_work SELECT * FROM ${before}.crms_trans_work WHERE rqst_mgr_seq IN (${rqstMgrSeq});
+		DELETE FROM ${before}.crms_trans_work WHERE rqst_mgr_seq IN (${rqstMgrSeq});
+
+		INSERT INTO ${after}.crms_trans_avi SELECT * FROM ${before}.crms_trans_avi WHERE rqst_mgr_seq IN (${rqstMgrSeq});
+		DELETE FROM ${before}.crms_trans_avi WHERE rqst_mgr_seq IN (${rqstMgrSeq});
+
+		INSERT INTO ${after}.crms_trans_rqst SELECT * FROM ${before}.crms_trans_rqst WHERE mgr_seq IN (${rqstMgrSeq});
+		DELETE FROM ${before}.crms_trans_rqst WHERE mgr_seq IN (${rqstMgrSeq});
+
+		<!--이미지 반출 삭제 -->
+		INSERT INTO ${after}.crms_image_join SELECT * FROM ${before}.crms_image_join WHERE rqst_mgr_seq IN (${rqstMgrSeq});
+		DELETE FROM ${before}.crms_image_join WHERE rqst_mgr_seq IN (${rqstMgrSeq});
+    </insert>
+
+	<select id="getUseRsSmsList" parameterType="HashMap" resultType="CrmsTransRqstVo">
+
+        SELECT distinct rqst.reqst_id, usr.user_nm, count(*) as use_rs_cnt, max(rqst.reqst_dat) as reqst_dat
+		FROM xeus.crms_trans_rqst rqst
+		INNER JOIN xeus.mt_usr_desc usr on usr.user_id = rqst.reqst_id
+		WHERE (rqst.use_rs_cd is null or rqst.use_rs_cd = '') and rqst.proc_stat_cd = 'SK'
+		GROUP BY rqst.reqst_id, usr.user_nm
+
+    </select>
+
+    <select id="getReportRqstList" parameterType="HashMap" resultType="Integer">
+		select count(*)
+		from xeus.crms_trans_rqst rqst
+		left join xeus.mt_usr_desc usr on usr.user_id = rqst.reqst_id
+		<where>
+			usr.auth_grp_no = 'G00014'
+
+			<if test="startDate != null and startDate != ''">
+				AND reqst_dat <![CDATA[ >= ]]> #{startDate}
+			</if>
+
+			<if test="endDate != null and endDate != ''">
+				AND reqst_dat <![CDATA[ < ]]> #{endDate}
+			</if>
+
+			<if test="year != null and year != ''">
+				AND reqst_dat like #{year}||'%'
+			</if>
+		</where>
+
+		union all
+
+		select count(*)
+		from xeus.crms_trans_rqst rqst
+		left join xeus.mt_usr_desc usr on usr.user_id = rqst.reqst_id
+
+		<where>
+			usr.auth_grp_no = 'G00022'
+
+			<if test="startDate != null and startDate != ''">
+				AND reqst_dat <![CDATA[ >= ]]> #{startDate}
+			</if>
+
+			<if test="endDate != null and endDate != ''">
+				AND reqst_dat <![CDATA[ < ]]> #{endDate}
+			</if>
+
+			<if test="year != null and year != ''">
+				AND reqst_dat like #{year}||'%'
+			</if>
+		</where>
+
+		union all
+
+		select count(*)
+		from xeus.crms_trans_rqst rqst
+		left join xeus.mt_usr_desc usr on usr.user_id = rqst.reqst_id
+
+		<where>
+			usr.auth_grp_no = 'G00018'
+
+			<if test="startDate != null and startDate != ''">
+				AND reqst_dat <![CDATA[ >= ]]> #{startDate}
+			</if>
+
+			<if test="endDate != null and endDate != ''">
+				AND reqst_dat <![CDATA[ < ]]> #{endDate}
+			</if>
+
+			<if test="year != null and year != ''">
+				AND reqst_dat like #{year}||'%'
+			</if>
+		</where>
+    </select>
+</mapper>

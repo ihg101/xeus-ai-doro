@@ -1,0 +1,313 @@
+@CHARSET "UTF-8";
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+/*     background-image: url("../img/user/login/login_bg.png"); */
+    background-image: url("../img/bg.png");
+    background-size: cover;
+}
+
+table th {
+    font-size: 15px;
+    color: white;
+}
+
+#logo {
+    margin-top: 100px;
+    height: 250px;
+    font-size: 70px;
+    color: white;
+    line-height: 280px;
+    text-shadow: 2px 5px #777777;
+/*     background-image: url(../img/user/login/bg.jpg); */
+}
+
+#copyright {
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	font-size: 11px;
+	color: #999999;
+	bottom: 30px;
+	cursor: default;
+}
+
+#wrapParent {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+
+    /* background-color: #1f2023;
+    background-image: url("../img/login/bg.png");
+    background-position: center;
+    background-repeat: no-repeat; */
+}
+
+#wrapParent #wrap {
+    margin:0 auto;
+    width: 700px;
+/*     min-width: 721px; */
+    height: 580px;
+    text-align: center;
+    position: relative;
+}
+
+#wrapBack {
+    position: absolute;
+    z-index: -1;
+    width: 700px;
+    height: 581px;
+    filter: blur(5px);
+    background: rgba(34, 44, 56, 0.3);
+}
+
+#memberLogin {
+    background-position: 304px 0px;
+    width: 304px;
+    height: 256px;
+	margin-left: 200px;
+    background-image: url("../img/user/login/login_area.png");
+
+}
+
+#noticeWrap {
+    float: left;
+    font-size: 12px;
+    font-weight: 400;
+    margin-top: 55px;
+    margin-left: 40px;
+}
+
+#noticeWrap .notcTitle {
+    cursor: pointer;
+    width: 200px;
+}
+
+#noticeWrap .notcTitle:hover {
+    text-decoration: underline;
+}
+
+#noticeWrap tr td {
+    text-align: left;
+    color: white;
+}
+
+#noticeWrap tr td.date {
+    text-align: right;
+}
+
+#loginWrap {
+    padding-left: 30px;
+    padding-top: 40px;
+}
+
+#userId {
+    width: 230px;
+    height: 32px;
+    border-radius: 5px;
+    border: 2px solid white;
+    line-height: 25px;
+    padding-left: 10px;
+    background-color: white;
+    outline: none;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+#userPwd {
+    width: 230px;
+    height: 32px;
+    border-radius: 5px;
+    border: 2px solid white;
+    line-height: 25px;
+    padding-left: 10px;
+    background-color: white;
+    outline: none;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/*
+ * 181121 이은규
+ * SMS인증시 필요한 css 추가
+ */
+#mobileNum {
+	width: 230px;
+	height: 32px;
+	border-radius: 5px;
+	border: 2px solid white;
+	line-height: 25px;
+	padding-left: 10px;
+	background-color: white;
+	outline: none;
+	color: #666;
+	margin-bottom: 10px;
+}
+#accNo{
+	width: 150px;
+	height: 32px;
+	border-radius: 5px;
+	border: 2px solid white;
+	padding-left: 10px;
+	background-color: white;
+	outline: none;
+	color: #666;
+	margin-bottom: 10px;
+}
+#acc_btn{
+	width: 70px;
+	height: 34px;
+	cursor: pointer;
+	border: none;
+	border-radius: 5px;
+	border: 2px solid white;
+	background: none;
+	outline: none;
+	font-size: 12px;
+	color: white;
+	font-weight: bold;
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+
+#login_btn {
+    width: 245px;
+    height: 34px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    border: 2px solid white;
+    background: none;
+    outline: none;
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+#login_btn:hover {
+    color: #666666;
+}
+
+#mapWrap {
+    text-align: right;
+}
+
+#mapWrap span {
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: default;
+}
+
+#mapWrap .user_txt {
+    cursor: pointer;
+}
+
+/* #mapWrap .user_txt:hover {
+    color: #2878FE;
+} */
+
+#fileDown:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#ci {
+    margin-top: 40px;
+    height: 180px;
+}
+
+
+
+
+.bpopup {
+    display: none;
+    border: 5px solid #222c38;
+    background: #222c38;
+}
+.bpopup button {
+    background: #4C535C;
+    border: 0px;
+    font-size: 13px;
+    padding: 7px 25px;
+    color: white;
+    cursor: pointer;
+}
+
+#bpop_wrap {
+    padding: 0 10px;
+}
+#bpop_wrap h2 {
+    text-align: center;
+    font-size: 14px;
+    margin: 20px 0px;
+    color: white;
+}
+#bpop_wrap table {
+    /* border-spacing: 0; */
+    border-spacing: 1px;
+    width: 580px;
+}
+#bpop_wrap table tr .top {
+    text-align: right;
+    font-size: 13px;
+    padding: 20px 15px 20px 15px;
+    background-color: #35404C;
+    color: white;
+}
+#bpop_wrap table tr th {
+    width: 20%;
+}
+#bpop_wrap table tr td {
+    border-bottom: 1px solid #D5D5D5;
+    border-right: 1px solid #D5D5D5;
+    /* background: #D5D5D5; */
+    background: white;
+    padding-left: 10px;
+}
+#bpop_wrap table tr td.lastTd {
+    background: #222c38;
+}
+#bpop_wrap table tr .bottom {
+    text-align: right;
+    font-size: 13px;
+    padding: 150px 15px 150px 73px;
+    background-color: #35404C;
+    color: white;
+}
+#bpop_wrap input {
+    height: 25px;
+    width: 95%;
+    /* background: #D5D5D5; */
+    background: white;
+    padding-left: 5px;
+}
+#bpop_wrap input, textarea {
+    border: 0;
+}
+#bpop_wrap textarea {
+    height: 250px;
+    width: 95%;
+    /* background: #D5D5D5; */
+    background: white;
+    padding: 10px 5px;
+    outline: none;
+    resize: none;
+}
+#bpop_wrap select {
+    height: 25px;
+    width: 95%;
+    border: 0;
+    /* background: #D5D5D5; */
+    background: white;
+}
+#bpop_wrap table tr td button {
+    margin: 10px 0px;
+}

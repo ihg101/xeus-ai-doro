@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.map.service.MapMapper">
+
+	<select id="getFavList" parameterType="HashMap" resultType="MapVo">
+        SELECT mgr_seq, user_id, title, x, y, zoom
+        FROM xeus.mt_fav_map
+
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+
+            <if test="sortCol == null and sortTyp == null">
+                mgr_seq asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+    </select>
+
+
+    <select id="getFavItem" parameterType="HashMap" resultType="MapVo">
+        SELECT mgr_seq, user_id, title, x, y, zoom
+        FROM xeus.mt_fav_map
+
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getFavCount" parameterType="HashMap" resultType="int">
+        SELECT count(*) FROM xeus.mt_fav_map
+
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+
+    <delete id="delFav" parameterType="HashMap">
+        DELETE FROM xeus.mt_fav_map WHERE mgr_seq = #{mgrSeq}::integer
+    </delete>
+
+
+    <insert id="addFav" parameterType="MapVo">
+        INSERT INTO xeus.mt_fav_map(user_id, title, x, y, zoom)
+        VALUES (#{userId}, #{title}, #{x}, #{y}, #{zoom});
+    </insert>
+
+
+    <update id="editFav" parameterType="MapVo">
+        UPDATE xeus.mt_fav_map
+
+        SET
+            mgr_seq = #{mgrSeq}
+
+            <if test="title != null and title != ''">
+                ,title = #{title}
+            </if>
+
+        WHERE mgr_seq = #{mgrSeq}
+    </update>
+
+</mapper>

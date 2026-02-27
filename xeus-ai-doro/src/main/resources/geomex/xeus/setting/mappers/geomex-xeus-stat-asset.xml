@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.stat.service.AssetStatMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="String">
+
+		SELECT distinct substring(asset_mgr_no from 1 for 3)
+		FROM xeus.asset_status_hist
+		WHERE asset_mgr_no IS NOT NULL AND asset_mgr_no <![CDATA[ <> ]]> '' AND asset_mgr_no <![CDATA[ <> ]]> 'null'
+
+    </select>
+
+	<select id="getYearStat" parameterType="HashMap" resultType="AssetStatVo">
+
+		SELECT log.year AS year, count(log.year) AS count
+		FROM (
+				SELECT substring(log.recv_dat, 1, 4) AS year
+				FROM xeus.asset_status_hist log
+				WHERE log.asset_mgr_no IS NOT NULL
+			 ) log
+		GROUP BY log.year
+		ORDER BY log.year
+
+    </select>
+
+    <select id="getMonthStat" parameterType="HashMap" resultType="AssetStatVo">
+
+		SELECT log.month AS month, count(log.month) AS count
+		FROM (
+				SELECT substring(log.recv_dat, 5, 2) AS month
+				FROM xeus.asset_status_hist log
+				<where>
+					log.asset_mgr_no IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.recv_dat LIKE #{year}||'%'
+					</if>
+				</where>
+			 ) log
+		GROUP BY log.month
+		ORDER BY log.month
+
+    </select>
+
+    <select id="getDayStat" parameterType="HashMap" resultType="AssetStatVo">
+
+		SELECT log.day AS day, count(log.day) AS count
+		FROM (
+				SELECT substring(log.recv_dat, 7, 2) AS day
+				FROM xeus.asset_status_hist log
+				<where>
+					log.asset_mgr_no IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.recv_dat LIKE #{year}||'%'
+					</if>
+					<if test="month != null and month != ''">
+						AND log.recv_dat LIKE '____'||#{month}||'%'
+					</if>
+				</where>
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+    <select id="getOrgzYearStat" parameterType="HashMap" resultType="AssetStatVo">
+
+    	SELECT log.year AS year, count(log.year) AS count
+		FROM (
+				SELECT substring(log.recv_dat, 1, 4) AS year
+				FROM xeus.asset_status_hist log
+				LEFT JOIN xeus.asset_infra infra ON infra.mgr_no= log.asset_mgr_no
+				LEFT JOIN xeus.asset_cctv cctv ON cctv.mgr_no= log.asset_mgr_no
+
+				WHERE log.asset_mgr_no IS NOT NULL
+					<if test="orgNm != null and orgNm != ''">
+<!-- 						AND (infra.mgr_no LIKE #{orgNm}||'%' OR cctv.mgr_no LIKE #{orgNm}||'%') -->
+							AND log.asset_mgr_no LIKE #{orgNm}||'%'
+					</if>
+			 ) log
+		GROUP BY log.year
+		ORDER BY log.year
+
+    </select>
+
+    <select id="getOrgzMonthStat" parameterType="HashMap" resultType="AssetStatVo">
+
+        SELECT log.month AS month, count(log.month) AS count
+		FROM (
+				SELECT substring(log.recv_dat, 5, 2) AS month
+				FROM xeus.asset_status_hist log
+				LEFT JOIN xeus.asset_infra infra ON infra.mgr_no= log.asset_mgr_no
+				LEFT JOIN xeus.asset_cctv cctv ON cctv.mgr_no= log.asset_mgr_no
+				WHERE log.asset_mgr_no IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.recv_dat LIKE #{year}||'%'
+					</if>
+					<if test="orgNm != null and orgNm != ''">
+<!-- 						AND (infra.facility_nm = #{orgNm} OR cctv.cctv_nm = #{orgNm}) -->
+							AND log.asset_mgr_no LIKE #{orgNm}||'%'
+					</if>
+
+			 ) log
+		GROUP BY log.month
+		ORDER BY log.month
+
+    </select>
+
+    <select id="getOrgzDayStat" parameterType="HashMap" resultType="AssetStatVo">
+
+		SELECT log.day AS day, count(log.day) AS count
+		FROM (
+				SELECT substring(log.recv_dat, 7, 2) AS day
+				FROM xeus.asset_status_hist log
+				LEFT JOIN xeus.asset_infra infra ON infra.mgr_no= log.asset_mgr_no
+				LEFT JOIN xeus.asset_cctv cctv ON cctv.mgr_no= log.asset_mgr_no
+				WHERE log.asset_mgr_no IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.recv_dat LIKE #{year}||'%'
+					</if>
+					<if test="month != null and month != ''">
+						AND log.recv_dat LIKE '____'||#{month}||'%'
+					</if>
+					<if test="orgNm != null and orgNm != ''">
+<!-- 						AND (infra.facility_nm = #{orgNm} OR cctv.cctv_nm = #{orgNm}) -->
+							AND log.asset_mgr_no LIKE #{orgNm}||'%'
+					</if>
+
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+    <select id="getOrgzDayCnt" parameterType="HashMap" resultType="String">
+
+		SELECT count(log.day) AS count
+		FROM (
+				SELECT substring(log.recv_dat, 7, 2) AS day
+				FROM xeus.asset_status_hist log
+				WHERE log.asset_mgr_no IS NOT NULL
+
+					<if test="orgNm != null and orgNm != ''">
+						AND log.asset_mgr_no LIKE #{orgNm}||'%'
+					</if>
+
+					<if test="date != null and date != ''">
+						AND log.recv_dat LIKE #{date}||'%'
+					</if>
+
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+</mapper>

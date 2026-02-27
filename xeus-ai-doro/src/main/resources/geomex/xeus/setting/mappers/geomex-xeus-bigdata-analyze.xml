@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.bigdata.service.BigDataAnalyzeMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="BigDataAnalyzeVo">
+        <!-- SELECT mgr_seq, user_id, analy_nm, analy_dat, analy_plan, finish_dat, analy_state -->
+        SELECT mgr_seq, user_id, analy_nm, analy_plan, rqst_dat, analy_dat, finish_dat, analy_state
+
+        FROM xeus.bigdata_analyze
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="userIds != null and userIds != ''">
+                AND user_id in (${userIds})
+            </if>
+
+            <if test="analyNm != null and analyNm != ''">
+                AND analy_nm = #{analyNm}
+            </if>
+
+            <if test="analyPlan != null and analyPlan != ''">
+                AND analy_plan like '%${analyPlan}%'
+            </if>
+
+            <if test="rqstDat != null and rqstDat != ''">
+                AND rqst_dat = #{rqstDat}
+            </if>
+
+            <if test="analyDat != null and analyDat != ''">
+                AND analy_dat = #{analyDat}
+            </if>
+
+            <if test="finishDat != null and finishDat != ''">
+                AND finish_dat = #{finishDat}
+            </if>
+
+            <if test="analyState != null and analyState != ''">
+                AND analy_state = #{analyState}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                mgr_seq asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="BigDataAnalyzeVo">
+        <!-- SELECT mgr_seq, user_id, analy_nm, analy_dat, analy_plan, finish_dat, analy_state -->
+        SELECT mgr_seq, user_id, analy_nm, analy_plan, rqst_dat, analy_dat, finish_dat, analy_state
+
+        FROM xeus.bigdata_analyze
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="fk != null and fk != ''">
+                AND mgr_seq = #{fk}::numeric
+            </if>
+
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="analyNm != null and analyNm != ''">
+                AND analy_nm = #{analyNm}
+            </if>
+
+            <if test="analyPlan != null and analyPlan != ''">
+                AND analy_plan = #{analyPlan}
+            </if>
+
+            <if test="rqstDat != null and rqstDat != ''">
+                AND rqst_dat = #{rqstDat}
+            </if>
+
+            <if test="analyDat != null and analyDat != ''">
+                AND analy_dat = #{analyDat}
+            </if>
+
+            <if test="finishDat != null and finishDat != ''">
+                AND finish_dat = #{finishDat}
+            </if>
+
+            <if test="analyState != null and analyState != ''">
+                AND analy_state = #{analyState}
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.bigdata_analyze
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="analyNm != null and analyNm != ''">
+                AND analy_nm = #{analyNm}
+            </if>
+
+            <if test="analyPlan != null and analyPlan != ''">
+                AND analy_plan = #{analyPlan}
+            </if>
+
+            <if test="rqstDat != null and rqstDat != ''">
+                AND rqst_dat LIKE '%'||#{rqstDat}||'%'
+            </if>
+
+            <if test="analyDat != null and analyDat != ''">
+                AND analy_dat LIKE '%'||#{analyDat}||'%'
+            </if>
+
+            <if test="finishDat != null and finishDat != ''">
+                AND finish_dat = #{finishDat}
+            </if>
+
+            <if test="analyState != null and analyState != ''">
+                AND analy_state = #{analyState}
+            </if>
+        </where>
+    </select>
+
+    <select id="createResultTable" parameterType="String">
+        CREATE TABLE xeus.bigdata_analy_result${value}
+        (
+        mgr_seq
+        bigserial,
+        analy_mgr_seq numeric(32,0) NOT NULL,
+        grid10m_gid numeric(32,0) NOT NULL,
+        grid100m_gid numeric(32,0) NOT NULL,
+        jibn_addr character varying(200),
+        road_addr character varying(200),
+        result_val numeric(10,0),
+        rgb_txt character varying(10),
+        grp_nm character varying(200),
+        CONSTRAINT bigdata_analy_result${value}_pk PRIMARY KEY (mgr_seq)
+        );
+
+        CREATE INDEX bigdata_analy_result${value}_analy_mgr_seq_idx
+        ON xeus.bigdata_analy_result${value}
+        USING btree (analy_mgr_seq);
+
+        CREATE INDEX bigdata_analy_result${value}_grid10m_gid_idx
+        ON xeus.bigdata_analy_result${value}
+        USING btree (grid10m_gid);
+
+    </select>
+
+
+    <update id="dropTable" parameterType="String">
+        <!-- DROP INDEX IF EXISTS xeus.bigdata_analy_result${value}_mgr_seq_idx; -->
+        DROP TABLE IF EXISTS xeus.bigdata_analy_result${value} cascade;
+    </update>
+
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.bigdata_analyze WHERE mgr_seq = #{mgrSeq}::numeric
+    </delete>
+
+
+    <insert id="add" parameterType="BigDataAnalyzeVo">
+        INSERT INTO xeus.bigdata_analyze(
+        user_id, analy_nm, analy_plan, rqst_dat, analy_dat, finish_dat, analy_state
+        )
+        VALUES (
+        #{userId}, #{analyNm}, #{analyPlan}, #{rqstDat}, #{analyDat}, #{finishDat}, #{analyState}
+        );
+
+        <selectKey keyProperty="mgrSeq" resultType="string" order="AFTER">
+            SELECT mgr_seq FROM xeus.bigdata_analyze
+            WHERE user_id = #{userId} AND analy_nm = #{analyNm} AND analy_dat = #{analyDat}
+        </selectKey>
+    </insert>
+
+
+    <update id="edit" parameterType="BigDataAnalyzeVo">
+        UPDATE xeus.bigdata_analyze SET
+        mgr_seq = #{mgrSeq}::numeric
+
+        <if test="userId != null and userId != ''">
+            , user_id = #{userId}
+        </if>
+
+        <if test="analyNm != null and analyNm != ''">
+            , analy_nm = #{analyNm}
+        </if>
+
+        <if test="analyPlan != null and analyPlan != ''">
+            , analy_plan = #{analyPlan}
+        </if>
+
+        <if test="rqstDat != null and rqstDat != ''">
+            , rqst_dat = #{rqstDat}
+        </if>
+
+        <if test="analyDat != null and analyDat != ''">
+            , analy_dat = #{analyDat}
+        </if>
+
+        <if test="finishDat != null and finishDat != ''">
+            , finish_dat = #{finishDat}
+        </if>
+
+        <if test="analyState != null and analyState != ''">
+            , analy_state = #{analyState}
+        </if>
+
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <select id="getWfs" parameterType="HashMap" resultType="HashMap">
+        SELECT tbl.*,
+
+        <if test="geometryType == 'polygon'">
+            st_asgeojson(grid._geometry) AS geojson,
+        </if>
+        <if test="geometryType == 'point'">
+            st_asgeojson(st_centroid(grid._geometry)) AS geojson,
+        </if>
+
+        st_x(st_centroid(grid._geometry)) AS _annox,
+        st_y(st_centroid(grid._geometry)) AS _annoy,
+        grid._gid
+
+        FROM ${tbl} as tbl
+        LEFT JOIN xeus.bigdata_grid_${GRID} as grid ON tbl.grid${GRID}_gid = grid._gid
+
+        <where>
+            <if test="col != null and col != '' and val != null and val != ''">
+                AND ${col} in (${val})
+            </if>
+
+            <if test="bbox != null and bbox != ''">
+                AND ST_Intersects(ST_MakeEnvelope(${bbox}, 5186), grid._geometry)
+            </if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+</mapper>

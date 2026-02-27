@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.sysmgr.service.NoticeMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="NoticeVo">
+		SELECT mgr_seq, notc_title, worker_id, notc_conts, last_mdfy_dat, atch_file_nm, atch_file_path, open_type
+
+        FROM xeus.mt_notc_list
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="notcTitle != null and notcTitle != ''">
+                AND notc_title LIKE '%'||#{notcTitle}||'%'
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND worker_id = #{workerId}
+            </if>
+
+            <if test="notcConts != null and notcConts != ''">
+                AND notc_conts = #{notcConts}
+            </if>
+
+            <if test="lastMdfyDat != null and lastMdfyDat != ''">
+                AND last_mdfy_dat = #{lastMdfyDat}
+            </if>
+
+            <if test="atchFileNm != null and atchFileNm != ''">
+                AND atch_file_nm = #{atchFileNm}
+            </if>
+
+            <if test="atchFilePath != null and atchFilePath != ''">
+                AND atch_file_path = #{atchFilePath}
+            </if>
+
+            <if test="openType != null and openType != ''">
+                AND open_type = #{openType}
+            </if>
+        </where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq desc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="NoticeVo">
+        SELECT mgr_seq, notc_title, worker_id, notc_conts, last_mdfy_dat, atch_file_nm, atch_file_path, open_type
+
+        FROM xeus.mt_notc_list
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="notcTitle != null and notcTitle != ''">
+                AND notc_title = #{notcTitle}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND worker_id = #{workerId}
+            </if>
+
+            <if test="notcConts != null and notcConts != ''">
+                AND notc_conts = #{notcConts}
+            </if>
+
+            <if test="lastMdfyDat != null and lastMdfyDat != ''">
+                AND last_mdfy_dat = #{lastMdfyDat}
+            </if>
+
+            <if test="atchFileNm != null and atchFileNm != ''">
+                AND atch_file_nm = #{atchFileNm}
+            </if>
+
+            <if test="atchFilePath != null and atchFilePath != ''">
+                AND atch_file_path = #{atchFilePath}
+            </if>
+
+            <if test="openType != null and openType != ''">
+                AND open_type = #{openType}
+            </if>
+        </where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*) FROM xeus.mt_notc_list
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="notcTitle != null and notcTitle != ''">
+                AND notc_title LIKE '%'||#{notcTitle}||'%'
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND worker_id = #{workerId}
+            </if>
+
+            <if test="notcConts != null and notcConts != ''">
+                AND notc_conts = #{notcConts}
+            </if>
+
+            <if test="lastMdfyDat != null and lastMdfyDat != ''">
+                AND last_mdfy_dat = #{lastMdfyDat}
+            </if>
+
+            <if test="atchFileNm != null and atchFileNm != ''">
+                AND atch_file_nm = #{atchFileNm}
+            </if>
+
+            <if test="atchFilePath != null and atchFilePath != ''">
+                AND atch_file_path = #{atchFilePath}
+            </if>
+
+            <if test="openType != null and openType != ''">
+                AND open_type = #{openType}
+            </if>
+        </where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.mt_notc_list WHERE mgr_seq = #{mgrSeq}::integer
+	</delete>
+
+
+	<insert id="add" parameterType="NoticeVo">
+		INSERT INTO xeus.mt_notc_list(notc_title, worker_id, notc_conts, last_mdfy_dat, atch_file_nm, atch_file_path, open_type)
+	    VALUES (#{notcTitle}, #{workerId}, #{notcConts}, #{lastMdfyDat}, #{atchFileNm}, #{atchFilePath}, #{openType});
+	</insert>
+
+
+	<update id="edit" parameterType="NoticeVo">
+		UPDATE xeus.mt_notc_list
+
+		SET
+            mgr_seq = #{mgrSeq}::integer
+
+            <if test="notcTitle != null and notcTitle != ''">
+                , notc_title = #{notcTitle}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                , worker_id = #{workerId}
+            </if>
+
+            <if test="notcConts != null and notcConts != ''">
+                , notc_conts = #{notcConts}
+            </if>
+
+            <if test="lastMdfyDat != null and lastMdfyDat != ''">
+                , last_mdfy_dat = #{lastMdfyDat}
+            </if>
+
+            <if test="atchFileNm != null and atchFileNm != ''">
+                , atch_file_nm = #{atchFileNm}
+            </if>
+
+            <if test="atchFilePath != null and atchFilePath != ''">
+                , atch_file_path = #{atchFilePath}
+            </if>
+
+            <if test="openType != null and openType != ''">
+                , open_type = #{openType}
+            </if>
+
+		WHERE mgr_seq = #{mgrSeq}::integer
+	</update>
+
+</mapper>

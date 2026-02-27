@@ -1,0 +1,201 @@
+.play-mode-control {
+    font-size: 7px !important;
+    padding: 0;
+    position: absolute;
+    top: 4px;
+    width: 22px;
+    height: 18px;
+    line-height: 18px;
+}
+
+span.ptzBtn {
+	position: absolute;
+	cursor: pointer;
+}
+
+span#ptzTop {
+	top: 0px;
+	/* left: 135px; */
+	left: calc(50% - 25px);
+	width: 50px;
+	height: 30px;
+	border-radius: 15px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/top.png);
+}
+span#ptzTop:hover {
+	background-image: url(../../res/img/ptz/top_over.png);
+}
+
+span#ptzBottom {
+	position: absolute;
+	cursor: pointer;
+	bottom: 0px;
+	/* left: 135px; */
+	left: calc(50% - 25px);
+	width: 50px;
+	height: 30px;
+	border-radius: 15px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/bottom.png);
+}
+span#ptzBottom:hover {
+	background-image: url(../../res/img/ptz/bottom_over.png);
+}
+
+span#ptzLeft {
+	position: absolute;
+	cursor: pointer;
+	/* top: 95px; */
+	top: calc(50% - 25px);
+	left: 0px;
+	width: 30px;
+	height: 50px;
+	border-radius: 15px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/left.png);
+}
+span#ptzLeft:hover {
+	background-image: url(../../res/img/ptz/left_over.png);
+}
+
+span#ptzRight {
+	position: absolute;
+	cursor: pointer;
+	/* top: 95px; */
+	top: calc(50% - 25px);
+	right: 0px;
+	width: 30px;
+	height: 50px;
+	border-radius: 15px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/right.png);
+}
+span#ptzRight:hover {
+	background-image: url(../../res/img/ptz/right_over.png);
+}
+
+
+span#ptzTopLeft {
+	position: absolute;
+	cursor: pointer;
+	top: -10px;
+	left: 0px;
+	width: 30px;
+	height: 50px;
+	border-radius: 15px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/left_top.png);
+}
+span#ptzTopLeft:hover {
+	background-image: url(../../res/img/ptz/left_top_over.png);
+}
+
+span#ptzTopRight {
+	position: absolute;
+	cursor: pointer;
+	top: -10px;
+	right: 0px;
+	width: 30px;
+	height: 50px;
+	border-radius: 15px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/top_right.png);
+}
+span#ptzTopRight:hover {
+	background-image: url(../../res/img/ptz/top_right_over.png);
+}
+
+span#ptzBottomLeft {
+	position: absolute;
+	cursor: pointer;
+	bottom: -10px;
+	left: 0px;
+	width: 30px;
+	height: 50px;
+	border-radius: 15px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/bottom_left.png);
+}
+span#ptzBottomLeft:hover {
+	background-image: url(../../res/img/ptz/bottom_left_over.png);
+}
+
+span#ptzBottomRight {
+	position: absolute;
+	cursor: pointer;
+	bottom: -10px;
+	right: 0px;
+	width: 30px;
+	height: 50px;
+	border-radius: 15px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/bottom_right.png);
+}
+span#ptzBottomRight:hover {
+	background-image: url(../../res/img/ptz/bottom_right_over.png);
+}
+
+span#ptzZoomIn {
+	position: absolute;
+	cursor: pointer;
+    /* top: 95px;
+    right: 133px; */
+    top: calc(50% - 30px);
+    right: calc(50% - 25px);
+    width: 50px;
+    height: 25px;
+    border-radius: 5px;
+	/* background: white;
+	background-size: 20px;
+	background-position: center; */
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/zoom.png);
+}
+span#ptzZoomIn:hover {
+	background-image: url(../../res/img/ptz/zoom_top_over.png);
+}
+
+span#ptzZoomOut {
+	position: absolute;
+	cursor: pointer;
+    /* top: 119px;
+    right: 133px; */
+    top: calc(50% - 5px);
+    right: calc(50% - 25px);
+    width: 50px;
+    height: 26px;
+    border-radius: 5px;
+	/* background: white;
+	background-size: 20px; */
+	background-position: bottom;
+	background-repeat: no-repeat;
+	background-image: url(../../res/img/ptz/zoom.png);
+}
+span#ptzZoomOut:hover {
+	background-image: url(../../res/img/ptz/zoom_bottom_over.png);
+}

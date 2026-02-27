@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gmx.gis.layer.service.GMT_LayerGroupMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerGroupVo">
+		SELECT mgr_seq, grp_nm, grp_zidx, mk_user, mk_dat
+
+		FROM xeus.gis_lyr_grp
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				AND mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				AND grp_nm = #{grpNm}
+			</if>
+
+			<if test="grpZidx != null and grpZidx != ''">
+				AND grp_zidx = #{grpZidx}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				grp_zidx asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+	<select id="getListExceptTempLyrGrp" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerGroupVo">
+		SELECT mgr_seq, grp_nm, grp_zidx, mk_user, mk_dat
+
+		FROM xeus.gis_lyr_grp
+
+		<where>
+				AND mgr_seq != 6
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				AND mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				AND grp_nm = #{grpNm}
+			</if>
+
+			<if test="grpZidx != null and grpZidx != ''">
+				AND grp_zidx = #{grpZidx}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				<!--나의레이어와 공유레이어는 가장 뒤쪽으로 정렬 -->
+				array_position(ARRAY['4','3'],mgr_seq::TEXT) DESC,
+				grp_zidx asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerGroupVo">
+		SELECT mgr_seq, grp_nm, grp_zidx, mk_user, mk_dat
+
+		FROM xeus.gis_lyr_grp
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				AND mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				AND grp_nm = #{grpNm}
+			</if>
+
+			<if test="grpZidx != null and grpZidx != ''">
+				AND grp_zidx = #{grpZidx}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.gis_lyr_grp
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				AND mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				AND grp_nm = #{grpNm}
+			</if>
+
+			<if test="grpZidx != null and grpZidx != ''">
+				AND grp_zidx = #{grpZidx}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.gis_lyr_grp WHERE mgr_seq = #{mgrSeq}::numeric
+	</delete>
+
+
+	<insert id="add" parameterType="gmx.gis.layer.service.GMT_LayerGroupVo">
+		INSERT INTO xeus.gis_lyr_grp(
+			grp_nm, grp_zidx, mk_user
+		) VALUES (
+			#{grpNm},
+			(SELECT MAX(grp_zidx)+1 FROM xeus.gis_lyr_grp),
+			#{mkUser}
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="gmx.gis.layer.service.GMT_LayerGroupVo">
+		UPDATE xeus.gis_lyr_grp SET
+			mgr_seq = #{mgrSeq}::numeric
+
+			<if test="grpNm != null and grpNm != ''">
+				, grp_nm = #{grpNm}
+			</if>
+
+			<if test="grpZidx != null and grpZidx != ''">
+				, grp_zidx = #{grpZidx}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				, mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				, mk_dat = #{mkDat}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}::numeric
+
+	</update>
+
+
+
+	<update id="setLayerGroupIndex" parameterType="HashMap">
+		<foreach collection="list" item="map">
+			UPDATE xeus.gis_lyr_grp SET grp_zidx = #{map.grpZidx}::numeric WHERE mgr_seq = #{map.mgrSeq}::numeric;
+		</foreach>
+	</update>
+</mapper>

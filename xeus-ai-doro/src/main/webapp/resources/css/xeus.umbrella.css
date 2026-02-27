@@ -1,0 +1,247 @@
+@CHARSET "UTF-8";
+#selectWrap {
+    height: 88%;
+    overflow: auto;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#dragWrap, #optionWrap, #columnWrap {
+	position: absolute;
+	z-index: 9999;
+	/* width: 950px;
+	height: 600px;
+	max-height: 600px */;
+	background: white;
+	border: 1px solid #30303A;
+}
+/* .selectable { list-style-type: none; margin: 0 auto; padding: 0; width: 100%; height: 210px; display: inline-block; } */
+.selectable {
+	/* display: inline-block;
+    vertical-align: top;
+    margin: 10px 70px;
+    text-align: center; */
+    width: 100%;
+}
+.selectable tbody td {
+	/* height: 50px; */
+    height: 30px;
+    font-weight: normal;
+    font-size: 14px;
+    border-bottom: 1px solid gray;
+    padding-left: 10px;
+}
+.selectable tbody td:hover {
+	background: #4582AC;
+	color: white;
+	font-weight: bold;
+	cursor: pointer;
+}
+.selectable li { position: relative; margin: 10px 5px 5px 10px; padding: 1px; float: left; width: 167px; height: 45px; font-size: 15px; text-align: center; line-height: 3; }
+.selectable li img.delExcel { position: absolute; top: -10px; right: -10px; cursor: pointer; }
+.selectable li.circle { border-radius: 50%; }
+
+#analysWrap p.title {
+	font-weight: bold;
+	font-size: 14px;
+	margin: 5px 0px;
+	cursor: pointer;
+	padding: 10px;
+}
+
+#optionWrap #listWrap {
+	width: 100%;
+	height: 530px;
+	overflow: auto;
+}
+
+#optionWrap table, #columnWrap, #tableWrap table {
+	width: 100%;
+}
+
+#optionWrap input[type=text] {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	width: 40px;
+	height: 21px;
+}
+
+#columnWrap table, #tableWrap table {
+	text-align: center;
+    border-collapse: collapse;
+    font-size: 13px;
+    line-height: 24px;
+    color: #666;
+}
+
+#columnWrap table th, #tableWrap table th {
+	cursor: pointer;
+	background: #F3F3F3;
+	border-left: 1px #dddddd solid;
+    border-bottom: 1px #dddddd solid;
+}
+
+#columnWrap table td, #tableWrap table td {
+    background: white;
+    border-left: 1px #dddddd solid;
+    border-bottom: 1px #dddddd solid;
+}
+
+#columnWrap #listWrap, #tableWrap {
+    height: 90%;
+    overflow: auto;
+    margin-bottom: 10px;
+}
+
+#columnWrap #listWrap div#grpOptionWrap {
+    padding: 5px;
+    font-size: 15px;
+    text-align: right;
+    font-weight: bold;
+    color: #666;
+    border: 1px #dddddd solid;
+}
+
+/* #columnWrap #listWrap input[type=number] {
+    width: 30px;
+    text-align: center;
+} */
+
+#uploadWrap {
+	position: absolute;
+	display: none;
+    /* width: 800px;
+    height: 424px;
+    top: calc(50% - 212px);
+    left: calc(50% - 400px); */
+    width: 100%;
+/*     height: 424px; */
+	height: 100%;
+/*     top: calc(50% - 212px); */
+    top: 0;
+    left: 0;
+}
+#uploadWrap #uploadForm {
+	height: 75.5%
+}
+#uploadWrap img.close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    z-index: 1;
+}
+.box {
+    font-size: 1.25rem;
+    background-color: #c8dadf;
+    position: relative;
+    padding: 100px 20px;
+}
+.boxInput {
+	margin-top: 80%;
+	text-align: center;
+}
+.box.has-advanced-upload {
+    outline: 2px dashed #92b0b3;
+    outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear;
+}
+.box.has-advanced-upload .boxIcon {
+    width: 100%;
+    height: 80px;
+    fill: #92b0b3;
+    display: block;
+    margin-bottom: 40px;
+}
+svg:not(:root) {
+    overflow: hidden;
+}
+svg {
+    fill: currentColor;
+    vertical-align: middle;
+    pointer-events: none;
+}
+.boxFile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.boxFile + label {
+    max-width: 80%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+}
+.boxFile + label:hover strong, .boxFile:focus + label strong, .boxFile.has-focus + label strong {
+    color: #39bfd3;
+}
+.boxButton {
+	border: none;
+	cursor: pointer;
+    font-weight: 700;
+    color: white;
+    background-color: #4582AC;
+    display: block;
+    padding: 8px 16px;
+    margin: 40px auto 0;
+}
+.boxUploading {
+    font-style: italic;
+}
+.boxUploading, .boxSuccess, .boxError {
+    display: none;
+}
+.boxSuccess {
+    -webkit-animation: appear-from-inside .25s ease-in-out;
+    animation: appear-from-inside .25s ease-in-out;
+}
+.boxRestart {
+    font-weight: 700;
+}
+.boxFile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.box.is-dragover {
+	outline-offset: -20px;
+	outline-colo: #c8dadf;
+	background-color: white;
+}
+
+#dataWrap {
+	position: absolute;
+	display: none;
+    /* width: 100%;
+    height: calc(100% - 33px);
+    top: 0;
+    left: 0;
+    margin-top: 33px; */
+    background: white;
+    z-index: 9999;
+}
+
+#dataWrap #titleWrap b {
+	padding: 5px;
+    font-size: 15px;
+    text-align: right;
+    font-weight: bold;
+    color: #666;
+}
+
+#jibnWrap, #txtWrap {
+	position: absolute;
+}
+
+#txtWrap {
+	left: 30%;
+}

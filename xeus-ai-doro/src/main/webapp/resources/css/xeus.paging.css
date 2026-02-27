@@ -1,0 +1,35 @@
+/* paging wrap */
+.paging_wrap {
+    display: none;
+    text-align: center;
+    padding: 20px 20px 20px 20px;
+    height: 22px;
+}
+.bottom_padding {
+    padding: 20px 20px 0px 20px !important;
+}
+
+.paging_wrap button {
+    border: 0;
+    margin: 0 1px;
+    padding: 0;
+    width: 25px;
+    height: 25px;
+    color: #999;/* 97A2AD */
+    font-size: 12px;
+    cursor: pointer;
+    background-color: transparent;/* 3C4958 */
+}
+.paging_wrap button.active {
+    color: #fff;
+    background-color: #0078d4;/* 255D9C */
+    border-radius: 50%;
+}
+
+.paging_wrap button.prev,
+.paging_wrap button.prev10,
+.paging_wrap button.next,
+.paging_wrap button.next10 {
+	font-size: 14px;
+	font-weight: bold;
+}

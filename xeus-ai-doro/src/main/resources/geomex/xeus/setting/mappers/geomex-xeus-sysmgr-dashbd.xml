@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.sysmgr.service.DashbdMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="DashbdVo">
+        SELECT mgr_seq, user_id, brd_title, json_txt, mdfy_dat
+
+		FROM xeus.mt_dashbd_list
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="userId != null and userId != ''">
+				AND user_id = #{userId}
+			</if>
+
+			<if test="brdTitle != null and brdTitle != ''">
+				AND brd_title = #{brdTitle}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="mdfyDat != null and mdfyDat != ''">
+				AND mdfy_dat = #{mdfyDat}
+			</if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                mgr_seq asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="DashbdVo">
+        SELECT mgr_seq, user_id, brd_title, json_txt, mdfy_dat
+
+		FROM xeus.mt_dashbd_list
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="userId != null and userId != ''">
+				AND user_id = #{userId}
+			</if>
+
+			<if test="brdTitle != null and brdTitle != ''">
+				AND brd_title = #{brdTitle}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="mdfyDat != null and mdfyDat != ''">
+				AND mdfy_dat = #{mdfyDat}
+			</if>
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.mt_dashbd_list
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="userId != null and userId != ''">
+				AND user_id = #{userId}
+			</if>
+
+			<if test="brdTitle != null and brdTitle != ''">
+				AND brd_title = #{brdTitle}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="mdfyDat != null and mdfyDat != ''">
+				AND mdfy_dat = #{mdfyDat}
+			</if>
+
+
+        </where>
+    </select>
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.mt_dashbd_list
+        WHERE mgr_seq = #{mgrSeq}::numeric
+    </delete>
+
+	<!-- <insert id="add" parameterType="DashbdVo"> -->
+    <insert id="add" parameterType="DashbdVo" useGeneratedKeys="true" keyProperty="mgrSeq">
+        INSERT INTO xeus.mt_dashbd_list(
+			user_id, brd_title, json_txt, mdfy_dat
+		) VALUES (
+			#{userId}, #{brdTitle}, #{jsonTxt}, #{mdfyDat}
+		);
+    </insert>
+
+    <update id="edit" parameterType="DashbdVo">
+        UPDATE xeus.mt_dashbd_list SET
+            mgr_seq = #{mgrSeq}::numeric
+
+            <if test="userId != null and userId != ''">
+				, user_id = #{userId}
+			</if>
+
+			<if test="brdTitle != null and brdTitle != ''">
+				, brd_title = #{brdTitle}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				, json_txt = #{jsonTxt}
+			</if>
+
+			<if test="mdfyDat != null and mdfyDat != ''">
+				, mdfy_dat = #{mdfyDat}
+			</if>
+
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <select id="getNetwkOperatingRate" parameterType="HashMap" resultType="float">
+        SELECT (100-ROUND(100.*int_err.cnt/inf_total.cnt, 2))
+		FROM
+		(SELECT count(*) AS cnt FROM xeus.asset_status WHERE mgr_no LIKE 'INF%') AS int_err,
+		(SELECT count(*) AS cnt FROM xeus.asset_infra
+			<where>
+				<if test="useYn != null and useYn != ''">
+                	AND use_yn = #{useYn}
+            	</if>
+           	</where>
+		) AS inf_total
+
+    </select>
+
+    <select id="getEquipCnt" parameterType="HashMap" resultType="DashbdVo">
+        SELECT wifi.cnt AS wifi_cnt, lora.cnt AS lora_cnt, blackbox.cnt AS blackbox_cnt
+		FROM
+			(SELECT count(*) AS cnt FROM xeus.asset_infra WHERE facility_clscd LIKE 'WIFI%' AND use_yn = 'Y' ) AS wifi,
+			(SELECT count(*) AS cnt FROM xeus.asset_infra WHERE facility_clscd LIKE 'LORA%' AND use_yn = 'Y' ) AS lora,
+			(SELECT count(*) AS cnt FROM xeus.asset_blackbox) AS blackbox
+    </select>
+
+</mapper>

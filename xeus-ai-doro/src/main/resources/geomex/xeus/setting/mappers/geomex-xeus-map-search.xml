@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.map.service.SearchMapper">
+
+    <select id="getEmdList" resultType="EmdVo">
+        SELECT emd_cd, emd_kor_nm
+
+        FROM xeus.kais_emd_as
+
+        ORDER BY emd_kor_nm
+    </select>
+
+    <select id="getLiList" resultType="LiVo">
+        SELECT li_cd, li_kor_nm
+
+        FROM xeus.kais_li_as
+
+        ORDER BY li_kor_nm
+    </select>
+
+    <select id="getRnList" resultType="DoroVo">
+        SELECT DISTINCT rn, rn_cd
+
+        FROM xeus.kais_manage_ls
+
+        ORDER BY rn;
+    </select>
+
+
+    <select id="getAddrSearchJibun" parameterType="HashMap" resultType="JibunSearchVo">
+        SELECT DISTINCT
+			cbnd.pnu,
+			cbnd.jibun,
+			dr.doro,
+			dr.doro as bldgNo,
+			<if test="geomType != null and geomType == 'point'">
+				st_centroid(cbnd.geometry) as geometry,
+				st_x(st_transform(st_centroid(cbnd.geometry), 4326)) as lon,
+				st_y(st_transform(st_centroid(cbnd.geometry), 4326)) as lat
+            </if>
+			<if test="geomType != null and geomType == 'polygon'">
+				cbnd.geometry,
+				st_x(st_transform(st_centroid(cbnd.geometry), 4326)) as lon,
+				st_y(st_transform(st_centroid(cbnd.geometry), 4326)) as lat
+            </if>
+		FROM
+			(SELECT sig.sig_kor_nm || ' ' || emd.emd_kor_nm || ' ' || bd.rd_se_lbl as doro
+			, sig.sig_kor_nm || ' ' || emd.emd_kor_nm || ' ' || bd.ln_addr as addr
+			FROM xeus.v_kais_buld_as as bd
+			LEFT OUTER JOIN xeus.kais_sig_as sig on sig.sig_cd = bd.sig_cd
+			LEFT OUTER JOIN xeus.kais_emd_as emd on emd.emd_cd = sig.sig_cd || bd.emd_cd) as dr
+
+			LEFT JOIN (SELECT
+							cb.pnu,
+
+							CASE when li.li_kor_nm = '' then sig.sig_kor_nm || '' || emd.emd_kor_nm
+									 else sig.sig_kor_nm || ' ' || emd.emd_kor_nm END
+							|| ' ' ||
+							CASE WHEN substr(cb.pnu, 11, 1) = '2' THEN '산 ' ELSE '' END || ltrim(substr(cb.pnu,12,4),'0') ||
+							CASE WHEN ltrim(substr(cb.pnu, 16, 4), '0') = '' THEN '' ELSE '-' || ltrim(substr(cb.pnu, 16, 4), '0') END AS jibun,
+
+							cb._geometry as geometry
+
+							FROM xeus.kras_cbnd_as as cb
+
+							LEFT OUTER JOIN xeus.kais_sig_as sig on sig.sig_cd = substr(cb.pnu, 0, 6)
+							LEFT OUTER JOIN xeus.kais_emd_as emd on emd.emd_cd = substr(cb.pnu, 0, 9)
+							LEFT OUTER JOIN xeus.kais_li_as li on li.li_cd = substr(cb.pnu, 0, 11)
+			) as cbnd ON cbnd.jibun = dr.addr
+
+		<where>
+			<choose>
+				<when test="jibun != null and jibun != '' and doro != null and doro != ''">
+					AND jibun like '%'||#{jibun} or doro like '%'||#{doro}
+				</when>
+
+				<when test="jibun != null and jibun != '' and doro == ''">
+					AND jibun like '%'||#{jibun}
+				</when>
+
+				<when test="jibun == '' and doro != null and doro != ''">
+					AND doro like '%'||#{doro}
+				</when>
+
+				<when test="lon != null and lon != '' and lat != null and lat != ''">
+					AND st_intersects(cbnd.geometry, st_transform(st_setsrid(st_makepoint(#{lon}::numeric, #{lat}::numeric), 4326), 5186))
+				</when>
+			</choose>
+
+			<!-- <if test="jibun != null and jibun != ''">
+				AND jibun = #{jibun}
+			</if>
+
+			<if test="doro != null and doro != ''">
+				AND doro = #{doro}
+			</if> -->
+
+		</where>
+    </select>
+
+    <select id="getAddrSearchList" parameterType="HashMap" resultType="JibunSearchVo">
+        SELECT DISTINCT
+            CASE when li.li_kor_nm = '' then sig.sig_kor_nm || '' || emd.emd_kor_nm
+                 <!--
+                 180506 이은규 li가 없을경우 li를 표시하지 않음.
+                 else sig.sig_kor_nm || ' ' || emd.emd_kor_nm || ' ' || li.li_kor_nm END AS emd_name, -->
+                 else sig.sig_kor_nm || ' ' || emd.emd_kor_nm <if test="liChk != null and (liChk eq 'Y'.toString())">  || ' ' || li.li_kor_nm </if> END AS emd_name,
+            CASE WHEN substr(cb.pnu, 11, 1) = '2' THEN '산' ELSE '' END || ltrim(substr(cb.pnu,12,4),'0') ||
+            CASE WHEN ltrim(substr(cb.pnu, 16, 4), '0') = '' THEN '' ELSE '-' || ltrim(substr(cb.pnu, 16, 4), '0') END AS jibun,
+            CASE bd.buld_se_cd WHEN '0' THEN '' WHEN '1' THEN '지하 ' WHEN '2' then '공중 ' ELSE '' END || rd.rn || ' ' || bd.buld_mnnm ||
+            CASE WHEN bd.buld_slno = 0 THEN '' ELSE '-' || bd.buld_slno END AS bldg_no, cb.pnu
+
+            FROM xeus.kras_cbnd_as as cb
+
+            LEFT OUTER JOIN xeus.kais_sig_as sig on sig.sig_cd = substr(cb.pnu, 0, 6)
+            LEFT OUTER JOIN xeus.kais_emd_as emd on emd.emd_cd = substr(cb.pnu, 0, 9)
+            LEFT OUTER JOIN xeus.kais_li_as li on li.li_cd = substr(cb.pnu, 0, 11)
+            LEFT OUTER JOIN xeus.kais_buld_as bd ON bd.emd_cd = #{emdCd} AND bd.lnbr_mnnm = #{bon}::integer
+                <if test="bu != null and bu != ''">
+                    AND bd.lnbr_slno = #{bu}::integer
+                </if>
+                <if test="bu == null or bu == ''">
+                    AND bd.lnbr_slno = cast(substr(cb.pnu, 16, 4) as numeric)
+                </if>
+                    AND bd.mntn_yn = (CASE WHEN substr(cb.pnu, 11, 1) ='2' THEN '1' ELSE '0' END)
+            LEFT OUTER JOIN xeus.kais_manage_ls rd ON bd.rds_man_no = rd.rds_man_no and bd.rn_cd = rd.rn_cd
+
+            WHERE cb.pnu LIKE #{pnu} || '%' AND cast(substring(cb.pnu, 12, 4) as numeric) = #{bon}::integer
+                <if test="bu != null and bu != ''">
+                    AND cast(substring(cb.pnu, 16, 4) as numeric) = #{bu}::integer
+                </if>
+
+            ORDER BY cb.pnu
+    </select>
+
+    <select id="getNewAddrSearchList" parameterType="HashMap" resultType="DoroSearchVo">
+        SELECT DISTINCT
+            sig.sig_kor_nm||' '||emd.emd_kor_nm <if test="liChk != null and (liChk eq 'Y'.toString())"> ||' '|| li.li_kor_nm </if> ||' '|| ln_addr as ln_addr,
+            sig.sig_kor_nm||' '||emd.emd_kor_nm <if test="liChk != null and (liChk eq 'Y'.toString())"> ||' '|| li.li_kor_nm </if> ||' '||rd_se_lbl as rd_se_lbl,
+            <!--
+            180506 이은규 li가 없을경우 li를 표시하지 않음.
+            sig.sig_kor_nm||' '||emd.emd_kor_nm||' '||li.li_kor_nm||' '||ln_addr as ln_addr,
+            sig.sig_kor_nm||' '||emd.emd_kor_nm||' '||li.li_kor_nm||' '||rd_se_lbl as rd_se_lbl, -->
+            vbd._gid as gid, buld_mnnm, buld_slno
+
+            FROM xeus.v_kais_buld_as as vbd
+
+            LEFT OUTER JOIN xeus.kais_sig_as sig on sig.sig_cd = vbd.sig_cd
+            LEFT OUTER JOIN xeus.kais_emd_as emd on emd.emd_cd = vbd.sig_cd||vbd.emd_cd
+            LEFT OUTER JOIN xeus.kais_li_as li on li.li_cd = vbd.sig_cd||vbd.emd_cd||vbd.li_cd
+
+            WHERE
+                <if test="rnCd != null and rnCd != ''">
+                    rn_cd = #{rnCd}
+                </if>
+
+                <if test="bon != null and bon != ''">
+                    AND buld_mnnm = #{bon}::integer
+                </if>
+
+                <if test="bu != null and bu != ''">
+                    AND buld_slno = #{bu}::integer
+                </if>
+
+            ORDER BY buld_mnnm, buld_slno
+
+    </select>
+
+    <select id="getLocation" parameterType="HashMap" resultType="LocationVo">
+        SELECT st_x(st_centroid(_geometry)) || ',' || st_y(st_centroid(_geometry)) as center
+
+        <if test="key == 'pnu'">
+            FROM xeus.kras_cbnd_as
+        </if>
+
+        <if test="key == 'gid'">
+            FROM xeus.v_kais_buld_as
+        </if>
+
+        WHERE
+            <if test="key == 'pnu' and val != null and val != ''">
+                pnu = #{val}
+            </if>
+            <if test="key == 'gid' and val != null and val != ''">
+                _gid = #{val}::integer
+            </if>
+    </select>
+
+    <select id="getCenterName" parameterType="HashMap" resultType="String">
+
+        SELECT sig.sig_kor_nm || ' ' || emd.emd_kor_nm as addr
+
+        FROM xeus.kais_emd_as AS emd
+        LEFT OUTER JOIN xeus.kais_sig_as sig ON sig.sig_cd = substr(emd.emd_cd, 0, 6)
+
+        WHERE st_contains(emd._geometry, ST_SetSRID(ST_Point(#{posi1}::float8 , #{posi2}::float8),5186)) = 't'
+
+    </select>
+
+    <select id="getBuldSearchList" parameterType="HashMap" resultType="BuldVo">
+        SELECT bd.buld_nm AS buld_nm
+       		, st_x(st_centroid(bd._geometry)) AS annox
+       		, st_y(st_centroid(bd._geometry)) AS annoy
+
+    	FROM xeus.kais_buld_as AS bd
+		WHERE bd.buld_nm LIKE '%'||#{buldNm}||'%'
+		ORDER BY bd.buld_nm
+    </select>
+
+</mapper>

@@ -1,0 +1,136 @@
+/**
+ * <pre>
+ * 네이버 지도를 ol.layer.Tile 객체로(XYZ) 리턴합니다.
+ *
+ * !!! 네이버 자체 지도 API 유효화로 전환되었으므로 타일을 임의 사용 금지합니다. !!!
+ *
+ * @author 이주영
+ * </pre>
+ */
+var NaverMap = function(){
+
+	var _Projection = new ol.proj.get("EPSG:5179");
+	var _Origin = [ 90112, 1192896 ];
+	var _Resolutions = [ 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25 ];
+
+	this.createMapLayer = function(layerInfo){
+		//if(visible == null) visible = false;
+
+		return new ol.layer.Tile({
+			id		: "naver_map",
+			name	: layerInfo.lyrNm,
+			visible : layerInfo.visibleYn,
+			zIndex  : layerInfo.lyrZidx,
+			group	: layerInfo.grpNm,
+			schema  : "tms",
+			geomType: "T",
+			shotcut : "<img class='shotcut' style='width: 30px; height: 20px;' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAPCAYAAADzun+cAAADW0lEQVQ4T41US2/bRhicFd+k3k9aVeWkiI0YQYAAuaSn/IP+y557LlD00EMRFCiKIEETRLasyKpkWZZEyeJD4pIsdgWypBXE3YuE5e7ON9/MfOTNx58iPLBKvodaGKLUfsRPuus5nM0OpPgic1OQAUWvwLGWDz0J8n+Av9s6kPMFaMUa6NaFu7bgKk8h5tR7wCJUVYS99r4K7AXuw8Ade4NirQbFKPHHZsM+8s1nyOnNAwCjqMLzKIId/Srw7fJ6D0ypjyDyIRAJoigll1iLG4KEQuOI763GA8jVMw6akwtwnRWos0vO74E9BP9tHRSw8daglIJ8GPwWrbw5P8AKYIuB39fVXk6RE0SIzdeIAjt50LV3nCHTd+t5B+1PI9PQg7WyYH7TBbmzxpHnOxhan+AHW2x9B4qkg+laaHU4GNN1OZ2gfPpDAkoEA3JgYycYCHd3nOl8sYAoivBcB/WKecCWtbhab0FWlD1wFIRYexbG1iVCgeLYXkArNxIz2fMptPYrQNL4Y4qkYOtvMw+7tsOB600To8/nMBvdzHfWYraa5jH6vbcgVxfvI0a/1TIxnV5DxQC1vA6j0sroKhT2DBjTuNUKAAbP9lxvhtHlECdnL3HZe4dyqZy0nbl4s16h+/gMi/kY1PdBLs/f8RxXa21Mz39HWV4neWW6BjCgHb36Itj9Agb9PtfPWtzyInMQECLA5s5C0/yW7y1upzg+fgTyz7DHgZ3VBKXwKjMkfJdA7bzMMI0Zp9myAtj+ZHQB3Shgt/M4Q1XTud66VkDd7PAWswIkgYD89cevkUgoWvIsMySYrmrnNYiQQwySFu1LLbdmY1CiIF8oIaIhiJiDLBv82nh0wY1XKlZ5CjjjaPYmMyTivDJdY4D0L3Nz1lp7nVfLG6xXSzSPuhj2/wYNJbTbe2/ELY6nGpl9+jki9C4zJITKKSTjCNNxH6peRblWPWCdjlOSa9/F4GqCxyfP0fvwJ+q1JvRSnRfB/itqnk0LPmDIzdsfo3j4x2ZSas8wXy5RLDdwMxkir+ZQMU+4wWLANOM4Xt6W8ijFzmYuZuvm+jPXmpkqnmzEHv0SiYqWDAnZ/B6aoeP66hyiVuF6sceenD7N5DKtcTpmg957dJ/sDcmiE8coDc7a/S+eB/H0WeCEkwAAAABJRU5ErkJggg=='>",
+			source  : new ol.source.XYZ({
+				projection: _Projection,
+				tileUrlFunction: function (coordinate) {
+
+					var z = coordinate[0] + 1;
+	                var x = coordinate[1];
+	                var y = coordinate[2];
+
+					return _PROXY_TILE_DATA_URL_ + "https://map.pstatic.net/nrb/styles/basic/1603354476/" + z + "/" + x + "/" + y + ".png";
+				},
+				tileGrid: new ol.tilegrid.TileGrid({
+					origin: _Origin,
+					resolutions: _Resolutions
+				})
+			})
+		});
+	}
+
+	this.createTileLayer = function(layerInfo){
+		//if(visible == null) visible = false;
+
+		return new ol.layer.Tile({
+			id		: "naver_tile",
+			name	: layerInfo.lyrNm,
+			visible : layerInfo.visibleYn,
+			zIndex  : layerInfo.lyrZidx,
+			group	: layerInfo.grpNm,
+			schema  : "tms",
+			geomType: "T",
+			shotcut : "<img class='shotcut' style='width: 30px; height: 20px;' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAPCAYAAADzun+cAAAFGElEQVQ4TyWV2W8b1xnFf7PvHEri7lAiI1KKbCVuZLdOjaJ2HloUyFOf+temQBEUbR3DTWPECWq7jq2FpEhxETmcfaaYydvFBS4OzvnO77tC/+w0N+0KYRgSxhFxHOOHAZqmIcsi7XYb17FZr9csFzfkaYKiSEiSRBynZGmOqupESVbe5XnOerPCNHU+v39KEocYqsLHBz2OB8esZnNqu3WEzr1hniESRRGyqiDKEkEQoKoqkiSUwp1WE1WTWUynXF1doOsq/V6PqrvLxcUVP//8nihOcRyHlLx8t7e3S8XWkSUBkZxfP3hI1aowny1YL9cI3c8+yXNBKh0pqo7l2Gy3W/zIp763UyYhiwK9/j7ddpPr6zGT8RWWbnB29pAsg5ff/8BkNkNWlNJ1rb6H6zooqoC3XuN7Hk9//4T+RwekccY33/wdoXVymEuKRhCF6JqJZuisNmviOGTHdcmyiDgKaDUanBwP8be3vHv7higIGQyGDAfHvHr1E/979x5RkalUXe7cabPdblDUIskAVVFo1Ru0ai3ajU6ZktC+OygdFxGrik6SpWz8bTkjWZaxTbWck2VqdDvt8jydjCHLudPu4LpVnj9/gbcNaLZbuLsujVad6+sJmqbgbdfIooSEQJ6KPDz7DZbpIDz+6g+5ZliMJmPWtx6IAlGalKKqKpNmIVkUslN16HU/QhJzoq2HaRg0a00+fPjAf777nm6vT3d/nyDycaoV/HCLKMF4fMXmds3R0SckYcbpyWdMJzOEP/7lz6Xw67dvWMxXmLZFkmfEhbgokJOiCBlV16a2W8HUdaq2RbNRI9wEvH79lqvxiMHRMY5bYTqboRoacVJQsiVJEjzP4+xXD9BkDUlUefPfdwhHjz7PvY2PH4UYloluGiUaRXMVqWj4ppyxaag096o067USL11TSOOQ0dWExWKFu7OHKMukaYogipyPPtBo1ICM6XRaduT05D6bjY93GyCcPD7Lb2836LqOH4YYhoEoK4gipWDxUC8wIy+jazfq1Gs1sjzED25L1lfLLZJoIAoKm82Wg4ODEjtJzqjuVFBliaPBgH+/eEnFdtmt7CHce/wg9/xfIrEsh/l8hqIXy0NGIme5mNNuN/n03glZljG9HuNYFt1ehyRdl+hZ5g6SqLO+DUgSuLy8xHEsbEvFdQwWyxt+++gLnv3jGQf7h4xG4yLqT/MingL+WrPF+fl78iTFtAwMTSUIt6XL4eAQEYHJ9YjA2yArApKcopkGw8E9ZtMVf/36bxwN7+L7PpIsUK1YmKZaJnV4eMgPL1+hKiZ5BsKjr57m/sbjzn4X0zRZLOYs53Pqe7toukLVsXFsC0kERRQQyFje3HA1usByNfr9PmGQs1r5PHv2AlXRODjoc3p6l8VyjuetSuH9bg/P85EkhU77DsKDPz3Jix3sui6apparMw5DWo06ipRTcWxcS0dTZUhTotAnTaKyA5IilvglcdEHeP7td/hRzNMnX6LpKtVqBYSM8fWIfu+Qy8sRxb+gaTrC4Rf382K+Rf133CrL5QJbN7BNnXqtiqYo2IaCa5ul6816BWlCpVJhtVlRa9QxNJvzizFpknFzs8B23NJIu9PE3d1htV5SbMfVas3keoa3CRCGv3uYF1uoEDc0nelsgqEUxYLhoFfyaqoyWRKgShKSkBIGv5TxoNfj/cU53U4X3bQRRZkff/yJJE1pddoIgoBQfDphjG6ZDIfH/PNf3zIaT/k/DStOt6w4j94AAAAASUVORK5CYII='>",
+			source  : new ol.source.XYZ({
+				projection: _Projection,
+				tileUrlFunction: function (coordinate) {
+
+					var z = coordinate[0] + 1;
+	                var x = coordinate[1];
+	                var y = coordinate[2];
+
+					return _PROXY_TILE_DATA_URL_ + "https://map.pstatic.net/nrb/styles/satellite/1603354476/" + z + "/" + x + "/" + y + ".png";
+				},
+				tileGrid: new ol.tilegrid.TileGrid({
+					origin: _Origin,
+					resolutions: _Resolutions
+				})
+			})
+		});
+	}
+
+	this.createTerrainLayer = function(layerInfo){
+		//if(visible == null) visible = false;
+
+		return new ol.layer.Tile({
+			id		: "naver_terrain",
+			name	: layerInfo.lyrNm,
+			visible : layerInfo.visibleYn,
+			zIndex  : layerInfo.lyrZidx,
+			group	: layerInfo.grpNm,
+			schema  : "tms",
+			geomType: "T",
+			shotcut : "<img class='shotcut' style='width: 30px; height: 20px;' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAPCAYAAADzun+cAAABrklEQVQ4T52VS47CMAyGbaAgoKrKIbhAz86OI7BGiBX7Sn2AgPLO6LfkTqZKppmxhHg5/vzbjstFURhy2OPxoNPpRMYYer/fPzwGgwGNRiOK45jG47HruPO38/lM1+uVPp8PcRcM4O12o/v9Lg4A24bvzEzD4ZAWi4UkEGrP55OKohD3FgwIsgEUn/GyDTCYZMtMUA21aZr2cgG8XC5y9vV6fSvWsvqAgEAh1CKIWp9qG2hnBx4fDgfjK6sCVS0OI1ifah9Q4VDNu93OuMoKNQB3zacavgrsrT16vN1u2+nRoXEBNRj6CoAqd1XlT+CQAJPJhObzuQxIXdfyrlMeRZEMXahJqQH9TaUGg49OMcAYEr1y+A/wUOM8z83xeAz1F8VQ/l/VupDkHmNDIVCI+VTjrG40Vxy9qloh3u/3BiqapunlYrBms1nbFiRbVZWsVF+vu0DZWszE6/XaZFkme9mlWnuH5FyGXmMP6GpV1T5gC16tVma5XNJ0OpUA9iBhWHxAexl0VQNu73mddl21mBHebDYGWUN1WZZSxhCgrd5WbT9UFKhtwAMlSRLZ8V8gZXw7Aivn8gAAAABJRU5ErkJggg=='>",
+			source  : new ol.source.XYZ({
+				projection: _Projection,
+				tileUrlFunction: function (coordinate) {
+
+					var z = coordinate[0] + 1;
+	                var x = coordinate[1];
+	                var y = coordinate[2];
+
+					return _PROXY_TILE_DATA_URL_ + "https://map.pstatic.net/nrb/styles/terrain/1603354476/" + z + "/" + x + "/" + y + ".png";
+				},
+				tileGrid: new ol.tilegrid.TileGrid({
+					origin: _Origin,
+					resolutions: _Resolutions
+				})
+			})
+		});
+	}
+
+	this.createCbndLayer = function(layerInfo){
+		//if(visible == null) visible = false;
+
+		return new ol.layer.Tile({
+			id		: "naver_cbnd",
+			name	: layerInfo.lyrNm,
+			visible : layerInfo.visibleYn,
+			zIndex  : layerInfo.lyrZidx,
+			group	: layerInfo.grpNm,
+			schema  : "tms",
+			geomType: "T",
+			shotcut : "<img class='shotcut' style='width: 30px; height: 20px;' src='data:image/png;base64,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'>",
+			source  : new ol.source.XYZ({
+				projection: _Projection,
+				tileUrlFunction: function (coordinate) {
+
+					var z = coordinate[0] + 1;
+	                var x = coordinate[1];
+	                var y = coordinate[2];
+
+					return _PROXY_TILE_DATA_URL_ + "https://map.pstatic.net/nrb/styles/basic/1603354476/" + z + "/" + x + "/" + y + ".png";
+				},
+				tileGrid: new ol.tilegrid.TileGrid({
+					origin: _Origin,
+					resolutions: _Resolutions
+				})
+			})
+		});
+	}
+
+}

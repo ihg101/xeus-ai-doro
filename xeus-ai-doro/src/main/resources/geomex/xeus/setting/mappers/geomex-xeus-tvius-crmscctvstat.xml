@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsCctvStatMapper">
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+        FROM xeus.crms_cctv_stat
+        <where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND cctv_mgr_no = #{cctvMgrNo}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND reqst_dat = #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND reqst_dat = #{endDat}
+            </if>
+
+            <if test="statData != null and statData != ''">
+                AND stat_data = #{statData}
+            </if>
+
+            <if test="validYn != null and validYn != ''">
+                AND valid_yn = #{validYn}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsCctvStatVo">
+        SELECT mgr_seq, cctv_mgr_no, start_dat, end_dat, stat_data, valid_yn
+
+        FROM xeus.crms_cctv_stat AS stat
+
+        <where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND stat.mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND stat.cctv_mgr_no = #{cctvMgrNo}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND stat.reqst_dat = #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND stat.reqst_dat = #{endDat}
+            </if>
+
+            <if test="statData != null and statData != ''">
+                AND stat.stat_data = #{statData}
+            </if>
+
+            <if test="validYn != null and validYn != ''">
+                AND stat.valid_yn = #{validYn}
+            </if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                stat.mgr_seq ASC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <!-- 혹시나 엑셀 쓰게되면 getXls를 getList로 대체함. -->
+    <!-- getItem도 getList로 대체함. -->
+
+    <insert id="add" parameterType="CrmsCctvStatVo">
+        INSERT INTO xeus.crms_cctv_stat ( mgr_seq, cctv_mgr_no, start_dat, end_dat, valid_yn )
+        VALUES ( #{mgrSeq}::numeric, #{cctvMgrNo}, #{startDat}, #{endDat}, #{validYn} )
+    </insert>
+
+
+    <update id="update" parameterType="CrmsCctvStatVo">
+        UPDATE xeus.crms_cctv_stat
+        SET
+            cctv_mgr_no = #{cctvMgrNo}
+            , start_dat = #{startDat}
+            , end_dat = #{endDat}
+            , stat_data = #{statData}
+            , valid_yn = #{validYn}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.crms_cctv_stat WHERE ${mgrSeq}::numeric
+    </delete>
+
+</mapper>

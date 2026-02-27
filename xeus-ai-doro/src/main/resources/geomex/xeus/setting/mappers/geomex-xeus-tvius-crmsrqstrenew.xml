@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsRqstRenewMapper">
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+
+        FROM xeus.crms_rqst_renew AS tt
+        LEFT JOIN xeus.mt_cmm_cde AS renew_typ_rel      ON renew_typ_rel.grp_cde = 'C56'
+                                                            AND renew_typ_rel.cde_cde = tt.renew_typ
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS acpt_user_id_rel  ON acpt_user_id_rel.user_id = tt.acpt_user_id
+        LEFT JOIN xeus.crms_trans_rqst AS rqst          ON rqst.mgr_seq = tt.rqst_mgr_seq
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS rqst_reqst_id_rel ON rqst_reqst_id_rel.user_id = rqst.reqst_id
+        LEFT JOIN xeus.mt_cmm_cde AS rqst_crime_typ_rel ON rqst_crime_typ_rel.grp_cde = 'C51'
+                                                            AND rqst_crime_typ_rel.cde_cde = rqst.crime_typ
+        LEFT JOIN xeus.crms_trans_avi AS avi            ON avi.mgr_seq = tt.avi_mgr_seq
+                                                            AND avi.rqst_mgr_seq = tt.rqst_mgr_seq
+        LEFT JOIN xeus.crms_trans_work AS work          ON work.file_seq = tt.file_seq
+                                                            AND work.avi_mgr_seq = tt.avi_mgr_seq
+                                                            AND work.rqst_mgr_seq = tt.rqst_mgr_seq
+        LEFT JOIN xeus.asset_cctv AS cctv_no_rel        ON cctv_no_rel.mgr_no = avi.cctv_mgr_no
+
+        <where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND tt.mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND tt.rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="aviMgrSeq != null and aviMgrSeq != ''">
+                AND tt.avi_mgr_seq = #{aviMgrSeq}::numeric
+            </if>
+
+            <if test="fileSeq != null and fileSeq != ''">
+                AND tt.file_seq = #{fileSeq}::numeric
+            </if>
+
+            <if test="renewTyp != null and renewTyp != ''">
+                AND tt.renew_typ = #{renewTyp}
+            </if>
+
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND rqst_reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="crimeTyp != null and crimeTyp != ''">
+                AND rqst.crime_typ = #{crimeTyp}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND tt.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND tt.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <if test="(acptYn eq 'null'.toString())">
+                AND tt.acpt_yn is null
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsRqstRenewVo">
+        SELECT tt.mgr_seq, tt.avi_mgr_seq, tt.rqst_mgr_seq, tt.file_seq, tt.renew_typ, tt.reqst_dat, tt.reqst_resn, tt.acpt_dat, tt.acpt_user_id, tt.acpt_yn, tt.rejt_resn
+            , tt.play_limit_cnt, tt.play_limit_dat
+            , renew_typ_rel.cde_nm AS renew_typ_rel_cde_nm, acpt_user_id_rel.user_nm AS acpt_user_id_rel_user_nm
+            , rqst.reqst_id AS rqst_reqst_id, rqst_reqst_id_rel.user_nm AS rqst_reqst_id_rel_cde_nm, rqst.crime_typ AS rqst_crime_typ, rqst_crime_typ_rel.cde_nm AS rqst_crime_typ_rel_cde_nm
+            , avi.cctv_mgr_no AS avi_cctv_mgr_no, avi.play_limit_cnt AS avi_play_limit_cnt, avi.play_limit_dat AS avi_play_limit_dat
+            , work.file_nm AS work_file_nm
+            , cctv_no_rel.cctv_nm AS cctv_no_rel_label
+            <!-- 190826 이은규, 오프라인반출 구분을 위해 rqst테이블의 req_gbn_cd 추가 -->
+            , rqst.req_gbn_cd
+
+        FROM xeus.crms_rqst_renew AS tt
+        LEFT JOIN xeus.mt_cmm_cde AS renew_typ_rel      ON renew_typ_rel.grp_cde = 'C56'
+                                                            AND renew_typ_rel.cde_cde = tt.renew_typ
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS acpt_user_id_rel  ON acpt_user_id_rel.user_id = tt.acpt_user_id
+        LEFT JOIN xeus.crms_trans_rqst AS rqst          ON rqst.mgr_seq = tt.rqst_mgr_seq
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS rqst_reqst_id_rel ON rqst_reqst_id_rel.user_id = rqst.reqst_id
+        LEFT JOIN xeus.mt_cmm_cde AS rqst_crime_typ_rel ON rqst_crime_typ_rel.grp_cde = 'C51'
+                                                            AND rqst_crime_typ_rel.cde_cde = rqst.crime_typ
+        LEFT JOIN xeus.crms_trans_avi AS avi            ON avi.mgr_seq = tt.avi_mgr_seq
+                                                            AND avi.rqst_mgr_seq = tt.rqst_mgr_seq
+        LEFT JOIN xeus.crms_trans_work AS work          ON work.file_seq = tt.file_seq
+                                                            AND work.avi_mgr_seq = tt.avi_mgr_seq
+                                                            AND work.rqst_mgr_seq = tt.rqst_mgr_seq
+        LEFT JOIN xeus.asset_cctv AS cctv_no_rel        ON cctv_no_rel.mgr_no = avi.cctv_mgr_no
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND tt.mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND tt.rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="aviMgrSeq != null and aviMgrSeq != ''">
+                AND tt.avi_mgr_seq = #{aviMgrSeq}::numeric
+            </if>
+
+            <if test="fileSeq != null and fileSeq != ''">
+                AND tt.file_seq = #{fileSeq}::numeric
+            </if>
+
+            <if test="renewTyp != null and renewTyp != ''">
+                AND tt.renew_typ = #{renewTyp}
+            </if>
+
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND rqst_reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="crimeTyp != null and crimeTyp != ''">
+                AND rqst.crime_typ = #{crimeTyp}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND tt.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND tt.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <if test="(acptYn eq 'null'.toString())">
+                AND tt.acpt_yn is null
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                tt.mgr_seq DESC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <!-- getMngList 안쓰이는거 같음. -->
+
+    <!-- getXls는 getList로 대체 -->
+
+    <select id="getItem" parameterType="HashMap" resultType="CrmsRqstRenewVo">
+        SELECT mgr_seq, avi_mgr_seq, rqst_mgr_seq, file_seq, renew_typ, reqst_dat, reqst_resn, acpt_dat, acpt_user_id, acpt_yn, rejt_resn, play_limit_cnt, play_limit_dat
+        FROM xeus.crms_rqst_renew
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}
+            </if>
+
+        </where>
+    </select>
+
+    <insert id="add" parameterType="CrmsRqstRenewVo">
+        INSERT INTO xeus.crms_rqst_renew ( mgr_seq, avi_mgr_seq, rqst_mgr_seq, file_seq, renew_typ, reqst_dat, reqst_resn, acpt_dat, acpt_user_id, acpt_yn, rejt_resn, play_limit_cnt, play_limit_dat )
+        VALUES ( (SELECT (COALESCE(max(mgr_seq), 0)+1) AS mgr_seq FROM xeus.crms_rqst_renew)
+        , #{aviMgrSeq}::numeric, #{rqstMgrSeq}::numeric, #{fileSeq}::numeric, #{renewTyp}, #{reqstDat}, #{reqstResn}, #{acptDat}, #{acptUserId}, #{acptYn}, #{rejtResn}, #{playLimitCnt}::numeric, #{playLimitDat} )
+    </insert>
+
+    <!-- 승인용 -->
+    <update id="updateAcpt" parameterType="HashMap">
+        UPDATE xeus.crms_rqst_renew
+        SET
+            <!-- renew_typ = #{renewTyp}
+            , reqst_dat = #{reqstDat}
+            , reqst_resn = #{reqstResn}
+            ,   굳이 바꿔줄 필요성을 못느껴서 주석처리함.-->
+            acpt_dat = #{acptDat}
+            , acpt_user_id = #{acptUserId}
+            , acpt_yn = #{acptYn}
+            <!-- , rejt_resn = #{rejtResn} -->
+            , play_limit_cnt = #{playLimitCnt}::numeric
+            , play_limit_dat = #{playLimitDat}
+        WHERE mgr_seq = #{mgrSeq}::numeric;
+
+        UPDATE xeus.crms_trans_rqst
+        SET
+            proc_stat_cd = 'SN'
+        WHERE mgr_seq = #{rqstMgrSeq}::numeric;
+
+        UPDATE xeus.crms_trans_work
+        SET
+            reenc_yn = 'Y',
+            down_cnt = 0
+        WHERE avi_mgr_seq = #{aviMgrSeq}::numeric
+            AND rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            AND file_seq = #{fileSeq}::numeric;
+
+    </update>
+
+    <!-- 거절용 -->
+    <update id="updateRejt" parameterType="HashMap">
+        UPDATE xeus.crms_rqst_renew
+        SET
+            acpt_dat = #{acptDat}
+            , acpt_user_id = #{acptUserId}
+            , acpt_yn = #{acptYn}
+            , rejt_resn = #{rejtResn}
+        WHERE mgr_seq = #{mgrSeq}::numeric;
+
+    </update>
+
+    <delete id="del" parameterType="hashMap">
+        DELETE FROM xeus.crms_rqst_renew WHERE ${mgrSeq}::numeric
+    </delete>
+
+    <select id="getStatCount" resultType="HashMap" parameterType="HashMap">
+        SELECT (CASE WHEN char_length(tt.acpt_yn) > 0 THEN tt.acpt_yn ELSE 'NON' END) AS acpt_yn, COUNT(*) AS cnt
+        FROM xeus.crms_rqst_renew AS tt
+            LEFT JOIN xeus.crms_trans_rqst AS rqst ON rqst.mgr_seq = tt.rqst_mgr_seq
+        <where>
+
+            <if test="renewTyp != null and renewTyp != ''">
+                AND renew_typ = #{renewTyp}
+            </if>
+
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+        GROUP BY tt.acpt_yn
+    </select>
+
+</mapper>

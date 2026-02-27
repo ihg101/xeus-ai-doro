@@ -1,0 +1,208 @@
+@CHARSET "UTF-8";
+
+/* Default Style */
+@font-face { font-family: 'Nanum'; src: url('./font/NanumGothic.woff') format('woff'); font-weight: normal; font-style: normal; }
+html, body { width: 100%; height: 100%; padding: 0px; margin: 0px; overflow: hidden;}
+* { font-family: 'Nanum'; }
+button, input[type="button"] {border: none; outline: 0; cursor: pointer; transition: 0.3s; background-repeat: no-repeat; background-position: center;}
+div, span, iframe, h1, h2, h3, h4, h5, h6, p, a, img, ol, ul, li, header, nav, section, footer { margin: 0; padding: 0; border: 0;}
+
+/* Common Selector */
+.pointer { cursor: pointer; }
+.default { cursor: default; }
+.tLeft { text-align: left; }
+.tCenter { text-align: center; }
+.tRight { text-align: Right; }
+.hidden { display: none !important; }
+.bold { text-align: bold; }
+.sText { display: inline-block; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 99%; padding-top: 3px; }
+.hiddenScroll::-webkit-scrollbar { width: 0px; background: transparent; }
+
+/* OpenLayers Custom CSS */
+.mainControl > button { width: 3.375em; }
+.ol-notification > div { z-index: 9; }
+
+/* GIS Manage */
+#rootWrap { position: relative; width: 100%; height: 100%;}
+#header { position: relative; width: 100%; height: 100px; border-bottom: 1px solid #ccc;}
+#body { position: relative; width: 100%; height: calc(100% - 100px); }
+#map { position: relative; width: 100%; height: 100%; }
+
+/* Legend */
+.legend { width: 100%; margin-bottom: 20px; border-collapse: collapse; }
+.legendTheme { width: 100%; margin-left: 17px; border-collapse: collapse; }
+.layer:hover { background: #ECECEC; }
+.layerGroupToggle {}
+.layerGroupToggle:hover { }
+.legend .shotcut { vertical-align: middle; }
+
+/* Style Setting */
+#styleWrap table { position: relative; width: 100%; height: 100%; }
+#styleWrap table select, input[type=text], input[type=color] { width: 100%; }
+/*#styleWrap #themaTab #themaCalcListWrap { max-height: 300px; overflow: auto; }*/
+
+/* Layer Info */
+#layerInfoWrap table { position: relative; width: 100%; height: 100%; }
+#layerInfoWrap > div {height: calc(100% - 0.6em);}
+
+/* Feature Info */
+#featureInfoWrap table { position: relative; width: 100%; height: 100%; }
+#featureInfoWrap table input { width: 100%; }
+
+
+/* 상단 메인 탭 메뉴 */
+#mainTabs {border-radius: 0; padding: 0; border: 0;}
+.top_box {display: flex; justify-content: space-between; height: 50px; background-color: #f1f1f1; border-bottom: 1px solid #ccc; box-sizing: border-box; padding: 0 15px;}
+.top_box .ci {font-size: 22px; margin: 0; padding: 12px; text-align: center; }
+ul.tab_wrap {border: none; border-radius: 0; background-color: #f1f1f1; padding-top: 14px !important;}
+ul.tab_wrap > li {border-radius: 0; margin: 0 !important; border: 1px solid transparent !important; border-bottom: 1px solid #ccc !important; background-color: #f1f1f1 !important; font-size: 12px; font-weight: bold; outline: 0;}
+ul.tab_wrap > li > a {padding: 0.8em 2em !important; outline: 0; font-weight: bold; transition: color 0.3s;}
+ul.tab_wrap > li:not(.ci):hover > a {border-bottom: 0 !important; color: #007fff;}
+ul.tab_wrap > li.ui-tabs-active {border: 1px solid #ccc !important; background-color: #fff !important; border-bottom: 0 !important; background-color: #f1f1f1; margin: 0;}
+ul.tab_wrap > li.ui-tabs-active > a {color: #333;}
+#mainTabs .tab_style {height: 50px; box-sizing: border-box; padding: 5px 15px !important; background-color: #fff; text-align: right;}
+#mainTabs .tab_style > button {font-size: 12px; border-radius: 0; font-weight: bold; background-color: #fff; padding: 10px; border-bottom: 1px solid transparent; position: relative;}
+#mainTabs .tab_style > button:hover {color: #aaa;}
+#mainTabs .tab_style > button:after {content: ""; display: block; width: 1px; height: 10px; background-color: #ccc; position: absolute; top: 12px; right: -2px;}
+#mainTabs .tab_style > button:last-child:after {display: none;}
+.menu_wrap {display: flex;}
+.menu_wrap > div {flex: auto;}
+.menu_wrap .user_info {flex: 0 0 auto; display: flex; justify-content: flex-start; align-items: center; font-size: 12px; margin-left: 30px;}
+.menu_wrap .user_info .user_nm {font-size: 12px; margin-right: 15px;}
+
+#gisEditTab {text-align: right; height: 50px; line-height: 50px; box-sizing: border-box; padding: 0px 15px !important;}
+#gisEditTab > h2 {display: inline-block; font-size: 14px;}
+#gisEditTab > select {font-size: 12px; padding: 5px 0;}
+#gisEditTab .editBtn {border: 1px solid #ddd; border-radius: 2px; padding: 5px 10px; font-size: 12px; background-color: #007fff; color: #fff;}
+#gisEditTab .editBtn:disabled {background-color: #eee; color: #333;}
+
+.search_box {position: absolute; top: 5px; right: -250px; display: flex;}
+.search_box > input[type="search"] {width: 200px; height: 30px; border-radius: 15px; border: 1px solid #ccc; outline: 0; box-sizing: border-box; padding: 5px 10px; font-size: 12px; transition: 0.3s;}
+.search_box .btn_search {display: inline-block; width: 30px; height: 30px; background-color: #0077ff; border-radius: 50%; vertical-align: top; margin-left: 5px; background-image: url(../../img/icon_search.png);}
+
+.legend .ui-icon.ui-icon-arrowthick-1-n.zIdxUp, .legend .ui-icon.ui-icon-arrowthick-1-s.zIdxDown {background-image: url(../../img/icon_up_arrow.png); background-position: 0 0; width: 12px;}
+.legend .ui-icon.ui-icon-arrowthick-1-s.zIdxDown {transform: rotate(180deg);}
+
+/* 스크롤 디자인 변경 */
+.customScroll::-webkit-scrollbar {width: 15px;}
+.customScroll::-webkit-scrollbar-thumb {border: 5px solid rgba(0, 0, 0, 0); background-clip: padding-box; -webkit-border-radius: 24px; background-color: #dbdbdb; -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);}
+.customScroll::-webkit-scrollbar-button {width: 0; height: 0; display: none;}
+.customScroll::-webkit-scrollbar-corner {background-color: transparent;}
+.customScroll::-webkit-scrollbar-track {border: 5px solid rgba(0, 0, 0, 0); background-clip: padding-box; -webkit-border-radius: 24px; background-color: #fafafa;}
+
+
+/* 팝업 상단(제목, 닫기) */
+.ui-dialog {padding: 0; border-radius: 0;}
+.ui-dialog-titlebar {border-radius: 0; background-color: #fafafa; padding: .7em 1em !important;}
+.ui-dialog .ui-dialog-titlebar-close {width: 50px; height: 100%; background-image: url(../../img/btn_close.png); background-size: 50%; background-color: #fafafa; background-repeat: no-repeat; background-position: center; top: 0; right: 0; margin: 0; padding: 0; border-radius: 0; border: 0;}
+.ui-dialog .ui-dialog-titlebar-close > span {display: none;}
+.ui-dialog .ui-dialog-titlebar-close:hover {background-color: #ddd;}
+.ui-widget-header {border: 0; border-bottom: 1px solid #ccc;}
+
+
+/* 팝업 세부 */
+#legendWrap .layerGroupToggle .layerT {text-align: left; width: 100%; padding: 10px 0; display: flex; flex-flow: nowrap; align-items: center;}
+#legendWrap .layerGroupToggle .layerT:before {content: ""; display: inline-block; width: 15px; height: 15px;  background-image: url(../../img/icon_down_arrow.png); background-size: contain; margin-right: 10px; transform: rotate(0deg); transition: transform 0.3s;}
+/*#legendWrap .layerGroupToggle .layerT:after {content: ""; display: inline-block; flex: auto; height: 1px; background-color: #ccc; vertical-align: middle; margin-left: 10px;}*/
+#legendWrap .layerGroupToggle .layerT.active:before {transform: rotate(-180deg);}
+#legendWrap .legend .layer .edit {font-size: 12px; background-color: #fff; border-radius: 0; border: 1px solid #ccc; padding: 4px 10px;}
+#legendWrap .legend .layer .thmToggle {font-size: 12px; background-color: #fff; border-radius: 0; border: 1px solid #ccc; padding: 5px 10px; margin-right: 3px; vertical-align: middle;}
+#legendWrap .legend .layer .thmToggle:after {content: ""; display: block; width: 12px; height: 12px; background-image: url(../../img/icon_down_arrow.png); background-size: contain; transition: 0.3s;}
+#legendWrap .legend .layer .thmToggle.active:after {transform: rotate(-180deg);}
+#styleTabs {padding: 0 !important; border: none;}
+#styleTabs .styleTab {max-height: 600px; overflow-y: auto;}
+#styleTabs .tab_wrap {display: flex; flex-flow: nowrap; width: 100%; padding: 0 !important; background: initial !important;}
+#styleTabs .tab_wrap > li {flex: 1 1 25%; background: initial !important; border-bottom: 1px solid #ccc !important; margin: 0; padding: 0; outline: 0;}
+#styleTabs .tab_wrap > li.ui-tabs-active { border-bottom: 1px solid transparent !important;}
+#styleTabs .tab_wrap > li > a {display: block; width: 100%; height: 30px; text-align: center; line-height: 30px; padding: 0 !important; outline: 0;}
+
+#uploadExcelWrap > .exl_wrap {display: flex; justify-content: center; align-items: center; height: 98%; width: 100%; flex: auto; border: 3px dashed #ddd; background-color: #f1f1f1; background-image: url(../../img/ex_bg.png); background-size: cover;}
+#uploadExcelWrap > .exl_wrap #coordinateTypeSelect {border: 1px solid #ddd; padding: 5px 10px;}
+#uploadExcelWrap > .exl_wrap #uploadExcelBtn {}
+
+/*.topFixBox {box-sizing: border-box; padding-top: 45px; max-height: 400px; position: relative; margin: 10px 0; overflow: hidden;}*/
+/*.table_style {height: 100%; max-height: 625px; overflow-y: auto;}*/
+/*#themaCalcListWrap table {position: static; margin: 0;}
+#themaCalcListWrap table thead {background-color: #ddd; font-size: 13px; display: inline-table; width: 100%; table-layout: fixed; position: absolute; top: 0; left: 0;}*/
+
+
+/* 공통 테이블 스타일 */
+.table_style {padding: 0 !important;}
+.table_style table {width: 100%; table-layout: fixed; border-collapse: collapse; margin: 10px 0; border-top: 1px solid #ccc; font-size: 12px;}
+.table_style table th {background-color: #f1f1f1;border-bottom: 1px solid #ccc; text-align: center !important; padding: 15px 0;}
+.table_style table td {border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; box-sizing: border-box; padding: 10px; word-break: break-word; text-align: center;}
+.table_style table td:last-child {border-right: 0;}
+.table_style table td select {border: 1px solid #bbb; width: 95%;}
+.table_style table td input {border: 1px solid #bbb; width: 95%;}
+.table_style table td input[type="checkbox"] {width: auto; vertical-align: sub;}
+.table_style table td button {display: inline-block; vertical-align: middle;}
+.btn_style {width: 100%; height: 40px; background-color: #007fff; color: #fff;}
+.btn_style:hover {background-color: #0375e8;}
+.btn_style2 {padding: 5px 10px; background-color: #007fff; color: #fff; margin: 0 5px; border-radius: 2px; font-size: 12px;}
+.btn_style2:hover {background-color: #0375e8;}
+.btn_Dstyle {border: 1px solid #ccc !important; border-radius: 2px !important; padding: 5px 10px !important; font-size: 12px !important; box-shadow: none !important;}
+.box {display: flex; flex-flow: nowrap; justify-content: space-between;}
+
+/* 지도 위 버튼 */
+.ol-control.mainBar > .ol-bar {background-color: #fff; border: 1px solid #ccc; border-radius: 2px; padding: 0; box-shadow: 0px 0px 5px -3px rgba(0,0,0,0.6);}
+.ol-control.mainBar:hover {background-color: #fff;}
+#map .mainControl {position: relative; border-radius: 0;}
+#map .mainControl > button {position: relative; background-color: #fff; font-size: 14px; color: #333; font-weight: 100; width: 50px; height: 35px; padding: 0; border-radius: 0; border: 1px solid transparent; transition: 0.3s; cursor: pointer; display: flex; justify-content: center; align-items: center;}
+#map .mainControl > button:hover:after {content: attr(title); display: block; width: 50px; height: 30px; line-height: 30px; color: #fff; font-size: 12px; border-radius: 3px; background-color: rgba(0,0,0,0.4); position: absolute; left: 0; bottom: -40px;}
+#map .mainControl > button:hover:before {content: ""; display: block; border: 5px solid transparent; border-bottom: 5px solid rgba(0,0,0,0.4); position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%);}
+#map .mainControl > button > span {display: inline-block; width: 16px; height: 16px; line-height: 16px; font-size: 15px; border-radius: 2px;}
+#map .mainControl > button:hover, #map .mainControl > button.active {background-color: #ddd;}
+/* #map .mainControl > button > span.legendB {background-image: url(../../img/icon_legend.png);} */
+#map .mainControl > button > span.home {background-image: url(../../img/icon_home.png);}
+/* #map .mainControl > button > span.clear {background-image: url(../../img/icon_clear.png);} */
+#map .mainControl > button > span.move {background-image: url(../../img/icon_move.png);}
+#map .mainControl > button > span.length {background-image: url(../../img/icon_length.png);}
+#map .mainControl > button > span.area {background-image: url(../../img/icon_area.png);}
+#map .mainControl > button > span.export {background-image: url(../../img/icon_save.png);}
+#map .mainControl > button > span.sketch {background-image: url(../../img/icon_sketch.png);}
+#map .mainControl > button > span.roadview {background-image: url(../../img/icon_roadview.png);}
+
+
+
+/* ol css 수정 */
+.layerName, .layerThemeValue {font-size: 12px;}
+/* #map .ol-control {background-color: initial;} */
+/* #map .ol-control:hover {background-color: initial;} */
+#map .ol-control > button {background-color: #fff; color: #333; margin: 0; padding: 2px 5px;}
+.ol-control-right.ol-overview.ol-collapsed button:before, .ol-control.ol-bookmark > button::before {display: none;}
+#map .ol-control.bottom_btn > button:hover {background-color: #007fff; color: #fff;}
+#map .ol-control.ol-active.bottom_btn > button {background-color: #007fff; color: #fff;}
+#map .ol-zoom, #map .ol-bookmark {left: initial !important; right: 8px; background-color: initial; box-shadow: 0px 0px 5px 2px rgba(0,0,0,.3);}
+#map .ol-searchgps  {left: initial !important; right: 8px; background-color: initial;}
+#map .ol-zoom > button, .ol-bookmark > button, .ol-searchgps > button {width: 30px; height: 30px;}
+#map .ol-zoom button:hover, .ol-bookmark button:hover, .ol-searchgps button:hover {background-color: #007fff; color: #fff;}
+#map .ol-zoom:hover {background-color: initial;}
+#map .ol-overview button {width: 35px; height: 35px; background-image:url(../../img/icon_map.png); box-shadow: 0px 0px 5px 2px rgba(0,0,0,.3);}
+#map .ol-overview button:hover {background-image:url(../../img/icon_map_over.png); background-color: #007fff;}
+#map .ol-bookmark {top: 75px !important;}
+#map .ol-bookmark > div {position: absolute; top: 0; left: -255px; z-index: 9; width: 245px; background-color: #fff; box-sizing: border-box; padding: 10px; border-radius: 2px;}
+#map .ol-bookmark > div input {width: 100%; border: 1px solid #ddd; padding: 5px 0px; font-size: 12px;}
+#map .ol-bookmark > button {background-image:url(../../img/icon_star.png);}
+#map .ol-bookmark >  button:hover {background-image:url(../../img/icon_star_over.png); background-color: #007fff;}
+#map .ol-bookmark ul {margin-bottom: 5px;}
+#map .ol-bookmark ul li {padding: 5px; height: 30px; line-height: 30px;}
+#map .ol-control.ol-bookmark li:hover {background-color: #fff; color: #0077ff;}
+#map .ol-control.ol-bookmark > div button {color: #333;}
+#map .ol-control.ol-bookmark > div button:hover {color: #fff; background-color: #0077ff;}
+#map .ol-control.ol-bookmark > div button:before {display: none;}
+#map .ol-searchgps.ol-search {top: 110px !important; display: flex; flex-direction: column;}
+#map .ol-searchgps.ol-search ul li {padding: 0.5em 0.5em;}
+#map .ol-searchgps.ol-search > div, .ol-searchgps.ol-search > label {background-color: #fff; margin: 0 !important; padding: 10px;}
+#map .ol-searchgps.ol-search > label {text-align: right; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom: 1px solid #ccc; background-color: #fafafa;}
+#map .ol-searchgps.ol-search .ol-longitude label, .ol-searchgps.ol-search .ol-latitude label  {width: auto !important; margin: 0 5px 0 0 !important; transform: none !important;}
+#map .ol-searchgps.ol-search .ol-latitude {border-bottom-left-radius: 2px; border-bottom-right-radius: 2px;}
+#map .ol-searchgps.ol-search input {border: 1px solid #ddd;}
+#map .ol-searchgps.ol-search button {background-image:url(../../img/icon_tude.png);  margin-bottom: 10px; box-shadow: 0px 0px 5px 2px rgba(0,0,0,.3);}
+#map .ol-control.ol-searchgps > button:first-child {background-image:url(../../img/icon_tude.png); margin-left: auto;}
+#map .ol-searchgps.ol-search  button:hover {background-image:url(../../img/icon_tude_over.png); background-color: #007fff;}
+#map .ol-control.ol-searchgps > button:first-child:before {display: none;}
+#map .ol-control-right.ol-overview button:before {display: none;}
+#map .ol-control.ol-overview .panel {margin: 38px;}
+
+#map .ol-control.ol-bar .ol-toggle.ol-active > button {background-color: #007fff;}
+#map .ol-control.ol-toggle button:disabled {background-color: #ccc; color: #666;}

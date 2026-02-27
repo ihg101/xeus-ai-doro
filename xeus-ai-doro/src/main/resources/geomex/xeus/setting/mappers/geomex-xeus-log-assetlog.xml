@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.log.service.AssetLogMapper">
+    <select id="getList" parameterType="HashMap" resultType="AssetLogVo">
+        SELECT mgr_seq, worker_id, asset_mgr_no, work_dat, work_gbn
+
+        FROM xeus.mt_asset_log
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND worker_id LIKE '%'||#{workerId}||'%'
+            </if>
+
+            <if test="assetMgrNo != null and assetMgrNo != ''">
+                AND asset_mgr_no = #{assetMgrNo}
+            </if>
+
+            <if test="workDat != null and workDat != ''">
+                AND work_dat = #{workDat}
+            </if>
+
+            <if test="workGbn != null and workGbn != ''">
+                AND work_gbn LIKE '%'||#{workGbn}||'%'
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND work_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND work_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                mgr_seq DESC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="AssetLogVo">
+        SELECT mgr_seq, worker_id, asset_mgr_no, work_dat, work_gbn
+
+        FROM xeus.mt_asset_log
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND worker_id = #{workerId}
+            </if>
+
+            <if test="assetMgrNo != null and assetMgrNo != ''">
+                AND asset_mgr_no = #{assetMgrNo}
+            </if>
+
+            <if test="workDat != null and workDat != ''">
+                AND work_dat = #{workDat}
+            </if>
+
+            <if test="workGbn != null and workGbn != ''">
+                AND work_gbn = #{workGbn}
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.mt_asset_log
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND worker_id LIKE '%'||#{workerId}||'%'
+            </if>
+
+            <if test="assetMgrNo != null and assetMgrNo != ''">
+                AND asset_mgr_no = #{assetMgrNo}
+            </if>
+
+            <if test="workDat != null and workDat != ''">
+                AND work_dat = #{workDat}
+            </if>
+
+            <if test="workGbn != null and workGbn != ''">
+                AND work_gbn LIKE '%'||#{workGbn}||'%'
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND work_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND work_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+        </where>
+    </select>
+
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.mt_asset_log WHERE mgr_seq = #{mgrSeq}::integer
+    </delete>
+
+
+    <insert id="add" parameterType="AssetLogVo">
+        INSERT INTO xeus.mt_asset_log(
+            worker_id, asset_mgr_no, work_dat, work_gbn
+        ) VALUES (
+            #{workerId}, #{assetMgrNo}, #{workDat}, #{workGbn}
+        );
+    </insert>
+
+
+    <update id="edit" parameterType="AssetLogVo">
+        UPDATE xeus.mt_asset_log SET
+
+            mgr_seq = #{mgrSeq}::integer
+
+            <if test="workerId != null and workerId != ''">
+                , worker_id = #{workerId}
+            </if>
+
+            <if test="assetMgrNo != null and assetMgrNo != ''">
+                , asset_mgr_no = #{assetMgrNo}
+            </if>
+
+            <if test="workDat != null and workDat != ''">
+                , work_dat = #{workDat}
+            </if>
+
+            <if test="workGbn != null and workGbn != ''">
+                , work_gbn = #{workGbn}
+            </if>
+
+        WHERE mgr_seq = #{mgrSeq}::integer
+
+    </update>
+
+    <select id="getStatList" parameterType="HashMap" resultType="AssetLogVo">
+        SELECT substring( work_dat, 1, 8) AS stat_date, count(*) As stat_cnt
+		FROM xeus.mt_asset_log
+
+		GROUP BY substring( work_dat, 1, 8)
+		ORDER BY stat_date ASC
+    </select>
+</mapper>

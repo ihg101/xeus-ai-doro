@@ -1,0 +1,157 @@
+@CHARSET "UTF-8";
+
+/* .searchWrapper {
+    padding: 0px 10px 10px 0px;
+    margin-left: 80px;
+    position: relative;
+    height: 95%;
+    overflow: auto;
+} */
+#resultTable{
+	margin-bottom: 30px;
+}
+.searchWrapper {
+/*     padding: 0px 10px 10px 0px; */
+    margin-left: 71px;
+    position: relative;
+    height: 96%;
+    overflow: auto;
+}
+
+.searchWrapper table {
+    /* width: 100%;
+    border-spacing: 1px; */
+    /* 171212 */
+    width: 100%;
+    border-top: 1px #adadad solid;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #666;
+}
+
+.searchWrapper select::-ms-expand {
+    display: none;
+}
+.searchWrapper select {
+    outline: none;
+    width: 100%;
+    border: 1px #dddddd solid;
+    margin: 1px;
+    height: 25px;
+
+	/* 180312 select box 화살표 css 적용 */
+	box-shadow: none;
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	background-color: transparent;
+	background-image: url("/xeus/res/img/drop_down_arrow3.png");
+	background-position: 95% 50%;/* center right; */
+	background-repeat: no-repeat;
+	background-size: 10px 15px;
+}
+
+.searchWrapper .selectDate{
+	background-image: url("/xeus/res/img/drop_down_arrow2.png") !important;
+}
+
+/* 171212 추가 */
+.searchWrapper input[type=text] {
+    border: 1px #dddddd solid;
+    height: 20px;
+    margin: 2px;
+}
+
+/* 171212 type=text 제거 */
+.searchWrapper input[type=color] {
+    border: none;
+    outline: none;
+    width: 98%;
+}
+
+.searchWrapper textarea {
+    border: 1px #dddddd solid;
+    outline: none;
+    margin: 1px;
+}
+
+.searchWrapper #resultList {
+    overflow-y: scroll;
+    position: relative;
+    max-height: 50%;
+}
+
+.searchWrapper .searchTable input[type=text] {
+    border: none;
+}
+
+.searchWrapper .searchTable select {
+    border: none;
+}
+
+.dropBox {
+    position: absolute;
+    display: none;
+    z-index: 1;
+    top: 5%;
+/*     left: 0; */
+    width: 95%;
+    height: 300px;
+    line-height: 15;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    border: 3px dotted gray;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+#overlay-east-contents .dropBox {
+    position: absolute;
+    display: none;
+    z-index: 1;
+    top: 5%;
+    left: 2%;
+    width: 95%;
+    height: 300px;
+    line-height: 20;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    border: 3px solid #4582ac;
+    color: white;
+    background: #333;
+}
+
+.dropBoxHover {
+    /* border: 3px dotted white !important; */
+    background: rgba(59, 59, 59, 0.95) !important;
+    color: white !important;
+}
+
+.searchWrapper #resultList tr:hover {
+    background: rgba(255, 255, 255, 0.8);
+    font-weight: bold;
+    cursor: default;
+}
+
+.searchTitle {
+    /* font-size: 15px;
+    font-weight: bold;
+    border-bottom: 2px solid black; */
+    /* 171212 */
+    font-size: 16px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 15px;
+	margin-left: 7px;
+}
+
+.tabTitle {
+	margin-top: 15px;
+	margin-left: 5px;
+    margin-bottom: 15px;
+    font-size: 0px;
+}
+

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.sysmgr.service.AuthMapper">
+    <!-- by khkim 2018.04.27 id가 auth_dat명의 권한이 있는지 체크 -->
+    <select id="hasAuth" parameterType="HashMap" resultType="int">
+        select count(u.user_id)
+        from xeus.mt_usr_desc u,
+        xeus.mt_auth_grp g,
+        xeus.mt_auth_join j,
+        xeus.mt_auth_list a
+        <where>
+            u.auth_grp_no = g.auth_grp_no
+            and j.auth_grp_no = g.auth_grp_no
+            and j.auth_mgr_no = a.auth_mgr_no
+            and u.user_id = #{userId}
+            and auth_data=#{authData}
+        </where>
+    </select>
+
+    <select id="getList" parameterType="HashMap" resultType="AuthVo">
+        SELECT auth_mgr_no, auth_data, auth_nm, last_mdfy_dat, auth_gbn, parent_auth_nm
+
+        FROM xeus.mt_auth_list
+
+        <where>
+            <if test="authMgrNo != null and authMgrNo != ''">
+                AND auth_mgr_no = #{authMgrNo}
+            </if>
+
+            <if test="authData != null and authData != ''">
+                AND auth_data = #{authData}
+            </if>
+
+            <if test="authNm != null and authNm != ''">
+                AND auth_nm = #{authNm}
+            </if>
+
+            <if test="authGbn != null and authGbn != ''">
+                AND auth_gbn = #{authGbn}
+            </if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+                <if test="sortCol2 != null and sortCol2 != '' and sortTyp2 != null and sortTyp2 != ''">
+                , ${sortCol2} ${sortTyp2}
+                </if>
+            </if>
+
+            <if test="sortCol == null and sortTyp == null">
+                auth_gbn asc, auth_mgr_no asc
+            </if>
+        </trim>
+
+        <!-- <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if> -->
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="AuthVo">
+        SELECT auth_mgr_no, auth_data, auth_nm, last_mdfy_dat, auth_gbn
+
+        FROM xeus.mt_auth_list
+
+        <where>
+            <if test="authMgrNo != null and authMgrNo != ''">
+                AND auth_mgr_no = #{authMgrNo}
+            </if>
+
+            <if test="authData != null and authData != ''">
+                AND auth_data = #{authData}
+            </if>
+
+            <if test="authNm != null and authNm != ''">
+                AND auth_nm = #{authNm}
+            </if>
+
+            <if test="authGbn != null and authGbn != ''">
+                AND auth_gbn = #{authGbn}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*) FROM xeus.mt_auth_list
+
+        <where>
+            <if test="authMgrNo != null and authMgrNo != ''">
+                AND auth_mgr_no = #{authMgrNo}
+            </if>
+
+            <if test="authData != null and authData != ''">
+                AND auth_data = #{authData}
+            </if>
+
+            <if test="authNm != null and authNm != ''">
+                AND auth_nm = #{authNm}
+            </if>
+
+            <if test="authGbn != null and authGbn != ''">
+                AND auth_gbn = #{authGbn}
+            </if>
+        </where>
+    </select>
+
+
+    <update id="editGrp" parameterType="AuthGrpVo">
+        UPDATE xeus.mt_auth_grp
+
+        SET
+        auth_grp_no = #{authGrpNo}
+
+        <if test="authGrpNm != null and authGrpNm != ''">
+            , auth_grp_nm = #{authGrpNm}
+        </if>
+
+        , last_mdfy_dat = (select to_char(now(), 'YYYYMMDDHH24MISS'))
+
+        WHERE auth_grp_no = #{authGrpNo}
+    </update>
+
+
+    <select id="getGrpList" parameterType="HashMap" resultType="AuthGrpVo">
+        SELECT auth_grp_no, auth_grp_nm, last_mdfy_dat FROM xeus.mt_auth_grp
+
+        <where>
+            <if test="authGrpNo != null and authGrpNo != ''">
+                AND auth_grp_no = #{authGrpNo}
+            </if>
+
+            <if test="authGrpNm != null and authGrpNm != ''">
+                AND auth_grp_nm LIKE '%'||#{authGrpNm}||'%'
+            </if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+
+            <if test="sortCol == null and sortTyp == null">
+                auth_grp_nm asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+    </select>
+
+
+    <select id="getGrpCount" parameterType="HashMap" resultType="int">
+        SELECT count(*) FROM xeus.mt_auth_grp
+
+        <where>
+            <if test="authGrpNo != null and authGrpNo != ''">
+                AND auth_grp_no = #{authGrpNo}
+            </if>
+
+            <if test="authGrpNm != null and authGrpNm != ''">
+                AND auth_grp_nm LIKE '%'||#{authGrpNm}||'%'
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getAuthGrpList" parameterType="HashMap" resultType="AuthGrpVo">
+        SELECT a.auth_grp_no, b.auth_grp_nm,
+        		array_to_String(array_agg(a.auth_mgr_no), ',') as auth_mgr_no,
+        		array_to_String(array_agg(c.auth_data), ',') as auth_data
+
+        FROM
+        xeus.mt_auth_join AS a
+        LEFT JOIN xeus.mt_auth_grp AS b ON a.auth_grp_no = b.auth_grp_no
+        LEFT JOIN xeus.mt_auth_list AS c ON a.auth_mgr_no = c.auth_mgr_no
+
+        <where>
+            <if test="authGrpNo != null and authGrpNo != ''">
+                AND a.auth_grp_no = #{authGrpNo}
+            </if>
+
+            <if test="authGrpNm != null and authGrpNm != ''">
+                AND b.auth_grp_nm = #{authGrpNm}
+            </if>
+
+            <if test="authMgrNo != null and authMgrNo != ''">
+                AND a.auth_mgr_no in (#{authMgrNo})
+            </if>
+        </where>
+
+        GROUP BY a.auth_grp_no, b.auth_grp_nm
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+
+            <if test="sortCol == null and sortTyp == null">
+                b.auth_grp_nm asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+    </select>
+
+
+    <select id="getAuthGrpCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+        FROM (SELECT a.auth_grp_no, b.auth_grp_nm, array_to_String(array_agg(a.auth_mgr_no), ',') as
+        auth_mgr_no
+        FROM xeus.mt_auth_join AS a
+        LEFT JOIN xeus.mt_auth_grp AS b ON a.auth_grp_no = b.auth_grp_no
+
+        <where>
+            <if test="authGrpNo != null and authGrpNo != ''">
+                AND a.auth_grp_no = #{authGrpNo}
+            </if>
+
+            <if test="authGrpNm != null and authGrpNm != ''">
+                AND b.auth_grp_nm = #{authGrpNm}
+            </if>
+
+            <if test="authMgrNo != null and authMgrNo != ''">
+                AND a.auth_mgr_no in (#{authMgrNo})
+            </if>
+        </where>
+
+        GROUP BY a.auth_grp_no, b.auth_grp_nm) AS c
+    </select>
+
+
+    <select id="getAuthListByAuthGrpNo" parameterType="HashMap" resultType="AuthGrpVo">
+        SELECT
+
+			a.auth_grp_no , c.auth_mgr_no, c.auth_data
+
+        FROM
+        xeus.mt_auth_join AS a
+        LEFT JOIN xeus.mt_auth_grp AS b ON a.auth_grp_no = b.auth_grp_no
+        LEFT JOIN xeus.mt_auth_list AS c ON a.auth_mgr_no = c.auth_mgr_no
+
+        <where>
+            <if test="authGrpNo != null and authGrpNo != ''">
+                AND a.auth_grp_no = #{authGrpNo}
+            </if>
+
+            <if test="authGrpNm != null and authGrpNm != ''">
+                AND b.auth_grp_nm = #{authGrpNm}
+            </if>
+
+            <if test="authMgrNo != null and authMgrNo != ''">
+                AND a.auth_mgr_no LIKE '%'||#{authMgrNo}||'%'
+            </if>
+        </where>
+
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+
+            <if test="sortCol == null and sortTyp == null">
+                c.auth_mgr_no ASC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+    </select>
+
+
+    <delete id="delGrp" parameterType="HashMap">
+        DELETE FROM xeus.mt_auth_grp
+
+        <where>
+            <if test="authGrpNo != null and authGrpNo != ''">
+                AND auth_grp_no = #{authGrpNo}
+            </if>
+
+            <if test="authGrpNm != null and authGrpNm != ''">
+                AND auth_grp_nm = #{authGrpNm}
+            </if>
+        </where>
+    </delete>
+    <delete id="delGrpAuth" parameterType="HashMap">
+        DELETE FROM xeus.mt_auth_join
+
+        <where>
+            <if test="authGrpNo != null and authGrpNo != ''">
+                AND auth_grp_no = #{authGrpNo}
+            </if>
+
+            <if test="authMgrNo != null and authMgrNo != ''">
+                AND auth_mgr_no = #{authMgrNo}
+            </if>
+        </where>
+    </delete>
+
+
+    <insert id="addGrp" parameterType="AuthGrpVo">
+        INSERT INTO xeus.mt_auth_grp(auth_grp_no, auth_grp_nm, last_mdfy_dat)
+        VALUES (
+        (SELECT
+        'G' || (case length((num + 1)::text)::integer
+        when 1 then '0000'
+        when 2 then '000'
+        when 3 then '00'
+        when 4 then '0'
+        end) || num + 1 AS val
+        FROM generate_series(
+        	(SELECT coalesce(substring(max(auth_grp_no), 2)::numeric, 0) FROM xeus.mt_auth_grp),
+        	(SELECT coalesce(substring(max(auth_grp_no), 2)::numeric, 0) FROM xeus.mt_auth_grp)
+        ) AS num),
+
+        #{authGrpNm},
+
+        (select to_char(now(), 'YYYYMMDDHH24MISS')));
+    </insert>
+    <insert id="addGrpAuth" parameterType="AuthGrpVo">
+        INSERT INTO xeus.mt_auth_join(auth_grp_no, auth_mgr_no)
+        VALUES
+        (#{authGrpNo}, #{authMgrNo});
+    </insert>
+
+</mapper>

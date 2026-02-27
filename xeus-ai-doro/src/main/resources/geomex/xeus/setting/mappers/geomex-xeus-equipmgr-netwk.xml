@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.NetwkMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="NetwkVo">
+		<!-- SELECT st_mgr_no, ed_mgr_no, net_gbn_cd, link_gbn_cd, cable_typ, cable_desc, conn_stat, net_nm, _gid AS gid, line_color, ring_no,
+				st_astext(_geometry) as wkt
+
+		FROM xeus.asset_netwk -->
+
+		SELECT netwk.st_mgr_no, netwk.ed_mgr_no, netwk.cable_desc, netwk.link_gbn_cd, netwk.conn_stat, netwk._gid AS gid, st_astext(netwk._geometry) as wkt
+			, netwk.theme_mgr_no
+			, theme.theme_nm AS net_nm, theme.net_gbn_cd, theme.cable_typ, theme.line_color, theme.ring_no
+
+		FROM xeus.asset_netwk netwk
+		LEFT JOIN xeus.asset_netwk_theme AS theme ON netwk.theme_mgr_no = theme.mgr_no
+
+		<where>
+
+			<if test="stMgrNo != null and stMgrNo != ''">
+				AND netwk.st_mgr_no ~* #{stMgrNo}
+			</if>
+
+			<if test="edMgrNo != null and edMgrNo != ''">
+				AND netwk.ed_mgr_no = #{edMgrNo}
+			</if>
+
+			<if test="netGbnCd != null and netGbnCd != ''">
+				AND theme.net_gbn_cd = #{netGbnCd}
+			</if>
+
+			<if test="linkGbnCd != null and linkGbnCd != ''">
+				AND netwk.link_gbn_cd = #{linkGbnCd}
+			</if>
+
+			<if test="cableTyp != null and cableTyp != ''">
+				AND theme.cable_typ = #{cableTyp}
+			</if>
+
+			<if test="cableDesc != null and cableDesc != ''">
+				AND netwk.cable_desc = #{cableDesc}
+			</if>
+
+			<if test="connStat != null and connStat != ''">
+				AND netwk.conn_stat = #{connStat}
+			</if>
+
+			<if test="netNm != null and netNm != ''">
+				AND theme.theme_nm = #{netNm}
+			</if>
+
+			<if test="gid != null and gid != ''">
+				AND netwk._gid = #{gid}::numeric
+			</if>
+
+			<if test="lineColor != null and lineColor != ''">
+				AND theme.line_color = #{lineColor}
+			</if>
+
+			<if test="ringNo != null and ringNo != ''">
+				AND theme.ring_no = #{ringNo}
+			</if>
+
+			<if test="themeMgrNo != null and themeMgrNo != ''">
+				AND netwk.theme_mgr_no = #{themeMgrNo}::numeric
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				netwk._gid asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getNmsCableTheme" parameterType="HashMap" resultType="NetwkVo">
+        <!-- SELECT DISTINCT ring_no, '#222222' AS line_color FROM xeus.asset_netwk
+
+        <where>
+	        net_gbn_cd = '11'
+	        <if test="type != null and type != ''">
+	        	AND net_nm = #{type}
+	        </if>
+        </where>
+        ORDER BY ring_no -->
+
+        SELECT DISTINCT net_nm, '#222222' AS line_color
+		FROM xeus.asset_netwk
+		WHERE net_gbn_cd = '11'
+		AND net_nm like #{type}||'%'
+		ORDER BY net_nm
+
+    </select>
+
+
+	<select id="getFnmsCableTheme" parameterType="HashMap" resultType="NetwkVo">
+        <!-- SELECT DISTINCT net_nm, line_color FROM xeus.asset_netwk WHERE net_gbn_cd = '12' ORDER BY line_color -->
+        SELECT mgr_no AS theme_mgr_no, line_color
+		FROM xeus.asset_netwk_theme
+		WHERE net_gbn_cd = '12'
+		ORDER BY mgr_no
+    </select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="NetwkVo">
+		<!-- SELECT st_mgr_no, ed_mgr_no, net_gbn_cd, link_gbn_cd, cable_typ, cable_desc, conn_stat, net_nm, _gid AS gid, line_color, ring_no
+
+		FROM xeus.asset_netwk -->
+
+		SELECT netwk.st_mgr_no, netwk.ed_mgr_no, netwk.cable_desc, netwk.link_gbn_cd, netwk.conn_stat, netwk._gid AS gid
+			, netwk.theme_mgr_no
+			, theme.theme_nm AS net_nm, theme.net_gbn_cd, theme.cable_typ, theme.line_color, theme.ring_no
+
+		FROM xeus.asset_netwk netwk
+		LEFT JOIN xeus.asset_netwk_theme AS theme ON netwk.theme_mgr_no = theme.mgr_no
+
+		<where>
+
+			<if test="stMgrNo != null and stMgrNo != ''">
+				AND netwk.st_mgr_no ~* #{stMgrNo}
+			</if>
+
+			<if test="edMgrNo != null and edMgrNo != ''">
+				AND netwk.ed_mgr_no = #{edMgrNo}
+			</if>
+
+			<if test="netGbnCd != null and netGbnCd != ''">
+				AND theme.net_gbn_cd = #{netGbnCd}
+			</if>
+
+			<if test="linkGbnCd != null and linkGbnCd != ''">
+				AND netwk.link_gbn_cd = #{linkGbnCd}
+			</if>
+
+			<if test="cableTyp != null and cableTyp != ''">
+				AND theme.cable_typ = #{cableTyp}
+			</if>
+
+			<if test="cableDesc != null and cableDesc != ''">
+				AND netwk.cable_desc = #{cableDesc}
+			</if>
+
+			<if test="connStat != null and connStat != ''">
+				AND netwk.conn_stat = #{connStat}
+			</if>
+
+			<if test="netNm != null and netNm != ''">
+				AND theme.theme_nm = #{netNm}
+			</if>
+
+			<if test="gid != null and gid != ''">
+				AND netwk._gid = #{gid}::numeric
+			</if>
+
+			<if test="lineColor != null and lineColor != ''">
+				AND theme.line_color = #{lineColor}
+			</if>
+
+			<if test="ringNo != null and ringNo != ''">
+				AND theme.ring_no = #{ringNo}
+			</if>
+
+			<if test="themeMgrNo != null and themeMgrNo != ''">
+				AND netwk.theme_mgr_no = #{themeMgrNo}::numeric
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.asset_netwk AS netwk
+		LEFT JOIN xeus.asset_netwk_theme AS theme ON netwk.theme_mgr_no = theme.mgr_no
+
+		<where>
+
+			<if test="stMgrNo != null and stMgrNo != ''">
+				AND netwk.st_mgr_no ~* #{stMgrNo}
+			</if>
+
+			<if test="edMgrNo != null and edMgrNo != ''">
+				AND netwk.ed_mgr_no = #{edMgrNo}
+			</if>
+
+			<if test="netGbnCd != null and netGbnCd != ''">
+				AND theme.net_gbn_cd = #{netGbnCd}
+			</if>
+
+			<if test="linkGbnCd != null and linkGbnCd != ''">
+				AND netwk.link_gbn_cd = #{linkGbnCd}
+			</if>
+
+			<if test="cableTyp != null and cableTyp != ''">
+				AND theme.cable_typ = #{cableTyp}
+			</if>
+
+			<if test="cableDesc != null and cableDesc != ''">
+				AND netwk.cable_desc = #{cableDesc}
+			</if>
+
+			<if test="connStat != null and connStat != ''">
+				AND netwk.conn_stat = #{connStat}
+			</if>
+
+			<if test="netNm != null and netNm != ''">
+				AND theme.theme_nm = #{netNm}
+			</if>
+
+			<if test="gid != null and gid != ''">
+				AND netwk._gid = #{gid}::numeric
+			</if>
+
+			<if test="lineColor != null and lineColor != ''">
+				AND theme.line_color = #{lineColor}
+			</if>
+
+			<if test="ringNo != null and ringNo != ''">
+				AND theme.ring_no = #{ringNo}
+			</if>
+
+			<if test="themeMgrNo != null and themeMgrNo != ''">
+				AND netwk.theme_mgr_no = #{themeMgrNo}::numeric
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.asset_netwk WHERE _gid = #{gid}::numeric
+	</delete>
+
+
+	<insert id="add" parameterType="NetwkVo">
+		INSERT INTO xeus.asset_netwk(
+			st_mgr_no, ed_mgr_no, net_gbn_cd, link_gbn_cd, cable_typ, cable_desc, conn_stat, net_nm, line_color, ring_no, theme_mgr_no
+			, _geometry
+		) VALUES (
+			#{stMgrNo}, #{edMgrNo}, #{netGbnCd}, #{linkGbnCd}, #{cableTyp}, #{cableDesc}, #{connStat}, #{netNm}, #{lineColor}, #{ringNo}, #{themeMgrNo}::numeric
+			<!-- , ST_SetSrid(ST_Multi(ST_GeomFromeWkt(#{wkt})), 5186) -->
+			, ST_SetSrid(ST_GeomFromeWkt(#{wkt}), 5186)
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="NetwkVo">
+		UPDATE xeus.asset_netwk SET
+
+			_gid = #{gid}::numeric
+
+			<if test="stMgrNo != null and stMgrNo != ''">
+				, st_mgr_no = #{stMgrNo}
+			</if>
+
+			<if test="edMgrNo != null and edMgrNo != ''">
+				, ed_mgr_no = #{edMgrNo}
+			</if>
+
+			<if test="netGbnCd != null and netGbnCd != ''">
+				, net_gbn_cd = #{netGbnCd}
+			</if>
+
+			<if test="linkGbnCd != null and linkGbnCd != ''">
+				, link_gbn_cd = #{linkGbnCd}
+			</if>
+
+			<if test="cableTyp != null and cableTyp != ''">
+				, cable_typ = #{cableTyp}
+			</if>
+
+			<if test="cableDesc != null and cableDesc != ''">
+				, cable_desc = #{cableDesc}
+			</if>
+
+			<if test="connStat != null and connStat != ''">
+				, conn_stat = #{connStat}
+			</if>
+
+			<if test="netNm != null and netNm != ''">
+				, net_nm = #{netNm}
+			</if>
+
+			<if test="lineColor != null and lineColor != ''">
+				, line_color = #{lineColor}
+			</if>
+
+			<if test="ringNo != null and ringNo != ''">
+				, ring_no = #{ringNo}
+			</if>
+
+			<if test="themeMgrNo != null and themeMgrNo != ''">
+				, theme_mgr_no = #{themeMgrNo}::numeric
+			</if>
+
+			<if test="wkt != null and wkt != ''">
+                , _geometry = ST_SetSrid(ST_GeomFromeWkt(#{wkt}), 5186)
+            </if>
+
+		WHERE _gid = #{gid}::numeric
+
+	</update>
+
+	<update id="editThemeColor" parameterType="NetwkVo">
+		UPDATE xeus.asset_netwk SET
+
+			net_nm = #{netNm}
+
+			<if test="lineColor != null and lineColor != ''">
+				, line_color = #{lineColor}
+			</if>
+
+		WHERE net_nm = #{netNm}
+
+	</update>
+
+</mapper>

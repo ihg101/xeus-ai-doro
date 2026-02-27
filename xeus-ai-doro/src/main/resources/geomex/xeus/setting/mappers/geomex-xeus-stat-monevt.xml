@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.stat.service.MonEvtStatMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="EventHistVo">
+		SELECT usvc_outb_id, evt_svc_nm, evt_typ, evt_typ_cd, msg_typ_cd, evt_nm,
+				evt_cntn, outb_pos_nm, outb_posx, outb_posy, evt_outb_dtm, evt_clr_dtm,
+				evt_proc_cd, evt_actn_dtm, evt_actn_usrid, evt_actn_cntn, test_yn, evt_json,
+<!-- 				 hist._gid AS gid -->
+				emd.emd_kor_nm
+
+		FROM xeus.v_mon_evet_list hist
+		LEFT JOIN xeus.kais_emd_as AS emd ON st_intersects ( emd._geometry, hist._geometry )
+
+		<where>
+		test_yn = 'N'
+		AND hist.evt_typ_cd IS NOT NULL
+			<if test="year != null and year != ''">
+				AND hist.evt_outb_dtm LIKE #{year}||'%'
+			</if>
+			<if test="month != null and month != ''">
+				AND hist.evt_outb_dtm LIKE '____'||#{month}||'%'
+			</if>
+			<if test="emdCd != null and emdCd != ''">
+           		AND emd.emd_cd = #{emdCd}
+       		</if>
+
+
+			<if test="usvcOutbId != null and usvcOutbId != ''">
+				AND usvc_outb_id = #{usvcOutbId}
+			</if>
+			<if test="uSvcOutbId != null and uSvcOutbId != ''">
+				AND usvc_outb_id = #{uSvcOutbId}
+			</if>
+
+
+			<if test="evtSvcNm != null and evtSvcNm != ''">
+				AND evt_svc_nm = #{evtSvcNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evt_svc_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtTyp != null and evtTyp != ''">
+				AND evt_typ = #{evtTyp}
+			</if>
+			<if test="statEvetType != null and statEvetType != ''">
+				AND evt_typ = #{statEvetType}
+			</if>
+
+
+			<if test="evtTypCd != null and evtTypCd != ''">
+				AND evt_typ_cd = #{evtTypCd}
+			</if>
+			<if test="statEvetTypCd != null and statEvetTypCd != ''">
+				AND evt_typ_cd = #{statEvetTypCd}
+			</if>
+
+
+			<if test="evtTypCdList != null and evtTypCdList != ''">
+				AND evt_typ_cd in
+				<foreach collection="evtTypCdList.split(',')" item="item" index="index" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+
+
+			<if test="msgTypCd != null and msgTypCd != ''">
+				AND msg_typ_cd = #{msgTypCd}
+			</if>
+			<if test="statMsgTypCd != null and statMsgTypCd != ''">
+				AND msg_typ_cd = #{statMsgTypCd}
+			</if>
+
+
+			<if test="evtNm != null and evtNm != ''">
+				AND evt_nm = #{evtNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evt_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtCntn != null and evtCntn != ''">
+				AND evt_cntn = #{evtCntn}
+			</if>
+			<if test="statEvetCntn != null and statEvetCntn != ''">
+				AND evt_cntn = #{statEvetCntn}
+			</if>
+
+
+			<if test="outbPosNm != null and outbPosNm != ''">
+				AND outb_pos_nm = #{outbPosNm}
+			</if>
+
+
+			<if test="outbPosx != null and outbPosx != ''">
+				AND outb_posx = #{outbPosx}::numeric
+			</if>
+
+
+			<if test="outbPosy != null and outbPosy != ''">
+				AND outb_posy = #{outbPosy}::numeric
+			</if>
+
+
+			<if test="evtOutbDtm != null and evtOutbDtm != ''">
+				AND evt_outb_dtm like '%'||#{evtOutbDtm}||'%'
+			</if>
+
+			<if test="startDat != null and startDat != ''">
+				AND evt_outb_dtm <![CDATA[ >= ]]> #{startDat}
+			</if>
+
+			<if test="endDat != null and endDat != ''">
+				AND evt_outb_dtm <![CDATA[ <= ]]> #{endDat}
+			</if>
+
+			<if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+				AND evt_outb_dtm like '%'||#{statEvetOutbDtm}||'%'
+			</if>
+
+
+			<if test="evtClrDtm != null and evtClrDtm != ''">
+				AND evt_clr_dtm = #{evtClrDtm}
+			</if>
+			<if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+				AND evt_clr_dtm = #{statEvetClrDtm}
+			</if>
+
+
+			<if test="evtProcCd != null and evtProcCd != ''">
+				AND evt_proc_cd = #{evtProcCd}
+			</if>
+			<if test="procSt != null and procSt != ''">
+				AND evt_proc_cd = #{procSt}
+			</if>
+
+
+			<if test="evtActnDtm != null and evtActnDtm != ''">
+				AND evt_actn_dtm = #{evtActnDtm}
+			</if>
+			<if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+				AND evt_actn_dtm = #{statEvetActnDtm}
+			</if>
+
+
+			<if test="evtActnUsrid != null and evtActnUsrid != ''">
+				AND evt_actn_usrid = #{evtActnUsrid}
+			</if>
+			<if test="statEvetActnMn != null and statEvetActnMn != ''">
+				AND evt_actn_usrid = #{statEvetActnMn}
+			</if>
+
+
+			<if test="evtActnCntn != null and evtActnCntn != ''">
+				AND evt_actn_cntn = #{evtActnCntn}
+			</if>
+			<if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+				AND evt_actn_cntn = #{statEvetActnCntn}
+			</if>
+
+
+			<if test="testYn != null and testYn != ''">
+				AND test_yn = #{testYn}
+			</if>
+			<if test="isTest != null and isTest != ''">
+				AND test_yn = #{isTest}
+			</if>
+
+
+			<if test="evtJson != null and evtJson != ''">
+				AND evt_json = #{evtJson}
+			</if>
+			<if test="etcCntn != null and etcCntn != ''">
+				AND evt_json = #{etcCntn}
+			</if>
+
+
+			<if test="gid != null and gid != ''">
+				AND _gid = #{gid}::numeric
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				evt_outb_dtm desc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+	<select id="getItem" parameterType="HashMap" resultType="EventHistVo">
+		SELECT usvc_outb_id, evt_svc_nm, evt_typ, evt_typ_cd, msg_typ_cd, evt_nm, evt_cntn, outb_pos_nm, outb_posx, outb_posy, evt_outb_dtm, evt_clr_dtm, evt_proc_cd, evt_actn_dtm, evt_actn_usrid, evt_actn_cntn, test_yn, evt_json
+<!-- 		_gid AS gid -->
+
+		FROM xeus.mon_evet_hist
+
+		<where>
+		test_yn = 'N'
+
+			<if test="usvcOutbId != null and usvcOutbId != ''">
+				AND usvc_outb_id = #{usvcOutbId}
+			</if>
+			<if test="uSvcOutbId != null and uSvcOutbId != ''">
+				AND usvc_outb_id = #{uSvcOutbId}
+			</if>
+
+
+			<if test="evtSvcNm != null and evtSvcNm != ''">
+				AND evt_svc_nm = #{evtSvcNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evt_svc_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtTyp != null and evtTyp != ''">
+				AND evt_typ = #{evtTyp}
+			</if>
+			<if test="statEvetType != null and statEvetType != ''">
+				AND evt_typ = #{statEvetType}
+			</if>
+
+
+			<if test="evtTypCd != null and evtTypCd != ''">
+				AND evt_typ_cd = #{evtTypCd}
+			</if>
+			<if test="statEvetTypCd != null and statEvetTypCd != ''">
+				AND evt_typ_cd = #{statEvetTypCd}
+			</if>
+
+
+			<if test="msgTypCd != null and msgTypCd != ''">
+				AND msg_typ_cd = #{msgTypCd}
+			</if>
+			<if test="statMsgTypCd != null and statMsgTypCd != ''">
+				AND msg_typ_cd = #{statMsgTypCd}
+			</if>
+
+
+			<if test="evtNm != null and evtNm != ''">
+				AND evt_nm = #{evtNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evt_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtCntn != null and evtCntn != ''">
+				AND evt_cntn = #{evtCntn}
+			</if>
+			<if test="statEvetCntn != null and statEvetCntn != ''">
+				AND evt_cntn = #{statEvetCntn}
+			</if>
+
+
+			<if test="outbPosNm != null and outbPosNm != ''">
+				AND outb_pos_nm = #{outbPosNm}
+			</if>
+
+
+			<if test="outbPosx != null and outbPosx != ''">
+				AND outb_posx = #{outbPosx}::numeric
+			</if>
+
+
+			<if test="outbPosy != null and outbPosy != ''">
+				AND outb_posy = #{outbPosy}::numeric
+			</if>
+
+
+			<if test="evtOutbDtm != null and evtOutbDtm != ''">
+				AND evt_outb_dtm like '%'||#{evtOutbDtm}||'%'
+			</if>
+
+			<if test="startDat != null and startDat != ''">
+				AND evt_outb_dtm <![CDATA[ >= ]]> #{startDat}
+			</if>
+
+			<if test="endDat != null and endDat != ''">
+				AND evt_outb_dtm <![CDATA[ <= ]]> #{endDat}
+			</if>
+
+			<if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+				AND evt_outb_dtm like '%'||#{statEvetOutbDtm}||'%'
+			</if>
+
+
+			<if test="evtClrDtm != null and evtClrDtm != ''">
+				AND evt_clr_dtm = #{evtClrDtm}
+			</if>
+			<if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+				AND evt_clr_dtm = #{statEvetClrDtm}
+			</if>
+
+
+			<if test="evtProcCd != null and evtProcCd != ''">
+				AND evt_proc_cd = #{evtProcCd}
+			</if>
+			<if test="procSt != null and procSt != ''">
+				AND evt_proc_cd = #{procSt}
+			</if>
+
+
+			<if test="evtActnDtm != null and evtActnDtm != ''">
+				AND evt_actn_dtm = #{evtActnDtm}
+			</if>
+			<if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+				AND evt_actn_dtm = #{statEvetActnDtm}
+			</if>
+
+
+			<if test="evtActnUsrid != null and evtActnUsrid != ''">
+				AND evt_actn_usrid = #{evtActnUsrid}
+			</if>
+			<if test="statEvetActnMn != null and statEvetActnMn != ''">
+				AND evt_actn_usrid = #{statEvetActnMn}
+			</if>
+
+
+			<if test="evtActnCntn != null and evtActnCntn != ''">
+				AND evt_actn_cntn = #{evtActnCntn}
+			</if>
+			<if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+				AND evt_actn_cntn = #{statEvetActnCntn}
+			</if>
+
+
+			<if test="testYn != null and testYn != ''">
+				AND test_yn = #{testYn}
+			</if>
+			<if test="isTest != null and isTest != ''">
+				AND test_yn = #{isTest}
+			</if>
+
+
+			<if test="evtJson != null and evtJson != ''">
+				AND evt_json = #{evtJson}
+			</if>
+			<if test="etcCntn != null and etcCntn != ''">
+				AND evt_json = #{etcCntn}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.mon_evet_hist hist
+		LEFT JOIN xeus.kais_emd_as AS emd ON st_intersects ( emd._geometry, hist._geometry )
+
+		<where>
+		test_yn = 'N' AND evt_nm is not null and evt_nm != 'null'
+
+			<if test="year != null and year != ''">
+				AND hist.evt_outb_dtm LIKE #{year}||'%'
+			</if>
+			<if test="month != null and month != ''">
+				AND hist.evt_outb_dtm LIKE '____'||#{month}||'%'
+			</if>
+			<if test="emdCd != null and emdCd != ''">
+           		AND emd.emd_cd = #{emdCd}
+       		</if>
+
+			<if test="usvcOutbId != null and usvcOutbId != ''">
+				AND usvc_outb_id = #{usvcOutbId}
+			</if>
+			<if test="uSvcOutbId != null and uSvcOutbId != ''">
+				AND usvc_outb_id = #{uSvcOutbId}
+			</if>
+
+
+			<if test="evtSvcNm != null and evtSvcNm != ''">
+				AND evt_svc_nm = #{evtSvcNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evt_svc_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtTyp != null and evtTyp != ''">
+				AND evt_typ = #{evtTyp}
+			</if>
+			<if test="statEvetType != null and statEvetType != ''">
+				AND evt_typ = #{statEvetType}
+			</if>
+
+
+			<if test="evtTypCd != null and evtTypCd != ''">
+				AND evt_typ_cd = #{evtTypCd}
+			</if>
+			<if test="statEvetTypCd != null and statEvetTypCd != ''">
+				AND evt_typ_cd = #{statEvetTypCd}
+			</if>
+
+
+			<if test="evtTypCdList != null and evtTypCdList != ''">
+				AND evt_typ_cd in
+				<foreach collection="evtTypCdList.split(',')" item="item" index="index" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+
+
+			<if test="msgTypCd != null and msgTypCd != ''">
+				AND msg_typ_cd = #{msgTypCd}
+			</if>
+			<if test="statMsgTypCd != null and statMsgTypCd != ''">
+				AND msg_typ_cd = #{statMsgTypCd}
+			</if>
+
+
+			<if test="evtNm != null and evtNm != ''">
+				AND evt_nm = #{evtNm}
+			</if>
+			<if test="statEvetNm != null and statEvetNm != ''">
+				AND evt_nm = #{statEvetNm}
+			</if>
+
+
+			<if test="evtCntn != null and evtCntn != ''">
+				AND evt_cntn = #{evtCntn}
+			</if>
+			<if test="statEvetCntn != null and statEvetCntn != ''">
+				AND evt_cntn = #{statEvetCntn}
+			</if>
+
+
+			<if test="outbPosNm != null and outbPosNm != ''">
+				AND outb_pos_nm = #{outbPosNm}
+			</if>
+
+
+			<if test="outbPosx != null and outbPosx != ''">
+				AND outb_posx = #{outbPosx}::numeric
+			</if>
+
+
+			<if test="outbPosy != null and outbPosy != ''">
+				AND outb_posy = #{outbPosy}::numeric
+			</if>
+
+
+			<if test="evtOutbDtm != null and evtOutbDtm != ''">
+				AND evt_outb_dtm like '%'||#{evtOutbDtm}||'%'
+			</if>
+			<if test="statEvetOutbDtm != null and statEvetOutbDtm != ''">
+				AND evt_outb_dtm like '%'||#{statEvetOutbDtm}||'%'
+			</if>
+
+
+			<if test="evtClrDtm != null and evtClrDtm != ''">
+				AND evt_clr_dtm = #{evtClrDtm}
+			</if>
+			<if test="statEvetClrDtm != null and statEvetClrDtm != ''">
+				AND evt_clr_dtm = #{statEvetClrDtm}
+			</if>
+
+
+			<if test="evtProcCd != null and evtProcCd != ''">
+				AND evt_proc_cd = #{evtProcCd}
+			</if>
+			<if test="procSt != null and procSt != ''">
+				AND evt_proc_cd = #{procSt}
+			</if>
+
+
+			<if test="evtActnDtm != null and evtActnDtm != ''">
+				AND evt_actn_dtm = #{evtActnDtm}
+			</if>
+			<if test="statEvetActnDtm != null and statEvetActnDtm != ''">
+				AND evt_actn_dtm = #{statEvetActnDtm}
+			</if>
+
+
+			<if test="evtActnUsrid != null and evtActnUsrid != ''">
+				AND evt_actn_usrid = #{evtActnUsrid}
+			</if>
+			<if test="statEvetActnMn != null and statEvetActnMn != ''">
+				AND evt_actn_usrid = #{statEvetActnMn}
+			</if>
+
+
+			<if test="evtActnCntn != null and evtActnCntn != ''">
+				AND evt_actn_cntn = #{evtActnCntn}
+			</if>
+			<if test="statEvetActnCntn != null and statEvetActnCntn != ''">
+				AND evt_actn_cntn = #{statEvetActnCntn}
+			</if>
+
+
+			<if test="testYn != null and testYn != ''">
+				AND test_yn = #{testYn}
+			</if>
+			<if test="isTest != null and isTest != ''">
+				AND test_yn = #{isTest}
+			</if>
+
+
+			<if test="evtJson != null and evtJson != ''">
+				AND evt_json = #{evtJson}
+			</if>
+			<if test="etcCntn != null and etcCntn != ''">
+				AND evt_json = #{etcCntn}
+			</if>
+
+
+			<if test="gid != null and gid != ''">
+				AND _gid = #{gid}::numeric
+			</if>
+
+
+			<if test="startDat != null and startDat != ''">
+				AND evt_outb_dtm <![CDATA[ >= ]]> #{startDat}
+			</if>
+
+			<if test="endDat != null and endDat != ''">
+				AND evt_outb_dtm <![CDATA[ <= ]]> #{endDat}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="getEvtList" parameterType="HashMap" resultType="String">
+
+		SELECT distinct evt_nm
+		FROM xeus.v_mon_evet_list
+		WHERE evt_nm IS NOT NULL AND test_yn = 'N' AND evt_nm <![CDATA[ <> ]]> '' AND evt_nm <![CDATA[ <> ]]> 'null'
+
+    </select>
+
+	<select id="getYearStat" parameterType="HashMap" resultType="MonEvtStatVo">
+
+		SELECT log.year AS year, count(log.year) AS count
+		FROM (
+				SELECT substring(log.evt_outb_dtm, 1, 4) AS year
+				FROM xeus.v_mon_evet_list log
+				WHERE log.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+			 ) log
+		GROUP BY log.year
+		ORDER BY log.year
+
+    </select>
+
+    <select id="getMonthStat" parameterType="HashMap" resultType="MonEvtStatVo">
+
+		SELECT log.month AS month, count(log.month) AS count
+		FROM (
+				SELECT substring(log.evt_outb_dtm, 5, 2) AS month
+				FROM xeus.v_mon_evet_list log
+				LEFT JOIN xeus.kais_emd_as AS emd ON st_intersects(emd._geometry, log._geometry)
+				<where>
+					log.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+					<if test="year != null and year != ''">
+						AND log.evt_outb_dtm LIKE #{year}||'%'
+					</if>
+					<if test="evtTypCd != null and evtTypCd != ''">
+						AND log.evt_typ_cd = #{evtTypCd}
+					</if>
+					<if test="emdCd != null and emdCd != ''">
+                		AND emd.emd_cd = #{emdCd}
+            		</if>
+				</where>
+			 ) log
+		GROUP BY log.month
+		ORDER BY log.month
+
+    </select>
+
+    <select id="getDayStat" parameterType="HashMap" resultType="MonEvtStatVo">
+
+		SELECT log.day AS day, count(log.day) AS count
+		FROM (
+				SELECT substring(log.evt_outb_dtm, 7, 2) AS day
+				FROM xeus.v_mon_evet_list log
+				LEFT JOIN xeus.kais_emd_as AS emd ON st_intersects(emd._geometry, log._geometry)
+
+				<where>
+					log.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+					<if test="year != null and year != ''">
+						AND log.evt_outb_dtm LIKE #{year}||'%'
+					</if>
+					<if test="month != null and month != ''">
+						AND log.evt_outb_dtm LIKE '____'||#{month}||'%'
+					</if>
+					<if test="evtTypCd != null and evtTypCd != ''">
+						AND log.evt_typ_cd = #{evtTypCd}
+					</if>
+					<if test="emdCd != null and emdCd != ''">
+                		AND emd.emd_cd = #{emdCd}
+            		</if>
+				</where>
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+
+    <select id="getEventStatByEvtNm" parameterType="HashMap" resultType="MonEvtStatVo">
+
+		SELECT
+			COUNT(hist.evt_nm) AS count, hist.evt_nm
+		FROM
+			xeus.v_mon_evet_list hist
+			LEFT JOIN xeus.kais_emd_as AS emd ON st_intersects ( emd._geometry, hist._geometry )
+
+			<where>
+				hist.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+				<if test="year != null and year != ''">
+					AND hist.evt_outb_dtm LIKE #{year}||'%'
+				</if>
+				<if test="month != null and month != ''">
+					AND hist.evt_outb_dtm LIKE '____'||#{month}||'%'
+				</if>
+				<if test="evtTypCd != null and evtTypCd != ''">
+					AND hist.evt_typ_cd = #{evtTypCd}
+				</if>
+				<if test="emdCd != null and emdCd != ''">
+               		AND emd.emd_cd = #{emdCd}
+           		</if>
+			</where>
+
+			GROUP BY evt_nm
+
+    </select>
+
+    <select id="getEventStatByEmdCd" parameterType="HashMap" resultType="MonEvtStatVo">
+
+		SELECT
+			COUNT(emd.emd_cd), emd.emd_cd, emd_kor_nm
+		FROM
+			xeus.v_mon_evet_list hist
+			LEFT JOIN xeus.kais_emd_as AS emd ON st_intersects ( emd._geometry, hist._geometry )
+
+			<where>
+				hist.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+				<if test="year != null and year != ''">
+					AND hist.evt_outb_dtm LIKE #{year}||'%'
+				</if>
+				<if test="month != null and month != ''">
+					AND hist.evt_outb_dtm LIKE '____'||#{month}||'%'
+				</if>
+				<if test="evtTypCd != null and evtTypCd != ''">
+					AND hist.evt_typ_cd = #{evtTypCd}
+				</if>
+<!-- 				<if test="emdCd != null and emdCd != ''"> -->
+<!--                		AND emd.emd_cd = #{emdCd} -->
+<!--            		</if> -->
+			</where>
+
+			GROUP BY emd.emd_cd,emd_kor_nm
+
+    </select>
+
+
+
+    <select id="getEventStatByEvtTypCdAndEvtNm" parameterType="HashMap" resultType="MonEvtStatVo">
+
+		SELECT
+			COUNT(hist.evt_nm) AS count, hist.evt_typ_cd, hist.evt_nm
+		FROM
+			xeus.v_mon_evet_list hist
+			LEFT JOIN xeus.kais_emd_as AS emd ON st_intersects ( emd._geometry, hist._geometry )
+
+			<where>
+				hist.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+				<if test="year != null and year != ''">
+					AND hist.evt_outb_dtm LIKE #{year}||'%'
+				</if>
+				<if test="month != null and month != ''">
+					AND hist.evt_outb_dtm LIKE '____'||#{month}||'%'
+				</if>
+				<if test="evtTypCd != null and evtTypCd != ''">
+					AND hist.evt_typ_cd = #{evtTypCd}
+				</if>
+				<if test="emdCd != null and emdCd != ''">
+               		AND emd.emd_cd = #{emdCd}
+           		</if>
+           		<if test="startDat != null and startDat != ''">
+					AND evt_outb_dtm <![CDATA[ >= ]]> #{startDat}
+				</if>
+
+				<if test="endDat != null and endDat != ''">
+					AND evt_outb_dtm <![CDATA[ <= ]]> #{endDat}
+				</if>
+
+			</where>
+
+			GROUP BY evt_typ_cd,evt_nm
+
+    </select>
+
+
+	 <select id="getEventStatByEvtTypCd" parameterType="HashMap" resultType="MonEvtStatVo">
+
+		SELECT
+			COUNT(hist.evt_typ_cd) AS count, hist.evt_typ_cd
+		FROM
+			xeus.v_mon_evet_list hist
+			LEFT JOIN xeus.kais_emd_as AS emd ON st_intersects ( emd._geometry, hist._geometry )
+
+			<where>
+				hist.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+				<if test="year != null and year != ''">
+					AND hist.evt_outb_dtm LIKE #{year}||'%'
+				</if>
+				<if test="month != null and month != ''">
+					AND hist.evt_outb_dtm LIKE '____'||#{month}||'%'
+				</if>
+				<if test="evtTypCd != null and evtTypCd != ''">
+					AND hist.evt_typ_cd = #{evtTypCd}
+				</if>
+				<if test="emdCd != null and emdCd != ''">
+               		AND emd.emd_cd = #{emdCd}
+           		</if>
+           		<if test="startDat != null and startDat != ''">
+					AND evt_outb_dtm <![CDATA[ >= ]]> #{startDat}
+				</if>
+
+				<if test="endDat != null and endDat != ''">
+					AND evt_outb_dtm <![CDATA[ <= ]]> #{endDat}
+				</if>
+			</where>
+
+			GROUP BY evt_typ_cd
+
+    </select>
+
+
+    <select id="getOrgzYearStat" parameterType="HashMap" resultType="MonEvtStatVo">
+
+        SELECT log.year AS year, count(log.year) AS count
+		FROM (
+				SELECT substring(log.evt_outb_dtm, 1, 4) AS year
+				FROM xeus.v_mon_evet_list log
+				WHERE log.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+					<if test="orgNm != null and orgNm != ''">
+						AND log.evt_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.year
+		ORDER BY log.year
+
+    </select>
+
+    <select id="getOrgzMonthStat" parameterType="HashMap" resultType="MonEvtStatVo">
+
+        SELECT log.month AS month, count(log.month) AS count
+		FROM (
+				SELECT substring(log.evt_outb_dtm, 5, 2) AS month
+				FROM xeus.v_mon_evet_list log
+				WHERE log.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+					<if test="year != null and year != ''">
+						AND log.evt_outb_dtm LIKE #{year}||'%'
+					</if>
+					<if test="orgNm != null and orgNm != ''">
+						AND log.evt_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.month
+		ORDER BY log.month
+
+    </select>
+
+    <select id="getOrgzDayStat" parameterType="HashMap" resultType="MonEvtStatVo">
+
+		SELECT log.day AS day, count(log.day) AS count
+		FROM (
+				SELECT substring(log.evt_outb_dtm, 7, 2) AS day
+				FROM xeus.v_mon_evet_list log
+				WHERE log.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+					<if test="year != null and year != ''">
+						AND log.evt_outb_dtm LIKE #{year}||'%'
+					</if>
+					<if test="month != null and month != ''">
+						AND log.evt_outb_dtm LIKE '____'||#{month}||'%'
+					</if>
+					<if test="orgNm != null and orgNm != ''">
+						AND log.evt_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+    <select id="getOrgzDayCnt" parameterType="HashMap" resultType="String">
+
+		SELECT count(log.day) AS count
+		FROM (
+				SELECT substring(log.evt_outb_dtm, 7, 2) AS day
+				FROM xeus.v_mon_evet_list log
+				WHERE log.evt_typ_cd IS NOT NULL AND test_yn = 'N'
+					<if test="orgNm != null and orgNm != ''">
+						AND log.evt_nm = #{orgNm}
+					</if>
+					<if test="date != null and date != ''">
+						AND log.evt_outb_dtm LIKE #{date}||'%'
+					</if>
+
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+
+    <select id="getDistinctEvtTypCd" parameterType="HashMap" resultType="EventHistVo">
+
+		SELECT DISTINCT evt_typ_cd
+
+		FROM xeus.mon_evet_hist
+
+	</select>
+
+</mapper>

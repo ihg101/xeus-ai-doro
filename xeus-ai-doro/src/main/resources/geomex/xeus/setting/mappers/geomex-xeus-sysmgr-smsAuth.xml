@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.sysmgr.service.SmsAuthMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="geomex.xeus.sysmgr.service.SmsAuthVo">
+        SELECT auth_grp_no, user_id, sms_auth
+
+        FROM xeus.mt_sms_auth
+
+        <where>
+        	<if test="authGrpNo != null and authGrpNo != ''">
+                AND auth_grp_no = #{authGrpNo}
+            </if>
+
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="smsAuth != null and smsAuth != ''">
+                AND sms_auth = #{smsAuth}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                user_id ASC
+            </if>
+        </trim>
+
+    </select>
+
+
+	<update id="edit" parameterType="HashMap">
+        UPDATE xeus.mt_sms_auth
+        SET sms_auth = #{smsAuth}
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <insert id="add" parameterType="geomex.xeus.sysmgr.service.SmsAuthVo">
+		INSERT INTO xeus.mt_sms_auth(
+			auth_grp_no, user_id, sms_auth
+		) VALUES (
+			#{authGrpNo}, #{userId}, #{smsAuth}
+		);
+	</insert>
+
+
+	<delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.mt_sms_auth WHERE user_id = #{userId}
+    </delete>
+
+</mapper>

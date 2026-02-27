@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gmx.gis.sysmgr.service.GMT_ColumnMapper">
+
+	<select id="getColumnInfo" parameterType="HashMap" resultType="gmx.gis.sysmgr.service.GMT_ColumnVo">
+		SELECT DISTINCT
+
+			info.table_schema as tbl_schema, attrelid::regclass as tbl_id, attnum as col_uid, attname as col_id, (SELECT col_description(attrelid, attnum)) AS col_nm,
+			info.data_type, info.character_maximum_length as string_size, info.numeric_precision, info.numeric_precision_radix, info.numeric_scale,
+
+			COALESCE((
+				SELECT attr2.attname
+				FROM   pg_index idx
+				JOIN   pg_attribute attr2 ON attr2.attrelid = idx.indrelid AND attr2.attnum = ANY(idx.indkey)
+				WHERE  attr2.attrelid in ('${schema}.${table}'::regclass)
+				AND    idx.indisprimary
+				AND    attr2.attname = attr.attname
+			) = attname, false) as is_pkey
+
+        FROM pg_attribute as attr
+
+		,(SELECT
+				*
+			FROM
+				information_schema.COLUMNS
+			WHERE
+				TABLE_NAME = '${table}'
+			AND TABLE_SCHEMA = #{schema}
+		) as info
+
+        WHERE  attrelid in ( '${schema}.${table}'::regclass )
+        AND    attnum > 0
+        AND    NOT attisdropped
+
+			AND attr.attname = info.column_name
+
+        ORDER BY 1, 2;
+	</select>
+
+
+	<select id="getTableValues" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="HashMap">
+		SELECT
+
+		*
+		, st_astext(_geometry) as geometry_wkt
+		, st_area(_geometry) as geometry_area
+		, st_length(_geometry) as geometry_length
+		, st_x(st_centroid(st_transform(_geometry, 4326))) as geometry_lon
+		, st_y(st_centroid(st_transform(_geometry, 4326))) as geometry_lat
+		, st_x(st_centroid(_geometry)) AS annox
+		, st_y(st_centroid(_geometry)) AS annoy
+
+		FROM ${st.schema}.${st.table}
+
+		<if test="kv != null and kv.size != 0">
+			<where>
+	        	<foreach collection="kv" item="map" index="i">
+					<choose>
+						<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">AND "${map.key}" = #{map.val}::numeric</when>
+						<!-- <when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND "${map.key}" = #{map.val}</when> -->
+						<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND LOWER("${map.key}") LIKE '%' || LOWER(#{map.val}) || '%'</when>
+					</choose>
+				</foreach>
+	        </where>
+        </if>
+
+        <trim prefix="ORDER BY">
+            <if test="st.sortCol != null and st.sortCol != '' and st.sortTyp != null and st.sortTyp != ''">
+                ${st.sortCol} ${st.sortTyp}
+            </if>
+        </trim>
+
+        <if test="st.limit != null and st.limit != '' and st.offset != null and st.offset != ''">
+            LIMIT ${st.limit} OFFSET ${st.offset}
+        </if>
+	</select>
+
+
+	<select id="getTableCountValue" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="int">
+		SELECT
+
+		count(*)
+
+		FROM ${st.schema}.${st.table}
+
+		<if test="kv != null and kv.size != 0">
+			<where>
+	        	<foreach collection="kv" item="map" index="i">
+					<choose>
+						<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">AND "${map.key}" = #{map.val}::numeric</when>
+						<!-- <when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND "${map.key}" = #{map.val}</when> -->
+						<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND LOWER("${map.key}") LIKE '%' || LOWER(#{map.val}) || '%'</when>
+					</choose>
+				</foreach>
+	        </where>
+        </if>
+
+        <trim prefix="ORDER BY">
+            <if test="st.sortCol != null and st.sortCol != '' and st.sortTyp != null and st.sortTyp != ''">
+                ${st.sortCol} ${st.sortTyp}
+            </if>
+        </trim>
+	</select>
+
+
+	<select id="getDistinctValue" parameterType="HashMap" resultType="String">
+		SELECT DISTINCT
+
+			"${col}" as val
+
+        FROM ${schema}.${table}
+
+        WHERE _gid IS NOT NULL and _gid::text != ''
+
+        ORDER BY 1;
+	</select>
+
+
+	<select id="getList" parameterType="HashMap" resultType="gmx.gis.sysmgr.service.GMT_ColumnVo">
+        SELECT attrelid::regclass as tbl_id, attnum as col_uid, attname as col_id, (SELECT col_description(attrelid, attnum)) AS col_nm
+
+        FROM   pg_attribute
+
+        WHERE  attrelid in (
+                                'xeus.mt_aces_log'::regclass
+                              , 'xeus.mt_allow_ip'::regclass
+                              , 'xeus.mt_asset_log'::regclass
+                              , 'xeus.mt_auth_grp'::regclass
+                              , 'xeus.mt_auth_list'::regclass
+                              , 'xeus.mt_auth_log'::regclass
+                              , 'xeus.mt_cmm_cde'::regclass
+                              , 'xeus.mt_notc_list'::regclass
+                              , 'xeus.mt_orgz_desc'::regclass
+                              , 'xeus.mt_usr_desc'::regclass
+                              , 'xeus.mt_sym_icon'::regclass
+                           )
+        AND    attnum > 0
+        AND    NOT attisdropped
+        AND    attname NOT IN('_geometry', '_annox', '_annoy')
+
+        ORDER  BY attrelid, attnum
+	</select>
+
+
+	<insert id="addLayerValue" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo">
+		INSERT INTO
+
+			${st.schema}.${st.table}
+
+			(
+			<foreach collection="kv" item="map" separator="," index="i">
+				<if test="map.key != 'geolocationLon' and map.key != 'geolocationLat' and map.key != 'pk' and map.key != 'featureTargetKey' and map.key != 'featureTargetVal'">"${map.key}"</if>
+			</foreach>
+
+			<if test="@gmx.gis.sysmgr.service.GMT_DataValidator@isGeolocationContains(spatialSt) == true">
+				, "_geometry"
+			</if>
+			)
+
+		VALUES
+
+			(
+			<foreach collection="kv" item="map" separator="," index="i">
+				<if test="map.key != 'geolocationLon' and map.key != 'geolocationLat' and map.key != 'pk' and map.key != 'featureTargetKey' and map.key != 'featureTargetVal'">
+					<choose>
+						<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">#{map.val}::numeric</when>
+						<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">#{map.val}</when>
+					</choose>
+				</if>
+			</foreach>
+
+			<if test="@gmx.gis.sysmgr.service.GMT_DataValidator@isGeolocationContains(spatialSt) == true">
+				, ST_Transform( ST_SetSRID( ST_MakePoint( #{spatialSt.geolocationLon}::numeric, #{spatialSt.geolocationLat}::numeric ), 4326 ), 5186 )
+			</if>
+			)
+
+	</insert>
+
+
+	<update id="editLayerValue" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo">
+		UPDATE
+
+			${st.schema}.${st.table}
+
+		SET
+
+		<foreach collection="kv" item="map" separator="," index="i">
+			<if test="map.key != 'geolocationLon' and map.key != 'geolocationLat' and map.key != 'pk' and map.key != 'featureTargetKey' and map.key != 'featureTargetVal'">
+				<choose>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">"${map.key}" = #{map.val}::numeric</when>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">"${map.key}" = #{map.val}</when>
+				</choose>
+			</if>
+		</foreach>
+
+		<if test="spatialSt != null">
+			<if test="spatialSt.geolocationLon != '' and spatialSt.geolocationLon != null and spatialSt.geolocationLat != '' and spatialSt.geolocationLat != null">
+				<if test="@gmx.gis.sysmgr.service.GMT_DataValidator@isGeolocationContains(spatialSt) == true">
+					, "_geometry" = ST_Transform( ST_SetSRID( ST_MakePoint( #{spatialSt.geolocationLon}::numeric, #{spatialSt.geolocationLat}::numeric ), 4326 ), 5186 )
+				</if>
+			</if>
+		</if>
+
+		WHERE
+
+		<choose>
+			<when test="featureKv != null and featureKv.fieldKey != '' and featureKv.fieldKey != null and featureKv.fieldVal != '' and featureKv.fieldVal != null">
+				<choose>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, featureKv.fieldKey) == true">"${featureKv.fieldKey}" = #{featureKv.fieldVal}::numeric</when>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, featureKv.fieldKey) == false">"${featureKv.fieldKey}" = #{featureKv.fieldVal}</when>
+				</choose>
+			</when>
+			<when test="pk != '' and pk != null">_gid = #{pk}</when>
+		</choose>
+	</update>
+
+
+	<update id="delLayerValue" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo">
+		DELETE FROM
+
+			${st.schema}.${st.table}
+
+		WHERE
+
+		<choose>
+			<when test="featureKv != null and featureKv.fieldKey != '' and featureKv.fieldKey != null and featureKv.fieldVal != '' and featureKv.fieldVal != null">
+				<choose>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, featureKv.fieldKey) == true">"${featureKv.fieldKey}" = #{featureKv.fieldVal}::numeric</when>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, featureKv.fieldKey) == false">"${featureKv.fieldKey}" = #{featureKv.fieldVal}</when>
+				</choose>
+			</when>
+			<when test="pk != '' and pk != null">_gid = #{pk}</when>
+		</choose>
+	</update>
+
+
+	<select id="selectLayerValue" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="HashMap">
+		SELECT
+
+		*
+		, st_astext(_geometry) as geometry_wkt
+		, st_area(_geometry) as geometry_area
+		, st_length(_geometry) as geometry_length
+		, st_x(st_centroid(st_transform(_geometry, 4326))) as geometry_lon
+		, st_y(st_centroid(st_transform(_geometry, 4326))) as geometry_lat
+
+
+		FROM ${st.schema}.${st.table}
+
+
+
+		<choose>
+			<when test="featureKv != null and featureKv.fieldKey != '' and featureKv.fieldKey != null and featureKv.fieldVal != '' and featureKv.fieldVal != null">
+				WHERE
+				<choose>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, featureKv.fieldKey) == true">"${featureKv.fieldKey}" = #{featureKv.fieldVal}::numeric</when>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, featureKv.fieldKey) == false">"${featureKv.fieldKey}" = #{featureKv.fieldVal}</when>
+				</choose>
+			</when>
+			<when test="pk != '' and pk != null">_gid = #{pk}</when>
+		</choose>
+	</select>
+
+
+
+	<select id="selectLayerCount" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="int">
+		SELECT
+
+		COUNT(*)
+
+
+		FROM ${st.schema}.${st.table}
+
+
+
+		<choose>
+			<when test="featureKv != null and featureKv.fieldKey != '' and featureKv.fieldKey != null and featureKv.fieldVal != '' and featureKv.fieldVal != null">
+				WHERE
+				<choose>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, featureKv.fieldKey) == true">"${featureKv.fieldKey}" = #{featureKv.fieldVal}::numeric</when>
+					<when test="@gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, featureKv.fieldKey) == false">"${featureKv.fieldKey}" = #{featureKv.fieldVal}</when>
+				</choose>
+			</when>
+			<when test="pk != '' and pk != null">_gid = #{pk}</when>
+		</choose>
+	</select>
+
+
+	<select id="getAllSchemas" resultType="String">
+		SELECT
+			schema_name
+		FROM information_schema.schemata
+		WHERE
+			schema_name NOT IN ('pg_toast','pg_temp_1','pg_toast_temp_1','pg_catalog','information_schema','ods','tiger','tiger_data','topology');
+	</select>
+
+
+	<select id="getCommonSearch" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="HashMap">
+		SELECT
+
+			a.*
+			, st_astext(a._geometry) as geometry_wkt
+			, st_area(_geometry) as geometry_area
+			, st_length(_geometry) as geometry_length
+			, st_x(st_centroid(st_transform(_geometry, 4326))) as geometry_lon
+			, st_y(st_centroid(st_transform(_geometry, 4326))) as geometry_lat
+
+        FROM ${st.schema}.${st.table} AS a
+
+        <where>
+        	<foreach collection="kv" item="map" index="i">
+				<choose>
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">AND "${map.key}" = #{map.val}::numeric</when>
+					<!-- <when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND "${map.key}" = #{map.val}</when> -->
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND LOWER("${map.key}") LIKE '%' || LOWER(#{map.val}) || '%'</when>
+				</choose>
+			</foreach>
+
+			<if test="spatialSt != null">
+				<if test="spatialSt.wkt != null and spatialSt.wkt != ''">
+					AND ST_INTERSECTS(
+						( SELECT ST_GeomFromText(#{spatialSt.wkt}, 5186) ), a._geometry
+					)
+				</if>
+				<!-- <if test="spatialSt.schema != null and spatialSt.schema != '' and spatialSt.table != null and spatialSt.table != ''">
+					<foreach collection="spatialKv" item="map" index="i">
+						<choose>
+							<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(spatialTyp, map.key) == true">
+								AND ST_INTERSECTS(
+									( SELECT _geometry FROM ${spatialSt.schema}.${spatialSt.table} WHERE "${map.key}" = #{map.val}::numeric ), a._geometry
+								)
+							</when>
+							<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(spatialTyp, map.key) == false">
+								AND ST_INTERSECTS(
+									( SELECT _geometry FROM ${spatialSt.schema}.${spatialSt.table} WHERE "${map.key}" = #{map.val} ), a._geometry
+								)
+							</when>
+						</choose>
+					</foreach>
+				</if> -->
+			</if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="st.sortCol != null and st.sortCol != '' and st.sortTyp != null and st.sortTyp != ''">
+                ${st.sortCol} ${st.sortTyp}
+            </if>
+        </trim>
+
+        <if test="st.limit != null and st.limit != ''">LIMIT ${st.limit}</if>
+        <if test="st.offset != null and st.offset != ''">OFFSET ${st.offset}</if>
+	</select>
+
+
+	<select id="getCommonSearchCount" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="int">
+		SELECT
+
+			count(a.*)
+
+        FROM ${st.schema}.${st.table} AS a
+
+        <where>
+        	<foreach collection="kv" item="map" index="i">
+				<choose>
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">AND "${map.key}" = #{map.val}::numeric</when>
+					<!-- <when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND "${map.key}" = #{map.val}</when> -->
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND LOWER("${map.key}") LIKE '%' || LOWER(#{map.val}) || '%'</when>
+				</choose>
+			</foreach>
+
+			<if test="spatialSt != null">
+				<if test="spatialSt.wkt != null and spatialSt.wkt != ''">
+					AND ST_INTERSECTS(
+						( SELECT ST_GeomFromText(#{spatialSt.wkt}, 5186) ), a._geometry
+					)
+				</if>
+				<!-- <if test="spatialSt.schema != null and spatialSt.schema != '' and spatialSt.table != null and spatialSt.table != ''">
+					<foreach collection="spatialKv" item="map" index="i">
+						<choose>
+							<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(spatialTyp, map.key) == true">
+								AND ST_INTERSECTS(
+									( SELECT _geometry FROM ${spatialSt.schema}.${spatialSt.table} WHERE "${map.key}" = #{map.val}::numeric ), a._geometry
+								)
+							</when>
+							<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(spatialTyp, map.key) == false">
+								AND ST_INTERSECTS(
+									( SELECT _geometry FROM ${spatialSt.schema}.${spatialSt.table} WHERE "${map.key}" = #{map.val} ), a._geometry
+								)
+							</when>
+						</choose>
+					</foreach>
+				</if> -->
+			</if>
+        </where>
+
+	</select>
+
+
+	<select id="getCommonSearchAreaAndLength" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="HashMap">
+		SELECT
+
+			  sum(st_area(a._geometry)) as geometry_area
+			, sum(st_length(a._geometry)) as geometry_length
+
+        FROM ${st.schema}.${st.table} AS a
+
+        <where>
+        	<foreach collection="kv" item="map" index="i">
+				<choose>
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">AND "${map.key}" = #{map.val}::numeric</when>
+					<!-- <when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND "${map.key}" = #{map.val}</when> -->
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND LOWER("${map.key}") LIKE '%' || LOWER(#{map.val}) || '%'</when>
+				</choose>
+			</foreach>
+
+			<if test="spatialSt != null">
+				<if test="spatialSt.wkt != null and spatialSt.wkt != ''">
+					AND ST_INTERSECTS(
+						( SELECT ST_GeomFromText(#{spatialSt.wkt}, 5186) ), a._geometry
+					)
+				</if>
+				<!-- <if test="spatialSt.schema != null and spatialSt.schema != '' and spatialSt.table != null and spatialSt.table != ''">
+					<foreach collection="spatialKv" item="map" index="i">
+						<choose>
+							<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(spatialTyp, map.key) == true">
+								AND ST_INTERSECTS(
+									( SELECT _geometry FROM ${spatialSt.schema}.${spatialSt.table} WHERE "${map.key}" = #{map.val}::numeric ), a._geometry
+								)
+							</when>
+							<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(spatialTyp, map.key) == false">
+								AND ST_INTERSECTS(
+									( SELECT _geometry FROM ${spatialSt.schema}.${spatialSt.table} WHERE "${map.key}" = #{map.val} ), a._geometry
+								)
+							</when>
+						</choose>
+					</foreach>
+				</if> -->
+			</if>
+        </where>
+
+	</select>
+
+
+	<!-- TODO. _gid 필드는 무조건 serial 타입으로 강제 생성 되도록 변경 (시퀀스) -->
+	<select id="createSearchResultLayer" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="HashMap">
+		CREATE TABLE ${st.newSchema}.${st.newTable} AS
+
+		SELECT
+
+			a.*
+
+        FROM ${st.schema}.${st.table} AS a
+
+        <where>
+        	<foreach collection="kv" item="map" index="i">
+				<choose>
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">AND "${map.key}" = #{map.val}::numeric</when>
+					<!-- <when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND "${map.key}" = #{map.val}</when> -->
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND LOWER("${map.key}") LIKE '%' || LOWER(#{map.val}) || '%'</when>
+				</choose>
+			</foreach>
+
+			<if test="spatialSt != null">
+				<if test="spatialSt.wkt != null and spatialSt.wkt != ''">
+					AND ST_INTERSECTS(
+						( SELECT ST_GeomFromText(#{spatialSt.wkt}, 5186) ), a._geometry
+					)
+				</if>
+				<!-- <if test="spatialSt.schema != null and spatialSt.schema != '' and spatialSt.table != null and spatialSt.table != ''">
+					<foreach collection="spatialKv" item="map" index="i">
+						<choose>
+							<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(spatialTyp, map.key) == true">
+								AND ST_INTERSECTS(
+									( SELECT _geometry FROM ${spatialSt.schema}.${spatialSt.table} WHERE "${map.key}" = #{map.val}::numeric ), a._geometry
+								)
+							</when>
+							<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(spatialTyp, map.key) == false">
+								AND ST_INTERSECTS(
+									( SELECT _geometry FROM ${spatialSt.schema}.${spatialSt.table} WHERE "${map.key}" = #{map.val} ), a._geometry
+								)
+							</when>
+						</choose>
+					</foreach>
+				</if> -->
+			</if>
+		</where>
+
+		; COMMENT ON TABLE ${st.newSchema}.${st.newTable} IS '${st.layerNm}';
+		<foreach collection="typ" item="typ" index="i">
+			COMMENT ON COLUMN ${st.newSchema}.${st.newTable}."${typ.col}" IS '${typ.nm}';
+		</foreach>
+
+		ALTER TABLE ${st.newSchema}.${st.newTable} ADD CONSTRAINT ${st.newTable}_pk PRIMARY KEY (_gid);
+		CREATE INDEX ${st.newSchema}_${st.newTable}__geometry ON ${st.newSchema}.${st.newTable} USING gist (_geometry);
+
+<!--_gid 시퀀스 생성 -->
+		CREATE SEQUENCE ${st.newSchema}.${st.newTable}__gid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+		SELECT SETVAL('${st.newSchema}.${st.newTable}__gid_seq',(SELECT MAX(_gid) FROM ${st.newSchema}.${st.newTable}));
+
+		ALTER TABLE ${st.newSchema}.${st.newTable} ALTER COLUMN _gid SET DEFAULT nextval('${st.newSchema}.${st.newTable}__gid_seq');
+		ALTER SEQUENCE "${st.newSchema}".${st.newTable}__gid_seq OWNED BY ${st.newSchema}.${st.newTable}._gid
+
+	</select>
+
+
+	<select id="createSearchResultViewLayer" parameterType="gmx.gis.sysmgr.service.GMT_ListHashMapVo" resultType="HashMap">
+		CREATE OR REPLACE VIEW ${st.newSchema}.${st.newTable} AS
+
+		SELECT
+
+			a.*
+
+        FROM ${st.schema}.${st.table} AS a
+
+        <where>
+        	<foreach collection="kv" item="map" index="i">
+				<choose>
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == true">AND "${map.key}" = '${map.val}'::numeric</when>
+					<when test="map.val != null and map.val != '' and @gmx.gis.sysmgr.service.GMT_DataValidator@isNumber(typ, map.key) == false">AND LOWER("${map.key}") LIKE '%' || LOWER('${map.val}') || '%'</when>
+				</choose>
+			</foreach>
+
+			<if test="spatialSt != null">
+				<if test="spatialSt.wkt != null and spatialSt.wkt != ''">
+					AND ST_INTERSECTS(
+						( SELECT ST_GeomFromText(#{spatialSt.wkt}, 5186) ), a._geometry
+					)
+				</if>
+			</if>
+		</where>
+
+		; COMMENT ON VIEW ${st.newSchema}.${st.newTable} IS '${st.layerNm}';
+		<foreach collection="typ" item="typ" index="i">
+			COMMENT ON COLUMN ${st.newSchema}.${st.newTable}."${typ.col}" IS '${typ.nm}';
+		</foreach>
+
+	</select>
+
+
+	<select id="isExistsTable" parameterType="HashMap" resultType="boolean">
+		SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = #{schemNm} AND table_name = #{tblId});
+	</select>
+
+
+	<select id="isExistsColumn" parameterType="HashMap" resultType="boolean">
+		SELECT EXISTS (SELECT FROM information_schema.columns WHERE table_schema = #{schemNm} AND table_name = #{tblId} AND column_name = #{columnNm});
+	</select>
+
+
+	<select id="addField" parameterType="HashMap" resultType="HashMap">
+		ALTER TABLE ${schemNm}.${tblId} ADD COLUMN ${colId} ${colType}(${colSize});
+		COMMENT ON COLUMN ${schemNm}.${tblId}.${colId} IS '${colNm}';
+	</select>
+
+
+	<select id="dropField" parameterType="HashMap" resultType="HashMap">
+		ALTER TABLE ${schemNm}.${tblId} DROP COLUMN IF EXISTS ${colId};
+	</select>
+
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <!-- SqlSession setup for MyBatis Database Layer -->
+    <!-- SQL Mapper XML파일을 일괄 지정 할 수 있다. configLocation중 선택 -->
+    <!-- 테스트 결과(v3.2경우) CacheModel 등의 일부 기능에서 문제가 발생하는 경우가 있으므로 사용에 유의할것!! -->
+    <!-- <bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:/sqlmap/mybatis-config.xml" />
+        <property name="mapperLocations" value="classpath:sqlmap/mappers/user-*.xml" />
+    </bean> -->
+
+    <!-- MapperConfigurer setup for @Mapper -->
+    <!-- <mybatis:scan base-package="org.mybatis.spring.sample.mapper" />  -->
+    <!-- MyBatis의 Mapper Interface 자동스캔 설정 @Mapper는 egov에서 정의한 것으로 아래를 써야 함-->
+    <!-- <bean class="egovframework.rte.psl.dataaccess.mapper.MapperConfigurer">
+        <property name="basePackage" value="geomex.xeus.**.service" />
+    </bean> -->
+
+    <!-- SqlSession setup for MyBatis Database Layer -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation"  value="classpath:/geomex/xeus/setting/mybatis/config.xml" />
+        <property name="mapperLocations" value="classpath:/geomex/xeus/setting/mappers/*.xml" />
+    </bean>
+
+    <bean id="sqlSession2" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource2" />
+        <property name="configLocation"  value="classpath:/geomex/xeus/setting/mybatis/config.xml" />
+        <property name="mapperLocations" value="classpath:/geomex/xeus/setting/mappers/*.xml" />
+    </bean>
+
+    <!-- mysql용 추가 -->
+    <!-- <bean id="sqlSession2" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource2" />
+        <property name="configLocation"  value="classpath:/geomex/xeus/setting/mysqlmybatis/config.xml" />
+        <property name="mapperLocations" value="classpath:/geomex/xeus/setting/mysqlmappers/*.xml" />
+    </bean> -->
+
+    <!-- <bean class="egovframework.rte.psl.dataaccess.mapper.MapperConfigurer">
+        <property name="basePackage" value="geomex.xeus.eventmonitor.service" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSession2" />
+    </bean> -->
+
+    <bean class="egovframework.rte.psl.dataaccess.mapper.MapperConfigurer">
+        <property name="basePackage" value="geomex.xeus.tvius.carservice" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSession2" />
+    </bean>
+
+    <bean class="egovframework.rte.psl.dataaccess.mapper.MapperConfigurer">
+        <!-- <property name="basePackage" value="geomex.xeus.**.service" /> -->
+        <property name="basePackage" value="**.**.**.service" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSession" />
+    </bean>
+
+
+
+    <!-- <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSession"/>
+    </bean>
+
+    <bean id="sqlSessionTemplate2" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSession2"/>
+    </bean> -->
+
+</beans>

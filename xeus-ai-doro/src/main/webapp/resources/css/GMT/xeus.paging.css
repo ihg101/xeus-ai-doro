@@ -1,0 +1,29 @@
+/* paging wrap */
+.paging_wrap {
+    display: none;
+    text-align: center;
+    padding: 20px 20px 20px 20px;
+    height: 22px;
+}
+.bottom_padding {
+    padding: 20px 20px 0px 20px !important;
+}
+.paging_wrap img {
+    cursor: pointer;
+    margin: 0 1px;
+    vertical-align: middle;
+}
+.paging_wrap button {
+    border: 0;
+    margin: 0 1px;
+    padding: 0;
+    width: 22px;
+    height: 22px;
+    color: #000;/* 97A2AD */
+    cursor: pointer;
+    background-color: transparent;/* 3C4958 */
+}
+.paging_wrap button.active {
+    color: #DEDFE1;
+    background-color: #4582AC;/* 255D9C */
+}

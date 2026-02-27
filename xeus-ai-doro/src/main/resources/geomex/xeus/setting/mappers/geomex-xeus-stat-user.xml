@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.stat.service.UsrStatMapper">
+
+	<select id="getYearStat" parameterType="HashMap" resultType="UsrStatVo">
+
+		SELECT log.year AS year, count(log.year) AS count
+		FROM (
+				SELECT substring(log.use_time, 1, 4) AS year
+				FROM xeus.mt_aces_log log
+				WHERE log.usr_id IS NOT NULL
+			 ) log
+		GROUP BY log.year
+		ORDER BY log.year
+
+    </select>
+
+    <select id="getMonthStat" parameterType="HashMap" resultType="UsrStatVo">
+
+		SELECT log.month AS month, count(log.month) AS count
+		FROM (
+				SELECT substring(log.use_time, 5, 2) AS month
+				FROM xeus.mt_aces_log log
+				<where>
+					log.usr_id IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.use_time LIKE #{year}||'%'
+					</if>
+				</where>
+			 ) log
+		GROUP BY log.month
+		ORDER BY log.month
+
+    </select>
+
+    <select id="getDayStat" parameterType="HashMap" resultType="UsrStatVo">
+
+		SELECT log.day AS day, count(log.day) AS count
+		FROM (
+				SELECT substring(log.use_time, 7, 2) AS day
+				FROM xeus.mt_aces_log log
+				<where>
+					log.usr_id IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.use_time LIKE #{year}||'%'
+					</if>
+					<if test="month != null and month != ''">
+						AND log.use_time LIKE '____'||#{month}||'%'
+					</if>
+				</where>
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+    <select id="getOrgzYearStat" parameterType="HashMap" resultType="UsrStatVo">
+
+        SELECT log.year AS year, count(log.year) AS count
+		FROM (
+				SELECT substring(log.use_time, 1, 4) AS year
+				FROM xeus.mt_aces_log log
+				LEFT JOIN xeus.mt_usr_desc usr ON usr.user_id = log.usr_id
+				LEFT JOIN xeus.mt_orgz_desc orgz ON usr.org_mgr_no = orgz.org_mgr_no
+				WHERE log.usr_id IS NOT NULL
+					<if test="orgNm != null and orgNm != ''">
+						AND orgz.org_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.year
+		ORDER BY log.year
+
+    </select>
+
+    <select id="getOrgzMonthStat" parameterType="HashMap" resultType="UsrStatVo">
+
+        SELECT log.month AS month, count(log.month) AS count
+		FROM (
+				SELECT substring(log.use_time, 5, 2) AS month
+				FROM xeus.mt_aces_log log
+				LEFT JOIN xeus.mt_usr_desc usr ON usr.user_id = log.usr_id
+				LEFT JOIN xeus.mt_orgz_desc orgz ON usr.org_mgr_no = orgz.org_mgr_no
+				WHERE log.usr_id IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.use_time LIKE #{year}||'%'
+					</if>
+					<if test="orgNm != null and orgNm != ''">
+						AND orgz.org_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.month
+		ORDER BY log.month
+
+    </select>
+
+    <select id="getOrgzDayStat" parameterType="HashMap" resultType="UsrStatVo">
+
+		SELECT log.day AS day, count(log.day) AS count
+		FROM (
+				SELECT substring(log.use_time, 7, 2) AS day
+				FROM xeus.mt_aces_log log
+				LEFT JOIN xeus.mt_usr_desc usr ON usr.user_id = log.usr_id
+				LEFT JOIN xeus.mt_orgz_desc orgz ON usr.org_mgr_no = orgz.org_mgr_no
+				WHERE log.usr_id IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.use_time LIKE #{year}||'%'
+					</if>
+					<if test="month != null and month != ''">
+						AND log.use_time LIKE '____'||#{month}||'%'
+					</if>
+					<if test="orgNm != null and orgNm != ''">
+						AND orgz.org_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+</mapper>

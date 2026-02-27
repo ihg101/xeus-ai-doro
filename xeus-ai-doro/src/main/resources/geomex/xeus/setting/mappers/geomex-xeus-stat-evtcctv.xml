@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.stat.service.EvtCctvStatMapper">
+
+	<select id="getYearStat" parameterType="HashMap" resultType="EvtCctvStatVo">
+
+		SELECT log.year AS year, count(log.year) AS count
+		FROM (
+				SELECT substring(log.start_dat, 1, 4) AS year
+				FROM xeus.mon_cctv_log log
+				WHERE log.cctv_mgr_no IS NOT NULL
+			 ) log
+		GROUP BY log.year
+		ORDER BY log.year
+
+    </select>
+
+    <select id="getMonthStat" parameterType="HashMap" resultType="EvtCctvStatVo">
+
+		SELECT log.month AS month, count(log.month) AS count
+		FROM (
+				SELECT substring(log.start_dat, 5, 2) AS month
+				FROM xeus.mon_cctv_log log
+				<where>
+					log.cctv_mgr_no IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.start_dat LIKE #{year}||'%'
+					</if>
+				</where>
+			 ) log
+		GROUP BY log.month
+		ORDER BY log.month
+
+    </select>
+
+    <select id="getDayStat" parameterType="HashMap" resultType="EvtCctvStatVo">
+
+		SELECT log.day AS day, count(log.day) AS count
+		FROM (
+				SELECT substring(log.start_dat, 7, 2) AS day
+				FROM xeus.mon_cctv_log log
+				<where>
+					log.cctv_mgr_no IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.start_dat LIKE #{year}||'%'
+					</if>
+					<if test="month != null and month != ''">
+						AND log.start_dat LIKE '____'||#{month}||'%'
+					</if>
+				</where>
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+    <select id="getOrgzYearStat" parameterType="HashMap" resultType="EvtCctvStatVo">
+
+        SELECT log.year AS year, count(log.year) AS count
+		FROM (
+				SELECT substring(log.use_time, 1, 4) AS year
+				FROM xeus.mon_cctv_log log
+				LEFT JOIN xeus.mt_usr_desc usr ON usr.user_id = log.usr_id
+				LEFT JOIN xeus.mt_orgz_desc orgz ON usr.org_mgr_no = orgz.org_mgr_no
+				WHERE log.usr_id IS NOT NULL
+					<if test="orgNm != null and orgNm != ''">
+						AND orgz.org_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.year
+		ORDER BY log.year
+
+    </select>
+
+    <select id="getOrgzMonthStat" parameterType="HashMap" resultType="EvtCctvStatVo">
+
+        SELECT log.month AS month, count(log.month) AS count
+		FROM (
+				SELECT substring(log.use_time, 5, 2) AS month
+				FROM xeus.mon_cctv_log log
+				LEFT JOIN xeus.mt_usr_desc usr ON usr.user_id = log.usr_id
+				LEFT JOIN xeus.mt_orgz_desc orgz ON usr.org_mgr_no = orgz.org_mgr_no
+				WHERE log.usr_id IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.use_time LIKE #{year}||'%'
+					</if>
+					<if test="orgNm != null and orgNm != ''">
+						AND orgz.org_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.month
+		ORDER BY log.month
+
+    </select>
+
+    <select id="getOrgzDayStat" parameterType="HashMap" resultType="EvtCctvStatVo">
+
+		SELECT log.day AS day, count(log.day) AS count
+		FROM (
+				SELECT substring(log.use_time, 7, 2) AS day
+				FROM xeus.mon_cctv_log log
+				LEFT JOIN xeus.mt_usr_desc usr ON usr.user_id = log.usr_id
+				LEFT JOIN xeus.mt_orgz_desc orgz ON usr.org_mgr_no = orgz.org_mgr_no
+				WHERE log.usr_id IS NOT NULL
+					<if test="year != null and year != ''">
+						AND log.use_time LIKE #{year}||'%'
+					</if>
+					<if test="month != null and month != ''">
+						AND log.use_time LIKE '____'||#{month}||'%'
+					</if>
+					<if test="orgNm != null and orgNm != ''">
+						AND orgz.org_nm = #{orgNm}
+					</if>
+
+			 ) log
+		GROUP BY log.day
+		ORDER BY log.day
+
+    </select>
+
+    <select id="getTodayCctvByTime" parameterType="HashMap" resultType="HashMap">
+         SELECT   COALESCE(SUM(CASE hh WHEN '00' THEN 1 ELSE 0 END), 0) AS "00"
+                , COALESCE(SUM(CASE hh WHEN '01' THEN 1 ELSE 0 END), 0) AS "01"
+                , COALESCE(SUM(CASE hh WHEN '02' THEN 1 ELSE 0 END), 0) AS "02"
+                , COALESCE(SUM(CASE hh WHEN '03' THEN 1 ELSE 0 END), 0) AS "03"
+                , COALESCE(SUM(CASE hh WHEN '04' THEN 1 ELSE 0 END), 0) AS "04"
+                , COALESCE(SUM(CASE hh WHEN '05' THEN 1 ELSE 0 END), 0) AS "05"
+                , COALESCE(SUM(CASE hh WHEN '06' THEN 1 ELSE 0 END), 0) AS "06"
+                , COALESCE(SUM(CASE hh WHEN '07' THEN 1 ELSE 0 END), 0) AS "07"
+                , COALESCE(SUM(CASE hh WHEN '08' THEN 1 ELSE 0 END), 0) AS "08"
+                , COALESCE(SUM(CASE hh WHEN '09' THEN 1 ELSE 0 END), 0) AS "09"
+                , COALESCE(SUM(CASE hh WHEN '10' THEN 1 ELSE 0 END), 0) AS "10"
+                , COALESCE(SUM(CASE hh WHEN '11' THEN 1 ELSE 0 END), 0) AS "11"
+                , COALESCE(SUM(CASE hh WHEN '12' THEN 1 ELSE 0 END), 0) AS "12"
+                , COALESCE(SUM(CASE hh WHEN '13' THEN 1 ELSE 0 END), 0) AS "13"
+                , COALESCE(SUM(CASE hh WHEN '14' THEN 1 ELSE 0 END), 0) AS "14"
+                , COALESCE(SUM(CASE hh WHEN '15' THEN 1 ELSE 0 END), 0) AS "15"
+                , COALESCE(SUM(CASE hh WHEN '16' THEN 1 ELSE 0 END), 0) AS "16"
+                , COALESCE(SUM(CASE hh WHEN '17' THEN 1 ELSE 0 END), 0) AS "17"
+                , COALESCE(SUM(CASE hh WHEN '18' THEN 1 ELSE 0 END), 0) AS "18"
+                , COALESCE(SUM(CASE hh WHEN '19' THEN 1 ELSE 0 END), 0) AS "19"
+                , COALESCE(SUM(CASE hh WHEN '20' THEN 1 ELSE 0 END), 0) AS "20"
+                , COALESCE(SUM(CASE hh WHEN '21' THEN 1 ELSE 0 END), 0) AS "21"
+                , COALESCE(SUM(CASE hh WHEN '22' THEN 1 ELSE 0 END), 0) AS "22"
+                , COALESCE(SUM(CASE hh WHEN '23' THEN 1 ELSE 0 END), 0) AS "23"
+        FROM    (SELECT use_typ,
+					    start_dat,
+                        substring(start_dat, 9, 2) AS hh
+                  FROM xeus.mon_cctv_log) AS r
+        <where>
+            use_typ is not null
+
+            <if test="today != null and today != ''">
+                AND start_dat LIKE #{today}||'%'
+            </if>
+        </where>
+
+    </select>
+
+</mapper>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.VmsMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="VmsVo">
+		SELECT mgr_no, vms_typ, vms_nm, ip_addr, port_num, con_id, con_pwd, rmark
+
+		FROM xeus.asset_cctv_vms
+
+		<where>
+
+			<if test="mgrNo != null and mgrNo != ''">
+				AND mgr_no = #{mgrNo}
+			</if>
+
+			<if test="vmsTyp != null and vmsTyp != ''">
+				AND vms_typ = #{vmsTyp}
+			</if>
+
+			<if test="vmsNm != null and vmsNm != ''">
+				AND vms_nm = #{vmsNm}
+			</if>
+
+			<if test="ipAddr != null and ipAddr != ''">
+				AND ip_addr = #{ipAddr}
+			</if>
+
+			<if test="portNum != null and portNum != ''">
+				AND port_num = #{portNum}::numeric
+			</if>
+
+			<if test="conId != null and conId != ''">
+				AND con_id = #{conId}
+			</if>
+
+			<if test="conPwd != null and conPwd != ''">
+				AND con_pwd = #{conPwd}
+			</if>
+
+			<if test="rmark != null and rmark != ''">
+				AND rmark = #{rmark}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				mgr_no asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="VmsVo">
+		SELECT mgr_no, vms_typ, vms_nm, ip_addr, port_num, con_id, con_pwd, rmark
+
+		FROM xeus.asset_cctv_vms
+
+		<where>
+
+			<if test="mgrNo != null and mgrNo != ''">
+				AND mgr_no = #{mgrNo}
+			</if>
+
+			<if test="vmsTyp != null and vmsTyp != ''">
+				AND vms_typ = #{vmsTyp}
+			</if>
+
+			<if test="vmsNm != null and vmsNm != ''">
+				AND vms_nm = #{vmsNm}
+			</if>
+
+			<if test="ipAddr != null and ipAddr != ''">
+				AND ip_addr = #{ipAddr}
+			</if>
+
+			<if test="portNum != null and portNum != ''">
+				AND port_num = #{portNum}::numeric
+			</if>
+
+			<if test="conId != null and conId != ''">
+				AND con_id = #{conId}
+			</if>
+
+			<if test="conPwd != null and conPwd != ''">
+				AND con_pwd = #{conPwd}
+			</if>
+
+			<if test="rmark != null and rmark != ''">
+				AND rmark = #{rmark}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.asset_cctv_vms
+
+		<where>
+
+			<if test="mgrNo != null and mgrNo != ''">
+				AND mgr_no = #{mgrNo}
+			</if>
+
+			<if test="vmsTyp != null and vmsTyp != ''">
+				AND vms_typ = #{vmsTyp}
+			</if>
+
+			<if test="vmsNm != null and vmsNm != ''">
+				AND vms_nm = #{vmsNm}
+			</if>
+
+			<if test="ipAddr != null and ipAddr != ''">
+				AND ip_addr = #{ipAddr}
+			</if>
+
+			<if test="portNum != null and portNum != ''">
+				AND port_num = #{portNum}::numeric
+			</if>
+
+			<if test="conId != null and conId != ''">
+				AND con_id = #{conId}
+			</if>
+
+			<if test="conPwd != null and conPwd != ''">
+				AND con_pwd = #{conPwd}
+			</if>
+
+			<if test="rmark != null and rmark != ''">
+				AND rmark = #{rmark}
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.asset_cctv_vms WHERE mgr_no = #{mgrNo}
+	</delete>
+
+
+	<insert id="add" parameterType="VmsVo">
+		INSERT INTO xeus.asset_cctv_vms(
+			mgr_no, vms_typ, vms_nm, ip_addr, port_num, con_id, con_pwd, rmark
+		) VALUES (
+			(SELECT
+              'VMS' ||
+              (case length((num + 1)::text)::numeric
+                when 1 then '000000'
+                when 2 then '00000'
+                when 3 then '0000'
+                when 4 then '000'
+                when 5 then '00'
+                when 6 then '0'
+                when 7 then ''
+              end) || num + 1 AS val
+            FROM generate_series(
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv_vms),
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv_vms)
+            ) AS num),
+
+            #{vmsTyp}, #{vmsNm}, #{ipAddr}, #{portNum}::numeric, #{conId}, #{conPwd}, #{rmark}
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="VmsVo">
+		UPDATE xeus.asset_cctv_vms SET
+			mgr_no = #{mgrNo}
+
+			<if test="vmsTyp != null and vmsTyp != ''">
+				, vms_typ = #{vmsTyp}
+			</if>
+
+			<if test="vmsNm != null and vmsNm != ''">
+				, vms_nm = #{vmsNm}
+			</if>
+
+			<if test="ipAddr != null and ipAddr != ''">
+				, ip_addr = #{ipAddr}
+			</if>
+
+			<if test="portNum != null and portNum != ''">
+				, port_num = #{portNum}::numeric
+			</if>
+
+			<if test="conId != null and conId != ''">
+				, con_id = #{conId}
+			</if>
+
+			<if test="conPwd != null and conPwd != ''">
+				, con_pwd = #{conPwd}
+			</if>
+
+			<if test="rmark != null and rmark != ''">
+				, rmark = #{rmark}
+			</if>
+
+		WHERE mgr_no = #{mgrNo}
+
+	</update>
+
+</mapper>

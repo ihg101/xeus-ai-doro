@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.sysmgr.service.ColumnInfoMapper">
+
+	<!-- <select id="getList" parameterType="HashMap" resultType="ColumnVo">
+        SELECT c.relname as tbl_id,
+                     a.attnum  as col_uid,
+                     a.attname as col_id,
+                     (SELECT col_description(a.attrelid, a.attnum)) AS col_nm
+        FROM
+                     pg_catalog.pg_class c
+                     inner join pg_catalog.pg_attribute a on a.attrelid = c.oid
+                     inner join pg_namespace on c.relnamespace = pg_namespace.oid
+        WHERE
+                     c.relname in ('mt_aces_log',
+                                                 'mt_allow_ip',
+                                                 'mt_auth_grp',
+                                                 'mt_auth_list',
+                                                 'mt_usr_desc')
+                     and a.attnum > 0
+                     and a.attisdropped is false
+                     and pg_catalog.pg_table_is_visible(c.oid)
+                     and nspname = 'xeus'
+
+        ORDER BY a.attrelid, a.attnum;
+	</select> -->
+
+	<select id="getList" parameterType="HashMap" resultType="ColumnVo">
+        SELECT attrelid::regclass as tbl_id, attnum as col_uid, attname as col_id, (SELECT col_description(attrelid, attnum)) AS col_nm
+
+        FROM   pg_attribute
+
+        WHERE  attrelid in (
+                                'xeus.mt_aces_log'::regclass
+                              , 'xeus.mt_allow_ip'::regclass
+                              , 'xeus.mt_asset_log'::regclass
+                              , 'xeus.mt_auth_grp'::regclass
+                              , 'xeus.mt_auth_list'::regclass
+                              , 'xeus.mt_auth_log'::regclass
+                              , 'xeus.mt_cmm_cde'::regclass
+                              , 'xeus.mt_msg_log'::regclass
+                              , 'xeus.mt_notc_list'::regclass
+                              , 'xeus.mt_orgz_desc'::regclass
+                              , 'xeus.mt_usr_desc'::regclass
+                              , 'xeus.mt_sym_icon'::regclass
+                              , 'xeus.mon_cctv_log'::regclass
+                              , 'xeus.mon_evet_hist'::regclass
+                              , 'xeus.mon_preview'::regclass
+                              , 'xeus.mon_stillcut_log'::regclass
+                              , 'xeus.asset_hist'::regclass
+                              , 'xeus.asset_cctv'::regclass
+                              , 'xeus.asset_cctv_vms'::regclass
+                              , 'xeus.asset_cctv_model'::regclass
+                              , 'xeus.asset_site'::regclass
+                              , 'xeus.asset_infra'::regclass
+                              , 'xeus.asset_status'::regclass
+                              , 'xeus.asset_status_hist'::regclass
+                              , 'xeus.asset_site_hist'::regclass
+                              , 'xeus.crms_trans_rqst'::regclass
+                              , 'xeus.crms_rqst_renew'::regclass
+                           )
+        AND    attnum > 0
+        AND    NOT attisdropped
+        AND    attname NOT IN('_geometry', '_annox', '_annoy')
+
+        ORDER  BY attrelid, attnum;
+	</select>
+
+	<select id="getColumn" parameterType="HashMap" resultType="ColumnVo">
+		SELECT attrelid::regclass as tbl_id, attnum as col_uid, attname as col_id, (SELECT col_description(attrelid, attnum)) AS col_nm, info.data_type
+
+        FROM   pg_attribute as attr
+
+		,(SELECT
+				*
+			FROM
+				information_schema. COLUMNS
+			WHERE
+				table_schema = 'xeus'
+			AND TABLE_NAME = #{tbl}
+			AND COLUMN_NAME NOT IN (
+				'_annox',
+				'_annoy',
+				'_geometry'
+			)) as info
+
+        WHERE  attrelid in (
+                                'xeus.${tbl}'::regclass
+                           )
+        AND    attnum > 0
+        AND    NOT attisdropped
+        AND    attname NOT IN('_geometry', '_annox', '_annoy')
+
+			AND attr.attname = info.column_name
+
+        ORDER  BY attnum;
+
+        <!-- SELECT attrelid::regclass as tbl_id, attnum as col_uid, attname as col_id, (SELECT col_description(attrelid, attnum)) AS col_nm
+
+        FROM   pg_attribute as attr
+
+		<if test="dataType != null and dataType != ''">
+			,(SELECT
+					*
+				FROM
+					information_schema. COLUMNS
+				WHERE
+					table_schema = 'xeus'
+				AND TABLE_NAME = #{tbl}
+				AND COLUMN_NAME NOT IN (
+					'_annox',
+					'_annoy',
+					'_geometry'
+				)) as info
+		</if>
+
+        WHERE  attrelid in (
+                                'xeus.${tbl}'::regclass
+                           )
+        AND    attnum > 0
+        AND    NOT attisdropped
+        AND    attname NOT IN('_geometry', '_annox', '_annoy')
+
+		<if test="dataType != null and dataType != ''">
+			AND attr.attname = info.column_name
+			AND info.data_type = #{dataType}
+		</if>
+
+        ORDER  BY attnum; -->
+	</select>
+
+
+</mapper>

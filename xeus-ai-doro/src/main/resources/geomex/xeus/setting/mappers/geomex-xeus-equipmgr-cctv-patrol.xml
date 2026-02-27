@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.PatrolMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="PatrolVo">
+		SELECT owner_id, title_nm, json_txt, col_num, intvl_time, srch_radius, cctv_limit, chg_dat, _gid AS gid
+				, ST_AsText(_geometry) AS wkt
+
+		FROM xeus.mon_cctv_patrol
+
+		<where>
+
+			<if test="ownerId != null and ownerId != ''">
+				AND owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				AND title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				AND col_num = #{colNum}::integer
+			</if>
+
+			<if test="intvlTime != null and intvlTime != ''">
+				AND intvl_time = #{intvlTime}::integer
+			</if>
+
+			<if test="srchRadius != null and srchRadius != ''">
+				AND srch_radius = #{srchRadius}::integer
+			</if>
+
+			<if test="cctvLimit != null and cctvLimit != ''">
+				AND cctv_limit = #{cctvLimit}::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				AND chg_dat = #{chgDat}
+			</if>
+
+			<if test="gid != null and gid != ''">
+				AND _gid = #{gid}::integer
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				_gid asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="PatrolVo">
+		SELECT owner_id, title_nm, json_txt, col_num, intvl_time, srch_radius, cctv_limit, chg_dat, _gid AS gid
+				, ST_AsText(_geometry) AS wkt
+
+		FROM xeus.mon_cctv_patrol
+
+		<where>
+
+			<if test="ownerId != null and ownerId != ''">
+				AND owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				AND title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				AND col_num = #{colNum}::integer
+			</if>
+
+			<if test="intvlTime != null and intvlTime != ''">
+				AND intvl_time = #{intvlTime}::integer
+			</if>
+
+			<if test="srchRadius != null and srchRadius != ''">
+				AND srch_radius = #{srchRadius}::integer
+			</if>
+
+			<if test="cctvLimit != null and cctvLimit != ''">
+				AND cctv_limit = #{cctvLimit}::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				AND chg_dat = #{chgDat}
+			</if>
+
+			<if test="gid != null and gid != ''">
+				AND _gid = #{gid}::integer
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getItemByVo" parameterType="PatrolVo" resultType="PatrolVo">
+		SELECT owner_id, title_nm, json_txt, col_num, intvl_time, srch_radius, cctv_limit, chg_dat, _gid AS gid
+				, ST_AsText(_geometry) AS wkt
+
+		FROM xeus.mon_cctv_patrol
+
+		<where>
+
+			<if test="ownerId != null and ownerId != ''">
+				AND owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				AND title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				AND col_num = #{colNum}::integer
+			</if>
+
+			<if test="intvlTime != null and intvlTime != ''">
+				AND intvl_time = #{intvlTime}::integer
+			</if>
+
+			<if test="srchRadius != null and srchRadius != ''">
+				AND srch_radius = #{srchRadius}::integer
+			</if>
+
+			<if test="cctvLimit != null and cctvLimit != ''">
+				AND cctv_limit = #{cctvLimit}::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				AND chg_dat = #{chgDat}
+			</if>
+
+			<if test="gid != null and gid != ''">
+				AND _gid = #{gid}::integer
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.mon_cctv_patrol
+
+		<where>
+
+			<if test="ownerId != null and ownerId != ''">
+				AND owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				AND title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				AND col_num = #{colNum}::integer
+			</if>
+
+			<if test="intvlTime != null and intvlTime != ''">
+				AND intvl_time = #{intvlTime}::integer
+			</if>
+
+			<if test="srchRadius != null and srchRadius != ''">
+				AND srch_radius = #{srchRadius}::integer
+			</if>
+
+			<if test="cctvLimit != null and cctvLimit != ''">
+				AND cctv_limit = #{cctvLimit}::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				AND chg_dat = #{chgDat}
+			</if>
+
+			<if test="gid != null and gid != ''">
+				AND _gid = #{gid}::integer
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.mon_cctv_patrol WHERE _gid = #{gid}::integer
+	</delete>
+
+
+	<insert id="add" parameterType="PatrolVo">
+		INSERT INTO xeus.mon_cctv_patrol(
+			owner_id, title_nm, json_txt, col_num, intvl_time, srch_radius, cctv_limit, chg_dat, _geometry
+		) VALUES (
+			#{ownerId}, #{titleNm}, #{jsonTxt}, #{colNum}::integer, #{intvlTime}::integer, #{srchRadius}::integer, #{cctvLimit}::integer, #{chgDat},
+			ST_SetSrid(ST_GeomFromeWkt(#{wkt}), 5186)
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="PatrolVo">
+		UPDATE xeus.mon_cctv_patrol SET
+			_gid = #{gid}::integer
+
+			<if test="ownerId != null and ownerId != ''">
+				, owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				, title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				, json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				, col_num = #{colNum}::integer
+			</if>
+
+			<if test="intvlTime != null and intvlTime != ''">
+				, intvl_time = #{intvlTime}::integer
+			</if>
+
+			<if test="srchRadius != null and srchRadius != ''">
+				, srch_radius = #{srchRadius}::integer
+			</if>
+
+			<if test="cctvLimit != null and cctvLimit != ''">
+				, cctv_limit = #{cctvLimit}::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				, chg_dat = #{chgDat}
+			</if>
+
+		WHERE _gid = #{gid}::integer
+
+	</update>
+
+</mapper>

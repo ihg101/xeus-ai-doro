@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.map.service.GeometryMapper">
+
+	<select id="getGeometry" parameterType="HashMap" resultType="GeometryVo">
+        SELECT
+
+            _gid AS gid,
+            st_x(st_centroid(_geometry)) AS anno_x,
+            st_y(st_centroid(_geometry)) AS anno_y,
+            st_astext(_geometry) AS geometry
+
+        FROM xeus.${tbl}
+
+        WHERE ${col} = #{val}
+	</select>
+
+	<select id="getMinMax" parameterType="HashMap" resultType="HashMap">
+		SELECT min(${col}), max(${col}), count(${col}) FROM xeus.${tbl};
+	</select>
+
+	<select id="getCount" parameterType="HashMap" resultType="HashMap">
+		SELECT count(*) FROM xeus.${tbl};
+	</select>
+
+	<select id="getWfs" parameterType="HashMap" resultType="HashMap">
+        SELECT tbl.*, st_asgeojson(tbl._geometry) as geojson,
+        		st_x(st_centroid(_geometry)) AS _annox,
+            	st_y(st_centroid(_geometry)) AS _annoy
+        <if test="tbl == 'asset_infra' or tbl == 'asset_pump' or tbl == 'asset_rainfall'">
+            , status.state_cd AS state_cd
+        </if>
+
+        <if test="tbl == 'asset_iot_wind'">
+            ,(select wind_avg from xeus.asset_dust where dev_eui = tbl.dev_eui order by time desc limit 1)
+
+			,(select wind_max from xeus.asset_dust where dev_eui = tbl.dev_eui order by time desc limit 1)
+
+			,(select time from xeus.asset_dust where dev_eui = tbl.dev_eui order by time desc limit 1)
+        </if>
+
+        FROM xeus.${tbl} as tbl
+
+        <if test="tbl == 'asset_infra' or tbl == 'asset_pump' or tbl == 'asset_rainfall'">
+            LEFT JOIN xeus.asset_status AS status ON tbl.mgr_no = status.mgr_no
+        </if>
+
+        <where>
+	        <if test="col != null and col != '' and val != null and val != ''">
+	            AND ${col} in (${val})
+	        </if>
+
+	        <if test="box != null and box != ''">
+	            AND ST_Intersects(ST_MakeEnvelope(${box}, 5186), _geometry)
+	        </if>
+
+			<!-- 특정 조건 추가 -->
+            <if test="reqGbn != null and reqGbn != ''">
+                AND req_gbn in (${reqGbn})
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <if test="facilityClscd != null and facilityClscd != ''">
+                AND facility_clscd like '%'||#{facilityClscd}||'%'
+            </if>
+
+	        <if test="col == 'fcl_gbn_cd' and tbl == 'asset_infra'">
+	            AND ((facility_clscd not like 'WIFI%' and facility_clscd not like 'LORA%' and facility_clscd not like 'CCTV%') OR facility_clscd ISNULL)
+	        </if>
+
+	        <if test="tbl == 'mon_evet_hist'">
+	        	AND test_yn = 'Y'
+				and evt_nm IS NOT NULL
+				and lower(evt_nm) != 'null'
+				and evt_nm != ''
+	        </if>
+
+	        <!-- NMS(CCTV, WIFI, LORA) -->
+	        <if test="netNm != null and netNm != '' and tbl == 'asset_netwk'">
+                AND net_nm in ('${netNm}')
+            </if>
+
+	        <!-- FNMS -->
+	        <if test="cableTyp != null and cableTyp != '' and tbl == 'asset_netwk'">
+                AND cable_typ in ('${cableTyp}')
+            </if>
+
+	        <!-- LoRa -->
+	        <if test="mdfyDate != null and mdfyDate != '' and endMdfyDate == '' and tbl == 'asset_lora_rt_state'">
+                AND mdfy_date like #{mdfyDate}||'%'
+            </if>
+			<if test="mdfyDate != null and mdfyDate != '' and endMdfyDate != null and endMdfyDate != '' and tbl == 'asset_lora_rt_state'">
+				<![CDATA[ AND mdfy_date >= #{mdfyDate} and mdfy_date <= #{endMdfyDate}||'24' ]]>
+			</if>
+	        <if test="devEui != null and devEui != '' and tbl == 'asset_lora_rt_state'">
+                AND dev_eui = #{devEui}
+            </if>
+
+			<!-- Dust -->
+	        <if test="tbl == 'asset_dust'">
+                AND app_eui != '375A4B4E00000056'
+            </if>
+	        <if test="time != null and time != '' and endTime == ''  and tbl == 'asset_dust'">
+                AND time like #{time}||'%'
+            </if>
+            <if test="time != null and time != '' and endTime != null and endTime != '' and tbl == 'asset_dust'">
+				<![CDATA[ AND time >= #{time} and time <= #{endTime}||'24' ]]>
+			</if>
+
+            <!-- Dmtia -->
+            <if test="locDat != null and locDat != ''">
+                AND loc_dat <![CDATA[ >= ]]> #{locDat}
+            </if>
+        </where>
+
+		<trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+	</select>
+
+	<select id="getBigdataWfs" parameterType="HashMap" resultType="HashMap">
+        SELECT tbl._gid, st_asgeojson(tbl._geometry) as geojson
+
+        <if test="tbl == 'bigdata_sys1000026'">
+            , grid_id
+        </if>
+
+        FROM xeus.${tbl} as tbl
+
+        <where>
+	        <if test="col != null and col != '' and val != null and val != ''">
+	            AND ${col} in (${val})
+	        </if>
+
+	        <if test="bbox != null and bbox != ''">
+	            AND ST_Intersects(ST_MakeEnvelope(${bbox}, 5186), _geometry)
+	        </if>
+        </where>
+
+		<trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+	</select>
+
+	<select id="getCableWfs" parameterType="HashMap" resultType="HashMap">
+        SELECT tbl.st_mgr_no
+        		, tbl.ed_mgr_no
+        		, tbl.cable_desc
+        		, tbl.conn_stat
+        		, tbl._gid
+        		, tbl._geometry
+        		, tbl.theme_mgr_no
+        		, theme.net_gbn_cd
+        		, theme.theme_nm AS net_nm
+        		, theme.ring_no
+        		, theme.cable_typ
+        		, theme.line_color
+        		, theme.link_gbn_cd
+        		, st_asgeojson(tbl._geometry) as geojson
+        		, st_x(st_centroid(_geometry)) AS _annox
+        		, st_y(st_centroid(_geometry)) AS _annoy
+
+
+        FROM xeus.${tbl} as tbl
+        LEFT JOIN xeus.asset_netwk_theme AS theme ON tbl.theme_mgr_no = theme.mgr_no
+
+        <where>
+	        <if test="col != null and col != '' and val != null and val != ''">
+	            AND ${col} in (${val})
+	        </if>
+
+	        <if test="box != null and box != ''">
+	            AND ST_Intersects(ST_MakeEnvelope(${box}, 5186), _geometry)
+	        </if>
+
+			<!-- 특정 조건 추가 -->
+
+            <if test="startDat!= null and startDat != ''">
+                AND reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <!-- 190207 NMS/FNMS(테마 적용) -->
+	        <if test="themeMgrNo != null and themeMgrNo != '' and tbl == 'asset_netwk'">
+                AND theme_mgr_no in (${themeMgrNo})
+            </if>
+
+        </where>
+
+		<trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+	</select>
+
+	<select id="getPresetCCTV" parameterType="HashMap" resultType="HashMap">
+		SELECT * FROM xeus.asset_cctv_preset
+
+		WHERE cctv_mgr_no = #{cctvMgrNo}
+
+		ORDER BY ST_SetSRID(ST_MakePoint(#{tmx}::numeric, #{tmy}::numeric), 5186)
+		<![CDATA[ <-> ]]>
+				 ST_SetSRID(ST_MakePoint(dir_x, dir_y), 5186)
+
+		LIMIT 1
+	</select>
+
+
+</mapper>

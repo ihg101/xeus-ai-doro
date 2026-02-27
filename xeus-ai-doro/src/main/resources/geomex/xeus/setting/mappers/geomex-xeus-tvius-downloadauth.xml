@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.DownloadAuthMapper">
+
+    <select id="getAuth" parameterType="HashMap" resultType="DownloadAuthVo">
+
+        SELECT tt.cctv_mgr_no AS cctv_mgr_no, vdwk.down_cnt AS down_cnt
+            , vdwk.sec_st_dat AS sec_st_dat, vdwk.sec_ed_dat AS sec_ed_dat
+            , usr.user_id AS user_id, usr.user_stat_cd AS user_stat
+            , vcctv.cctv_nm AS cctv_label
+        FROM xeus.crms_trans_avi AS tt
+            LEFT JOIN xeus.crms_trans_work AS vdwk  ON vdwk.avi_mgr_seq = tt.mgr_seq AND vdwk.rqst_mgr_seq = tt.rqst_mgr_seq
+            LEFT JOIN xeus.crms_trans_rqst AS rqst  ON rqst.mgr_seq = tt.rqst_mgr_seq
+            LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS usr         ON usr.user_id = rqst.reqst_id
+            LEFT JOIN xeus.asset_cctv AS vcctv      ON vcctv.mgr_no = tt.cctv_mgr_no
+
+        <where>
+
+            <if test="userId != null and userId != ''">
+                AND rqst.reqst_id = #{userId}
+            </if>
+
+            <if test="fileNm != null and fileNm != ''">
+                AND vdwk.file_nm = #{fileNm}
+            </if>
+
+        </where>
+
+
+    </select>
+
+    <select id="getAuthPrev" parameterType="HashMap" resultType="DownloadAuthVo">
+
+        SELECT tt.cctv_mgr_id AS cctv_id , vdwk.down_cnt::text
+            , vdwk.sec_st_dat AS sec_st_dat, vdwk.sec_ed_dat AS sec_ed_dat
+            , usr.user_id AS user_id, usr.user_stat_cd AS user_stat
+        FROM xeus.crms_prev_avi AS tt
+            LEFT JOIN xeus.crms_prev_work AS vdwk  ON vdwk.avi_mgr_seq = tt.mgr_seq AND vdwk.rqst_mgr_seq = tt.rqst_mgr_seq
+            LEFT JOIN xeus.crms_prev_rqst AS rqst  ON rqst.mgr_seq = tt.rqst_mgr_seq
+            LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS usr        ON usr.user_id = rqst.reqst_id
+            LEFT JOIN xeus.asset_cctv AS vcctv     ON vcctv.mgr_no = tt.cctv_mgr_no
+
+        <where>
+
+            <if test="userId != null and userId != ''">
+                AND rqst.reqst_id = #{userId}
+            </if>
+
+            <if test="fileNm != null and fileNm != ''">
+                AND vdwk.file_nm = #{fileNm}
+            </if>
+
+        </where>
+
+    </select>
+
+    <update id="upCount" parameterType="HashMap">
+        UPDATE xeus.crms_trans_work
+        SET down_cnt = (down_cnt::numeric + 1)
+        WHERE file_nm = #{fileNm}
+
+    </update>
+    <update id="upPrevCount" parameterType="HashMap">
+        UPDATE xeus.crms_prev_work
+        SET down_cnt = (down_cnt::numeric + 1)
+        WHERE file_nm = #{fileNm}
+
+    </update>
+
+</mapper>

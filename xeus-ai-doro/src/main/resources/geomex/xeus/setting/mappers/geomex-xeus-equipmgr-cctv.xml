@@ -1,0 +1,1145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.CctvMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="CctvVo">
+        SELECT DISTINCT cctv.mgr_no, org_mgr_no, md_mgr_no, site_mgr_no, inst_dat, cctv_nm, device_id,
+                chnl_no, gbn_cd, ip_addr, port_num, use_yn, pan_yn, light_yn,
+                infrd_yn, tilt_yn, zoom_yn, talk_yn, tour_yn, con_id, con_pwd, snmp_str, const_year,
+                const_nm, loc_desc, rmark, vms_mgr_no, cctv._gid AS gid, gbn_nm, cctv.angle AS angle
+
+                , status.state_cd AS state_cd
+
+                , st_x(st_transform(cctv._geometry, 4326)) as lng
+                , st_y(st_transform(cctv._geometry, 4326)) as lat
+
+                , sig.sig_kor_nm || ' ' || emd.emd_kor_nm || ' ' || li.li_kor_nm || ' ' || cbnd.jibun AS addr
+                , cbnd.pnu
+
+                , (select adm_nm from xeus.kais_hjd_as where st_intersects(_geometry, cctv._geometry)) as hjd
+                , (select emd_kor_nm from xeus.kais_emd_as where st_intersects(_geometry, cctv._geometry)) as bjd
+
+        FROM xeus.asset_cctv AS cctv
+        LEFT JOIN xeus.asset_status AS status ON cctv.mgr_no = status.mgr_no
+
+        LEFT JOIN xeus.kras_cbnd_as AS cbnd ON st_intersects(cbnd._geometry, cctv._geometry)
+        LEFT JOIN xeus.kais_sig_as sig on sig.sig_cd = substr(cbnd.pnu, 0, 6)
+        LEFT JOIN xeus.kais_emd_as emd on emd.emd_cd = substr(cbnd.pnu, 0, 9)
+        LEFT JOIN xeus.kais_li_as li on li.li_cd = substr(cbnd.pnu, 0, 11)
+
+        <where>
+
+        	cctv.mgr_no != 'CTV0000000'
+
+            <if test="admNm != null and admNm != ''">
+                AND st_intersects((select _geometry from xeus.kais_hjd_as where adm_nm = #{admNm}), cctv._geometry)
+            </if>
+
+            <if test="emdCd != null and emdCd != ''">
+                AND st_intersects(emd._geometry, cctv._geometry)
+
+                AND emd.emd_cd = #{emdCd}
+            </if>
+
+            <if test="wkt != null and wkt != ''">
+                AND ST_Intersects(ST_SetSrid(ST_Multi(ST_GeomFromeWkt(#{wkt})), 5186), cctv._geometry)
+            </if>
+
+            <if test="center != null and center != '' and radius != null and radius != ''">
+                AND ST_Intersects(ST_SetSrid(ST_Buffer(ST_GeomFromeWkt(#{center}), #{radius}::numeric), 5186), cctv._geometry)
+            </if>
+
+            <if test="mgrNo != null and mgrNo != ''">
+                AND cctv.mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND cctv.org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="mdMgrNo != null and mdMgrNo != ''">
+                AND cctv.md_mgr_no = #{mdMgrNo}
+            </if>
+
+            <if test="siteMgrNo != null and siteMgrNo != ''">
+                AND cctv.site_mgr_no = #{siteMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND cctv.inst_dat = #{instDat}
+            </if>
+
+            <if test="cctvNm != null and cctvNm != ''">
+                <!-- AND lower(cctv.cctv_nm) like '%' || lower(#{cctvNm}) || '%' -->
+                AND cctv.cctv_nm like '%' || #{cctvNm} || '%'
+            </if>
+
+            <if test="deviceId != null and deviceId != ''">
+                AND cctv.device_id = #{deviceId}
+            </if>
+
+            <if test="chnlNo != null and chnlNo != ''">
+                AND cctv.chnl_no = #{chnlNo}::numeric
+            </if>
+
+            <if test="gbnCd != null and gbnCd != ''">
+                AND cctv.gbn_cd = #{gbnCd}
+            </if>
+
+            <if test="ipAddr != null and ipAddr != ''">
+                AND cctv.ip_addr = #{ipAddr}
+            </if>
+
+            <if test="portNum != null and portNum != ''">
+                AND cctv.port_num = #{portNum}
+            </if>
+
+            <if test="useYn != null and useYn != ''">
+                AND cctv.use_yn = #{useYn}
+            </if>
+
+            <if test="panYn != null and panYn != ''">
+                AND cctv.pan_yn = #{panYn}
+            </if>
+
+            <if test="lightYn != null and lightYn != ''">
+                AND cctv.light_yn = #{lightYn}
+            </if>
+
+            <if test="infrdYn != null and infrdYn != ''">
+                AND cctv.infrd_yn = #{infrdYn}
+            </if>
+
+            <if test="tiltYn != null and tiltYn != ''">
+                AND cctv.tilt_yn = #{tiltYn}
+            </if>
+
+            <if test="zoomYn != null and zoomYn != ''">
+                AND cctv.zoom_yn = #{zoomYn}
+            </if>
+
+            <if test="talkYn != null and talkYn != ''">
+                AND cctv.talk_yn = #{talkYn}
+            </if>
+
+            <if test="tourYn != null and tourYn != ''">
+                AND cctv.tour_yn = #{tourYn}
+            </if>
+
+            <if test="conId != null and conId != ''">
+                AND cctv.con_id = #{conId}
+            </if>
+
+            <if test="conPwd != null and conPwd != ''">
+                AND cctv.con_pwd = #{conPwd}
+            </if>
+
+            <if test="snmpStr != null and snmpStr != ''">
+                AND cctv.snmp_str = #{snmpStr}
+            </if>
+
+            <if test="constYear != null and constYear != ''">
+                AND cctv.const_year = #{constYear}
+            </if>
+
+            <if test="constNm != null and constNm != ''">
+                AND cctv.const_nm = #{constNm}
+            </if>
+
+            <if test="locDesc != null and locDesc != ''">
+                AND cctv.loc_desc = #{locDesc}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND cctv.rmark = #{rmark}
+            </if>
+
+            <if test="vmsMgrNo != null and vmsMgrNo != ''">
+                AND cctv.vms_mgr_no = #{vmsMgrNo}
+            </if>
+
+            <if test="cctvNoList != null and cctvNoList != ''">
+                AND cctv.device_id in (${cctvNoList})
+            </if>
+
+            <if test="gbnNm != null and gbnNm != ''">
+                AND cctv.gbn_nm like '%' || #{gbnNm} || '%'
+            </if>
+
+			<if test="angle != null and angle != ''">
+                AND cctv.angle = #{angle}::numeric
+            </if>
+
+            <if test="stateCd != null and stateCd != ''">
+                AND COALESCE(status.state_cd, null, 'null') <![CDATA[ <> ]]> #{stateCd}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                mgr_no asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <select id="getItem" parameterType="HashMap" resultType="CctvVo">
+        SELECT DISTINCT cctv.mgr_no, org_mgr_no, md_mgr_no, site_mgr_no, inst_dat, cctv_nm, device_id,
+                chnl_no, gbn_cd, ip_addr, port_num, use_yn, pan_yn, light_yn,
+                infrd_yn, tilt_yn, zoom_yn, talk_yn, tour_yn, con_id, con_pwd, snmp_str, const_year,
+                const_nm, loc_desc, rmark, vms_mgr_no, cctv._gid AS gid, cctv.angle AS angle, gbn_nm
+
+                , status.state_cd AS state_cd
+
+                , st_x(st_transform(cctv._geometry, 4326)) as lng
+                , st_y(st_transform(cctv._geometry, 4326)) as lat
+
+                , st_x(cctv._geometry) as center_x
+                , st_y(cctv._geometry) as center_y
+
+                , sig.sig_kor_nm || ' ' || emd.emd_kor_nm || ' ' || li.li_kor_nm || ' ' || cbnd.jibun AS addr
+                , cbnd.pnu
+
+                , cctv._geometry AS geometry
+
+        FROM xeus.asset_cctv AS cctv
+        LEFT JOIN xeus.asset_status AS status ON cctv.mgr_no = status.mgr_no
+
+        LEFT JOIN xeus.kras_cbnd_as AS cbnd ON st_intersects(cbnd._geometry, cctv._geometry)
+        LEFT JOIN xeus.kais_sig_as sig on sig.sig_cd = substr(cbnd.pnu, 0, 6)
+        LEFT JOIN xeus.kais_emd_as emd on emd.emd_cd = substr(cbnd.pnu, 0, 9)
+        LEFT JOIN xeus.kais_li_as li on li.li_cd = substr(cbnd.pnu, 0, 11)
+
+        <where>
+
+        	cctv.mgr_no != 'CTV0000000'
+
+        	<if test="admNm != null and admNm != ''">
+                AND st_intersects((select _geometry from xeus.kais_hjd_as where adm_nm = #{admNm}), cctv._geometry)
+            </if>
+
+            <if test="emdCd != null and emdCd != ''">
+                AND st_intersects(emd._geometry, cctv._geometry)
+
+                AND emd.emd_cd = #{emdCd}
+            </if>
+
+            <if test="wkt != null and wkt != ''">
+                AND ST_Intersects(ST_SetSrid(ST_Multi(ST_GeomFromeWkt(#{wkt})), 5186), cctv._geometry)
+            </if>
+
+            <if test="center != null and center != '' and radius != null and radius != ''">
+                AND ST_Intersects(ST_SetSrid(ST_Buffer(ST_GeomFromeWkt(#{center}), #{radius}::numeric), 5186), cctv._geometry)
+            </if>
+
+            <if test="mgrNo != null and mgrNo != ''">
+                AND cctv.mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="mdMgrNo != null and mdMgrNo != ''">
+                AND md_mgr_no = #{mdMgrNo}
+            </if>
+
+            <if test="siteMgrNo != null and siteMgrNo != ''">
+                AND site_mgr_no = #{siteMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND inst_dat = #{instDat}
+            </if>
+
+            <if test="cctvNm != null and cctvNm != ''">
+                <!-- AND lower(cctv.cctv_nm) like '%' || lower(#{cctvNm}) || '%' -->
+                AND cctv.cctv_nm like '%' || #{cctvNm} || '%'
+            </if>
+
+            <if test="oneCctvNm != null and oneCctvNm != ''">
+                <!-- AND lower(cctv.cctv_nm) like '%' || lower(#{cctvNm}) || '%' -->
+                AND cctv.cctv_nm = #{oneCctvNm}
+            </if>
+
+            <if test="deviceId != null and deviceId != ''">
+                AND device_id = #{deviceId}
+            </if>
+
+            <if test="chnlNo != null and chnlNo != ''">
+                AND chnl_no = #{chnlNo}::numeric
+            </if>
+
+            <if test="gbnCd != null and gbnCd != ''">
+                AND gbn_cd = #{gbnCd}
+            </if>
+
+            <if test="ipAddr != null and ipAddr != ''">
+                AND ip_addr = #{ipAddr}
+            </if>
+
+            <if test="portNum != null and portNum != ''">
+                AND port_num = #{portNum}
+            </if>
+
+            <if test="useYn != null and useYn != ''">
+                AND use_yn = #{useYn}
+            </if>
+
+            <if test="panYn != null and panYn != ''">
+                AND pan_yn = #{panYn}
+            </if>
+
+            <if test="lightYn != null and lightYn != ''">
+                AND light_yn = #{lightYn}
+            </if>
+
+            <if test="infrdYn != null and infrdYn != ''">
+                AND infrd_yn = #{infrdYn}
+            </if>
+
+            <if test="tiltYn != null and tiltYn != ''">
+                AND tilt_yn = #{tiltYn}
+            </if>
+
+            <if test="zoomYn != null and zoomYn != ''">
+                AND zoom_yn = #{zoomYn}
+            </if>
+
+            <if test="talkYn != null and talkYn != ''">
+                AND talk_yn = #{talkYn}
+            </if>
+
+            <if test="tourYn != null and tourYn != ''">
+                AND tour_yn = #{tourYn}
+            </if>
+
+            <if test="conId != null and conId != ''">
+                AND con_id = #{conId}
+            </if>
+
+            <if test="conPwd != null and conPwd != ''">
+                AND con_pwd = #{conPwd}
+            </if>
+
+            <if test="snmpStr != null and snmpStr != ''">
+                AND cctv.snmp_str = #{snmpStr}
+            </if>
+
+            <if test="constYear != null and constYear != ''">
+                AND const_year = #{constYear}
+            </if>
+
+            <if test="constNm != null and constNm != ''">
+                AND const_nm = #{constNm}
+            </if>
+
+            <if test="locDesc != null and locDesc != ''">
+                AND loc_desc = #{locDesc}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND rmark = #{rmark}
+            </if>
+
+            <if test="vmsMgrNo != null and vmsMgrNo != ''">
+                AND vms_mgr_no = #{vmsMgrNo}
+            </if>
+
+            <if test="gid != null and gid != ''">
+                AND cctv._gid = #{gid}::numeric
+            </if>
+
+            <if test="angle != null and angle != ''">
+                AND cctv.angle = #{angle}::numeric
+            </if>
+
+            <if test="gbnNm != null and gbnNm != ''">
+                AND cctv.gbn_nm like '%' || #{gbnNm} || '%'
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="getRTSP" parameterType="HashMap" resultType="CctvVo">
+        SELECT vms.ip_addr
+
+        FROM xeus.asset_cctv_vms AS vms, xeus.asset_cctv AS cctv
+
+        WHERE vms.mgr_no = cctv.vms_mgr_no
+
+        AND cctv._gid = #{gid}::integer
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.asset_cctv AS cctv
+        LEFT JOIN xeus.asset_status AS status ON cctv.mgr_no = status.mgr_no
+
+        <where>
+
+        	cctv.mgr_no != 'CTV0000000'
+
+        	<if test="admNm != null and admNm != ''">
+                AND st_intersects((select _geometry from xeus.kais_hjd_as where adm_nm = #{admNm}), cctv._geometry)
+            </if>
+
+            <if test="emdCd != null and emdCd != ''">
+                AND st_intersects((select _geometry from xeus.kais_emd_as where emd_cd = #{emdCd}), cctv._geometry)
+            </if>
+
+            <if test="wkt != null and wkt != ''">
+                AND ST_Intersects(ST_SetSrid(ST_Multi(ST_GeomFromeWkt(#{wkt})), 5186), cctv._geometry)
+            </if>
+
+            <if test="center != null and center != '' and radius != null and radius != ''">
+                AND ST_Intersects(ST_SetSrid(ST_Buffer(ST_GeomFromeWkt(#{center}), #{radius}::numeric), 5186), cctv._geometry)
+            </if>
+
+            <if test="mgrNo != null and mgrNo != ''">
+                AND cctv.mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND cctv.org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="mdMgrNo != null and mdMgrNo != ''">
+                AND cctv.md_mgr_no = #{mdMgrNo}
+            </if>
+
+            <if test="siteMgrNo != null and siteMgrNo != ''">
+                AND cctv.site_mgr_no = #{siteMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND cctv.inst_dat = #{instDat}
+            </if>
+
+            <if test="cctvNm != null and cctvNm != ''">
+                <!-- AND lower(cctv.cctv_nm) like '%' || lower(#{cctvNm}) || '%' -->
+                AND cctv.cctv_nm like '%' || #{cctvNm} || '%'
+            </if>
+
+            <if test="deviceId != null and deviceId != ''">
+                AND cctv.device_id = #{deviceId}
+            </if>
+
+            <if test="chnlNo != null and chnlNo != ''">
+                AND cctv.chnl_no = #{chnlNo}::numeric
+            </if>
+
+            <if test="gbnCd != null and gbnCd != ''">
+                AND cctv.gbn_cd = #{gbnCd}
+            </if>
+
+            <if test="ipAddr != null and ipAddr != ''">
+                AND cctv.ip_addr = #{ipAddr}
+            </if>
+
+            <if test="portNum != null and portNum != ''">
+                AND cctv.port_num = #{portNum}
+            </if>
+
+            <if test="useYn != null and useYn != ''">
+                AND cctv.use_yn = #{useYn}
+            </if>
+
+            <if test="panYn != null and panYn != ''">
+                AND cctv.pan_yn = #{panYn}
+            </if>
+
+            <if test="lightYn != null and lightYn != ''">
+                AND cctv.light_yn = #{lightYn}
+            </if>
+
+            <if test="infrdYn != null and infrdYn != ''">
+                AND cctv.infrd_yn = #{infrdYn}
+            </if>
+
+            <if test="tiltYn != null and tiltYn != ''">
+                AND cctv.tilt_yn = #{tiltYn}
+            </if>
+
+            <if test="zoomYn != null and zoomYn != ''">
+                AND cctv.zoom_yn = #{zoomYn}
+            </if>
+
+            <if test="talkYn != null and talkYn != ''">
+                AND cctv.talk_yn = #{talkYn}
+            </if>
+
+            <if test="tourYn != null and tourYn != ''">
+                AND cctv.tour_yn = #{tourYn}
+            </if>
+
+            <if test="conId != null and conId != ''">
+                AND cctv.con_id = #{conId}
+            </if>
+
+            <if test="conPwd != null and conPwd != ''">
+                AND cctv.con_pwd = #{conPwd}
+            </if>
+
+            <if test="snmpStr != null and snmpStr != ''">
+                AND cctv.snmp_str = #{snmpStr}
+            </if>
+
+            <if test="constYear != null and constYear != ''">
+                AND cctv.const_year = #{constYear}
+            </if>
+
+            <if test="constNm != null and constNm != ''">
+                AND cctv.const_nm = #{constNm}
+            </if>
+
+            <if test="locDesc != null and locDesc != ''">
+                AND cctv.loc_desc = #{locDesc}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND cctv.rmark = #{rmark}
+            </if>
+
+            <if test="vmsMgrNo != null and vmsMgrNo != ''">
+                AND cctv.vms_mgr_no = #{vmsMgrNo}
+            </if>
+
+            <if test="cctvNoList != null and cctvNoList != ''">
+                AND device_id in (${cctvNoList})
+            </if>
+
+            <if test="stateCd != null and stateCd != ''">
+                AND COALESCE(status.state_cd, null, 'null') <![CDATA[ <> ]]> #{stateCd}
+            </if>
+
+            <if test="gbnNm != null and gbnNm != ''">
+                AND cctv.gbn_nm like '%' || #{gbnNm} || '%'
+            </if>
+
+        </where>
+    </select>
+
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.asset_cctv WHERE mgr_no = #{mgrNo}
+    </delete>
+
+
+    <insert id="add" parameterType="CctvVo">
+        INSERT INTO xeus.asset_cctv(
+            mgr_no, org_mgr_no, md_mgr_no, site_mgr_no, inst_dat, cctv_nm, cctv_desc, device_id,
+            <if test="chnlNo != null and chnlNo != ''">
+                chnl_no,
+            </if>
+            gbn_cd,
+            ip_addr,
+            <if test="portNum != null and portNum != ''">
+                port_num,
+            </if>
+            use_yn, pan_yn, light_yn,
+            infrd_yn, tilt_yn, zoom_yn, talk_yn, tour_yn, con_id, con_pwd, const_year,
+            const_nm, loc_desc, rmark, vms_mgr_no, gbn_nm
+            <if test="snmpStr != null and snmpStr != ''">
+                , snmp_str
+            </if>
+            <if test="lng != null and lng != '' and lat != null and lat != ''">
+                , _geometry
+                , _annox
+                , _annoy
+            </if>
+        ) VALUES (
+            (SELECT
+              'CTV' ||
+              (case length((num + 1)::text)::integer
+                when 1 then '000000'
+                when 2 then '00000'
+                when 3 then '0000'
+                when 4 then '000'
+                when 5 then '00'
+                when 6 then '0'
+                when 7 then ''
+              end) || num + 1 AS val
+            FROM generate_series(
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv),
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv)
+            ) AS num),
+
+            #{orgMgrNo}, #{mdMgrNo}, #{siteMgrNo}, #{instDat}, #{cctvNm}, #{cctvNm}, #{deviceId},
+            <if test="chnlNo != null and chnlNo != ''">
+                #{chnlNo}::numeric,
+            </if>
+            #{gbnCd},
+            #{ipAddr},
+            <if test="portNum != null and portNum != ''">
+                #{portNum}::numeric,
+            </if>
+            #{useYn}, #{panYn}, #{lightYn},
+            #{infrdYn}, #{tiltYn}, #{zoomYn}, #{talkYn}, #{tourYn}, #{conId}, #{conPwd}, #{constYear},
+            #{constNm}, #{locDesc}, #{rmark}, #{vmsMgrNo}, #{gbnNm}
+            <if test="snmpStr != null and snmpStr != ''">
+                , #{snmpStr}
+            </if>
+            <if test="lng != null and lng != '' and lat != null and lat != ''">
+                , public.ST_SetSRID(public.ST_MakePoint(#{lng}::numeric, #{lat}::numeric), 5186)
+                , #{lng}::numeric
+                , #{lat}::numeric
+            </if>
+        );
+
+        INSERT INTO xeus.mt_asset_log(
+            asset_mgr_no, worker_id, work_dat, work_gbn
+
+        ) VALUES (
+            (SELECT
+              'CTV' ||
+              (case length((num + 1)::text)::integer
+                when 1 then '000000'
+                when 2 then '00000'
+                when 3 then '0000'
+                when 4 then '000'
+                when 5 then '00'
+                when 6 then '0'
+                when 7 then ''
+              end) || num AS val
+            FROM generate_series(
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv),
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv)
+            ) AS num),
+            #{workerId},
+            #{workDat},
+            #{workGbn}
+        );
+    </insert>
+
+
+    <update id="edit" parameterType="CctvVo">
+        UPDATE xeus.asset_cctv SET
+            mgr_no = #{mgrNo}
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                , org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="mdMgrNo != null and mdMgrNo != ''">
+                , md_mgr_no = #{mdMgrNo}
+            </if>
+
+            <if test="siteMgrNo != null">
+                , site_mgr_no = #{siteMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                , inst_dat = #{instDat}
+            </if>
+
+            <if test="cctvNm != null and cctvNm != ''">
+                , cctv_nm = #{cctvNm}
+                , cctv_desc = #{cctvNm}
+            </if>
+
+            <if test="deviceId != null and deviceId != ''">
+                , device_id = #{deviceId}
+            </if>
+
+            <if test="chnlNo != null and chnlNo != ''">
+                , chnl_no = #{chnlNo}::integer
+            </if>
+
+            <if test="gbnCd != null and gbnCd != ''">
+                , gbn_cd = #{gbnCd}
+            </if>
+
+            <if test="ipAddr != null and ipAddr != ''">
+                , ip_addr = #{ipAddr}
+            </if>
+
+            <if test="portNum != null and portNum != ''">
+                , port_num = #{portNum}::integer
+            </if>
+
+            <if test="useYn != null and useYn != ''">
+                , use_yn = #{useYn}
+            </if>
+
+            <if test="panYn != null and panYn != ''">
+                , pan_yn = #{panYn}
+            </if>
+
+            <if test="lightYn != null and lightYn != ''">
+                , light_yn = #{lightYn}
+            </if>
+
+            <if test="infrdYn != null and infrdYn != ''">
+                , infrd_yn = #{infrdYn}
+            </if>
+
+            <if test="tiltYn != null and tiltYn != ''">
+                , tilt_yn = #{tiltYn}
+            </if>
+
+            <if test="zoomYn != null and zoomYn != ''">
+                , zoom_yn = #{zoomYn}
+            </if>
+
+            <if test="talkYn != null and talkYn != ''">
+                , talk_yn = #{talkYn}
+            </if>
+
+            <if test="tourYn != null and tourYn != ''">
+                , tour_yn = #{tourYn}
+            </if>
+
+            <if test="conId != null and conId != ''">
+                , con_id = #{conId}
+            </if>
+
+            <if test="conPwd != null and conPwd != ''">
+                , con_pwd = #{conPwd}
+            </if>
+
+            <if test="snmpStr != null and snmpStr != ''">
+                , snmp_str = #{snmpStr}
+            </if>
+
+            <if test="constYear != null and constYear != ''">
+                , const_year = #{constYear}
+            </if>
+
+            <if test="constNm != null and constNm != ''">
+                , const_nm = #{constNm}
+            </if>
+
+            <if test="locDesc != null and locDesc != ''">
+                , loc_desc = #{locDesc}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                , rmark = #{rmark}
+            </if>
+
+            <if test="vmsMgrNo != null and vmsMgrNo != ''">
+                , vms_mgr_no = #{vmsMgrNo}
+            </if>
+
+            <if test="lng != null and lng != '' and lat != null and lat != ''">
+                , _geometry = st_geomFromWkb(public.ST_MakePoint(#{lng}::numeric, #{lat}::numeric), 5186)
+                , _annox = #{lng}::numeric
+                , _annoy = #{lat}::numeric
+            </if>
+
+            <if test="angle != null and angle != ''">
+                , angle = #{angle}::numeric
+            </if>
+
+            <if test="gbnNm != null and gbnNm != ''">
+                , gbn_nm = #{gbnNm}
+            </if>
+
+        WHERE mgr_no = #{mgrNo}
+
+    </update>
+
+    <insert id="init">
+        DELETE FROM xeus.asset_cctv;
+
+        INSERT INTO xeus.asset_cctv VALUES ('CTV0000161', '000001', '000001', 'VMS0000001', null, '20170704115017', '중앙공원입구1', '389908', 0, '19', 0, null, null, 'Y', 'N', 'N', 'N', 'N', 'N', 'N', 'Y', null, null, null, null, null, null, 161, 211444.8, 371736.4, '010100002042140000CC6E6666A6CF0941BE7D9A9961B01641');
+        INSERT INTO xeus.asset_cctv VALUES ('CTV0000163', '000001', '000002', 'VMS0000003', null, '20170704115017', '중앙공원입구3', '412279', 0, '19', 0, null, null, 'Y', 'N', 'N', 'N', 'N', 'N', 'N', 'Y', null, null, null, null, null, null, 163, 211676.1652, 371818.0038, '010100002042140000A5204552E1D609417EBDE603A8B11641');
+        INSERT INTO xeus.asset_cctv VALUES ('CTV0000164', '000001', '000001', 'VMS0000004', null, '20170704115017', '중앙공원입구4', '421686', 0, '19', 0, null, null, 'Y', 'N', 'Y', 'N', 'N', 'N', 'N', 'Y', null, null, null, null, null, null, 164, 211202.6829, 371688.1444, '0101000020421400002276837615C80941D9F6DB93A0AF1641');
+        INSERT INTO xeus.asset_cctv VALUES ('CTV0000189', '000001', '000001', 'VMS0000005', null, '20170704115017', '봉동현대자동차사거리(주정차단속)', '77886962', 0, '20', 0, null, null, 'Y', 'Y', 'N', 'N', 'Y', 'N', 'N', 'Y', null, null, null, null, null, null, 189, 211795.7626, 371765.5122, '010100002042140000D6B3C1199EDA09411E0C790CD6B01641');
+        INSERT INTO xeus.asset_cctv VALUES ('CTV0000162', '000001', '000001', 'VMS0000002', null, '20170704115017', '중앙공원입구2', '402513', 0, '19', 0, '127.0.0.1', 80, 'Y', 'N', 'N', 'N', 'N', 'N', 'N', 'Y', null, null, null, null, null, null, 162, 211454.4041, 371725.2763, '01010000204214000094E0933BF3CF09418503E31A35B01641');
+
+        DELETE FROM xeus.asset_cctv_unreg;
+
+        INSERT INTO xeus.asset_cctv_unreg VALUES ('CTV0000163', '000001', '000002', 'VMS0000003', null, '20170704115017', 'KEB하나은행', '412279', 0, '19', 0, null, null, 'Y', 'N', 'N', 'N', 'N', 'N', 'N', 'Y', null, null, null, null, null, null, 163, 211676.1652, 371818.0038, '010100002042140000A5204552E1D609417EBDE603A8B11641');
+        INSERT INTO xeus.asset_cctv_unreg VALUES ('CTV0000164', '000001', '000001', 'VMS0000004', null, '20170704115017', '한국타이어', '421686', 0, '19', 0, null, null, 'Y', 'N', 'Y', 'N', 'N', 'N', 'N', 'Y', null, null, null, null, null, null, 164, 211202.6829, 371688.1444, '0101000020421400002276837615C80941D9F6DB93A0AF1641');
+        INSERT INTO xeus.asset_cctv_unreg VALUES ('CTV0000189', '000001', '000001', 'VMS0000005', null, '20170704115017', '코레스', '77886962', 0, '20', 0, null, null, 'Y', 'Y', 'N', 'N', 'Y', 'N', 'N', 'Y', null, null, null, null, null, null, 189, 211795.7626, 371765.5122, '010100002042140000D6B3C1199EDA09411E0C790CD6B01641');
+        INSERT INTO xeus.asset_cctv_unreg VALUES ('CTV0000162', '000001', '000001', 'VMS0000002', null, '20170704115017', '대림산업', '402513', 0, '19', 0, '127.0.0.1', 80, 'Y', 'N', 'N', 'N', 'N', 'N', 'N', 'Y', null, null, null, null, null, null, 162, 211454.4041, 371725.2763, '01010000204214000094E0933BF3CF09418503E31A35B01641');
+    </insert>
+
+    <select id="makeGeometry" parameterType="HashMap" resultType="CctvVo">
+
+        SELECT st_transform(
+                    st_setsrid(
+                        st_makepoint(
+                            <if test="lon != null and lon != ''">
+                                #{lon}::numeric
+                            </if>
+                            ,
+                            <if test="lat != null and lat != ''">
+                                #{lat}::numeric
+                            </if>
+                            )
+                        ,
+                        <if test="srid != null and srid != ''">
+                            #{srid}::integer
+                        </if>
+                        )
+                    , 5186) AS geometry,
+                st_x(st_transform(
+                    st_setsrid(
+                        st_makepoint(
+                            <if test="lon != null and lon != ''">
+                                #{lon}::numeric
+                            </if>
+                            ,
+                            <if test="lat != null and lat != ''">
+                                #{lat}::numeric
+                            </if>
+                            )
+                        ,
+                        <if test="srid != null and srid != ''">
+                            #{srid}::integer
+                        </if>
+                        )
+                    , 5186)) AS center_x,
+                st_y(st_transform(
+                    st_setsrid(
+                        st_makepoint(
+                            <if test="lon != null and lon != ''">
+                                #{lon}::numeric
+                            </if>
+                            ,
+                            <if test="lat != null and lat != ''">
+                                #{lat}::numeric
+                            </if>
+                            )
+                        ,
+                        <if test="srid != null and srid != ''">
+                            #{srid}::integer
+                        </if>
+                        )
+                    , 5186)) AS center_y
+
+    </select>
+
+    <select id="getNetItem" parameterType="HashMap" resultType="CctvVo">
+
+        SELECT st_distance(cctv._geometry, (
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                      ))::integer AS dist
+                , cctv.mgr_no, cctv.org_mgr_no, cctv.md_mgr_no, cctv.site_mgr_no, cctv.inst_dat, cctv.cctv_nm, cctv.device_id, cctv.chnl_no
+                , cctv.gbn_cd, cctv.ip_addr, cctv.port_num, cctv.use_yn, cctv.pan_yn, cctv.light_yn, cctv.infrd_yn
+                , cctv.tilt_yn, cctv.zoom_yn, cctv.talk_yn, cctv.tour_yn, cctv.con_id, cctv.con_pwd, cctv.const_year, cctv.const_nm, cctv.loc_desc, cctv.rmark
+                , cctv.vms_mgr_no, cctv._gid AS gid
+                , st_x(st_transform(cctv._geometry, 4326)) as lng
+                , st_y(st_transform(cctv._geometry, 4326)) as lat
+        FROM xeus.asset_cctv AS cctv
+        LEFT JOIN xeus.asset_status AS status ON cctv.mgr_no = status.mgr_no
+
+        <where>
+
+            COALESCE(status.state_cd, null, 'null') <![CDATA[ <> ]]> '12'
+
+            <if test="ptzCctv != null and ptzCctv != ''">
+                AND lower(cctv.cctv_nm) like '%r%'
+            </if>
+
+            <if test="gid != null and gid != ''">
+                AND cctv._gid <![CDATA[ <> ]]> #{gid}::numeric
+            </if>
+
+            <if test="netSchGbn != null and (netSchGbn eq 'top'.toString())">
+                AND (degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ < ]]> 23
+                OR degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ >= ]]> 338)
+            </if>
+
+            <if test="netSchGbn != null and (netSchGbn eq 'rightTop'.toString())">
+                AND (degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ < ]]> 68
+                AND degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ >= ]]> 23)
+            </if>
+
+            <if test="netSchGbn != null and (netSchGbn eq 'right'.toString())">
+                AND (degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ < ]]> 113
+                AND degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ >= ]]> 68)
+            </if>
+
+            <if test="netSchGbn != null and (netSchGbn eq 'rightBottom'.toString())">
+                AND (degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ < ]]> 158
+                AND degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ >= ]]> 113)
+            </if>
+
+            <if test="netSchGbn != null and (netSchGbn eq 'bottom'.toString())">
+                AND (degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ < ]]> 203
+                AND degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ >= ]]> 158)
+            </if>
+
+            <if test="netSchGbn != null and (netSchGbn eq 'leftBottom'.toString())">
+                AND (degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ < ]]> 248
+                AND degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ >= ]]> 203)
+            </if>
+
+            <if test="netSchGbn != null and (netSchGbn eq 'left'.toString())">
+                AND (degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ < ]]> 293
+                AND degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ >= ]]> 248)
+            </if>
+
+            <if test="netSchGbn != null and (netSchGbn eq 'leftTop'.toString())">
+                AND (degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ < ]]> 338
+                AND degrees(st_azimuth(
+                                        <if test="geometry != null and geometry != ''">
+                                            #{geometry}::geometry
+                                        </if>
+                                        , cctv._geometry)) <![CDATA[ >= ]]> 293)
+            </if>
+            <if test="dist != null and dist != '' and (dist != '0'.toString())">
+                AND st_distance(cctv._geometry, (
+                                        #{geometry}::geometry
+                                ))::integer <![CDATA[ < ]]> #{dist}::integer
+            </if>
+
+        </where>
+
+        ORDER BY dist LIMIT 1
+
+    </select>
+
+    <select id="getBoundingExtent" parameterType="HashMap" resultType="CctvVo">
+
+        SELECT ST_XMIN(ST_EXTENT(_geometry)) AS min_x
+            , ST_YMIN(ST_EXTENT(_geometry)) AS min_y
+            , ST_XMAX(ST_EXTENT(_geometry)) AS max_x
+            , ST_YMAX(ST_EXTENT(_geometry)) AS max_y
+        FROM xeus.asset_cctv
+
+        <where>
+            <if test="gidList != null">
+                AND _gid IN
+                <foreach item="item" collection="gidList" index="index" open="(" separator="," close=")">
+                    #{item.value}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getCntOfGbnCd" parameterType="HashMap" resultType="CctvVo">
+
+        SELECT cctv.gbn_cd, count(cctv.gbn_cd) AS gbn_cnt
+		FROM xeus.asset_cctv cctv
+
+        <where>
+        	<if test="gbnCd != null and gbnCd !=''">
+                AND cctv.gbn_cd IN (${gbnCd})
+            </if>
+        </where>
+
+		GROUP BY cctv.gbn_cd
+		ORDER BY gbn_cnt
+
+    </select>
+
+     <select id="getGbnNm" parameterType="HashMap" resultType="CctvVo">
+
+        SELECT gbn_nm
+		FROM xeus.asset_cctv
+
+		GROUP BY gbn_nm
+		ORDER BY gbn_nm
+
+    </select>
+
+
+    <select id="getVmsItem" parameterType="HashMap" resultType="CctvVo">
+        SELECT MIN(cctv.mgr_no) AS mgr_no
+		FROM xeus.asset_cctv cctv
+		INNER JOIN xeus.asset_cctv_vms AS vms ON cctv.vms_mgr_no = vms.mgr_no
+
+		<if test="vmsTyp != null and vmsTyp != ''">
+			AND vms.vms_typ = #{vmsTyp}
+        </if>
+
+        <if test="vmsMgrNo != null and vmsMgrNo != ''">
+			AND vms.mgr_no = #{vmsMgrNo}
+        </if>
+
+    </select>
+
+    <update id="syncCctv" parameterType="HashMap">
+        UPDATE xeus.asset_cctv SET
+            ${where} = #{key}
+            , ${col} = #{val}
+
+            <if test="col == 'cctv_nm'">
+	            , cctv_desc = #{val}
+	        </if>
+
+        WHERE ${where} = #{key}
+
+
+    </update>
+
+	<delete id="delAll" parameterType="HashMap">
+        DELETE FROM xeus.asset_cctv
+       	WHERE mgr_no != 'CTV0000000'
+    </delete>
+
+    <insert id="addAll" parameterType="CctvVO">
+<!--    		<selectKey keyProperty="mgrNo" resultType="CctvVO" order="BEFORE">
+			SELECT
+				(SELECT
+				'CTV' ||
+					(case length((num+1)::text)::integer
+						when 1 then '000000'
+						when 2 then '00000'
+						when 3 then '0000'
+						when 4 then '000'
+						when 5 then '00'
+						when 6 then '0'
+						when 7 then ''
+						end) || num + 1 AS val
+				FROM generate_series(
+					(SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv),
+					(SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv)
+				) as num) AS MGR_NO
+		</selectKey> -->
+        INSERT INTO XEUS.ASSET_CCTV (
+			mgr_no,
+			org_mgr_no,
+			vms_mgr_no,
+	        cctv_nm,
+	       	gbn_nm,
+	       	gbn_cd,
+			device_id,
+			chnl_no,
+			use_yn,
+			pan_yn,
+			light_yn,
+			infrd_yn,
+			tilt_yn,
+			zoom_yn,
+			talk_yn,
+			tour_yn,
+			ip_addr,
+			port_num,
+			con_id,
+			con_pwd,
+			angle,
+			loc_desc,
+			inst_dat,
+			const_year,
+			const_nm,
+			rmark,
+			_annox,
+			_annoy,
+			_geometry
+        ) VALUES (
+	        #{mgrNo},
+	        '000001',
+	        'VMS0000001',
+	        #{cctvNm},
+	        #{gbnNm},
+	        #{gbnCd},
+	        #{deviceId},
+			#{chnlNo}::numeric,
+			#{useYn},
+			#{panYn},
+			#{lightYn},
+			#{infrdYn},
+			#{tiltYn},
+			#{zoomYn},
+			#{talkYn},
+			#{tourYn},
+			#{ipAddr},
+			#{portNum}::numeric,
+			#{conId},
+			#{conPwd},
+			#{angle}::numeric,
+			#{locDesc},
+			#{instDat},
+			#{constYear},
+			#{constNm},
+			#{rmark},
+			st_x(ST_Transform(st_setsrid(ST_makepoint(#{lng}::numeric, #{lat}::numeric),4326),5186)),
+	 		st_y(ST_Transform(st_setsrid(ST_makepoint(#{lng}::numeric, #{lat}::numeric),4326),5186)),
+	 		ST_Transform(st_setsrid(ST_makepoint(#{lng}::numeric, #{lat}::numeric),4326),5186)
+         )
+    </insert>
+    
+    <!-- 2024.11.04 원우빈 추가 -->
+     <select id="getSpecificList" resultType="CctvVO" parameterType="HashMap">
+         SELECT mgr_no,vms_mgr_no, cctv_nm, device_id, 
+         ST_X(ST_Transform(ST_SetSRID(ST_MakePoint(_annox, _annoy), 5186), 4326)) AS lng,
+         ST_Y(ST_Transform(ST_SetSRID(ST_MakePoint(_annox, _annoy), 5186), 4326)) AS lat
+         FROM xeus.asset_cctv
+        <where>
+               <if test="vmsMgrNo != null and vmsMgrNo != ''">
+                   AND vms_mgr_no = #{vmsMgrNo}
+               </if>
+        </where>
+     </select>
+</mapper>

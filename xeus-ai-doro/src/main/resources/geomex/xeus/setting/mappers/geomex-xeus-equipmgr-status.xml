@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.StatusMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="StatusVo">
+		SELECT stat.mgr_no, stat.state_cd, stat.state_json, stat.recv_dat, cctv.cctv_nm, infra.facility_nm, pump.pumpjang_name, rain.raingauge_name
+
+        FROM xeus.asset_status AS stat
+
+        LEFT JOIN xeus.asset_cctv AS cctv ON stat.mgr_no = cctv.mgr_no
+        LEFT JOIN xeus.asset_pump AS pump ON stat.mgr_no = pump.mgr_no
+        LEFT JOIN xeus.asset_infra AS infra ON stat.mgr_no = infra.mgr_no
+		LEFT JOIN xeus.asset_rainfall AS rain ON stat.mgr_no = rain.mgr_no
+
+		<where>
+            <if test="mgrNo != null and mgrNo != ''">
+                AND stat.mgr_no = #{mgrNo}
+            </if>
+
+            <if test="type != null and type != ''">
+                AND substring(stat.mgr_no, 1, 3) = #{type}
+            </if>
+
+            <if test="stateCd != null and stateCd != ''">
+                AND stat.state_cd = #{stateCd}
+            </if>
+
+            <if test="stateCd == null">
+                AND stat.state_cd != '11'
+            </if>
+
+            <if test="stateJson != null and stateJson != ''">
+                AND stat.state_json = #{stateJson}
+            </if>
+
+            <if test="recvDat != null and recvDat != ''">
+                AND stat.recv_dat = #{recvDat}
+            </if>
+        </where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+
+			<if test="sortCol == null and sortTyp == null">
+				stat.mgr_no asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="StatusVo">
+  		SELECT stat.mgr_no, stat.state_cd, stat.state_json, stat.recv_dat, cctv.cctv_nm, infra.facility_nm, pump.pumpjang_name, rain.raingauge_name
+
+        FROM xeus.asset_status AS stat
+
+        LEFT JOIN xeus.asset_cctv AS cctv ON stat.mgr_no = cctv.mgr_no
+        LEFT JOIN xeus.asset_pump AS pump ON stat.mgr_no = pump.mgr_no
+        LEFT JOIN xeus.asset_infra AS infra ON stat.mgr_no = infra.mgr_no
+		LEFT JOIN xeus.asset_rainfall AS rain ON stat.mgr_no = rain.mgr_no
+
+        <where>
+            <if test="mgrNo != null and mgrNo != ''">
+                AND stat.mgr_no = #{mgrNo}
+            </if>
+
+            <if test="type != null and type != ''">
+                AND substring(stat.mgr_no, 1, 3) = #{type}
+            </if>
+
+            <if test="stateCd != null and stateCd != ''">
+                AND stat.state_cd = #{stateCd}
+            </if>
+
+            <if test="stateCd == null">
+                AND stat.state_cd != '11'
+            </if>
+
+            <if test="stateJson != null and stateJson != ''">
+                AND stat.state_json = #{stateJson}
+            </if>
+
+            <if test="recvDat != null and recvDat != ''">
+                AND stat.recv_dat = #{recvDat}
+            </if>
+        </where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(stat.*)
+
+        FROM xeus.asset_status AS stat
+
+        LEFT JOIN xeus.asset_cctv AS cctv ON stat.mgr_no = cctv.mgr_no
+        LEFT JOIN xeus.asset_pump AS pump ON stat.mgr_no = pump.mgr_no
+        LEFT JOIN xeus.asset_infra AS infra ON stat.mgr_no = infra.mgr_no
+		LEFT JOIN xeus.asset_rainfall AS rain ON stat.mgr_no = rain.mgr_no
+
+        <where>
+            <if test="mgrNo != null and mgrNo != ''">
+                AND stat.mgr_no = #{mgrNo}
+            </if>
+
+            <if test="type != null and type != ''">
+                AND substring(stat.mgr_no, 1, 3) = #{type}
+            </if>
+
+            <if test="stateCd != null and stateCd != ''">
+                AND stat.state_cd = #{stateCd}
+            </if>
+
+            <if test="stateCd == null">
+                AND stat.state_cd != '11'
+            </if>
+
+            <if test="stateJson != null and stateJson != ''">
+                AND stat.state_json = #{stateJson}
+            </if>
+
+            <if test="recvDat != null and recvDat != ''">
+                AND stat.recv_dat = #{recvDat}
+            </if>
+        </where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.asset_status WHERE mgr_no = #{mgrNo}
+	</delete>
+
+
+	<insert id="add" parameterType="StatusVo">
+		INSERT INTO xeus.asset_status(mgr_no, state_cd, state_json, recv_dat) VALUES (#{mgrNo}, #{stateJson}, #{stateCd}, #{recvDat});
+	</insert>
+
+
+	<update id="edit" parameterType="StatusVo">
+		UPDATE xeus.asset_status
+
+		SET
+            mgr_no = #{mgrNo}
+
+            <if test="stateCd != null and stateCd != ''">
+                , state_cd = #{stateCd}
+            </if>
+
+            <if test="stateJson != null and stateJson != ''">
+                , state_json = #{stateJson}
+            </if>
+
+            <if test="recvDat != null and recvDat != ''">
+                , recv_dat = #{recvDat}
+            </if>
+
+		WHERE mgr_no = #{mgrNo}
+	</update>
+
+</mapper>

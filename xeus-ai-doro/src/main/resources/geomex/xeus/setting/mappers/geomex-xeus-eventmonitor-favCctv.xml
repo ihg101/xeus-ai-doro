@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.eventmonitor.service.FavCctvMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="FavCctvVo">
+		SELECT mgr_seq, owner_id, title_nm, json_txt, col_num, chg_dat
+
+		FROM xeus.mon_cctv_fav
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::integer
+			</if>
+
+			<if test="ownerId != null and ownerId != ''">
+				AND owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				AND title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				AND col_num = #{colNum}::integer::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				AND chg_dat = #{chgDat}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="FavCctvVo">
+		SELECT mgr_seq, owner_id, title_nm, json_txt, col_num, chg_dat
+
+		FROM xeus.mon_cctv_fav
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::integer
+			</if>
+
+			<if test="ownerId != null and ownerId != ''">
+				AND owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				AND title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				AND col_num = #{colNum}::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				AND chg_dat = #{chgDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.mon_cctv_fav
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::integer
+			</if>
+
+			<if test="ownerId != null and ownerId != ''">
+				AND owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				AND title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				AND json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				AND col_num = #{colNum}::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				AND chg_dat = #{chgDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.mon_cctv_fav WHERE mgr_seq = #{mgrSeq}::integer
+	</delete>
+
+
+	<insert id="add" parameterType="FavCctvVo">
+		INSERT INTO xeus.mon_cctv_fav(
+			owner_id, title_nm, json_txt, col_num, chg_dat
+		) VALUES (
+			#{ownerId}, #{titleNm}, #{jsonTxt}, #{colNum}::integer, #{chgDat}
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="FavCctvVo">
+		UPDATE xeus.mon_cctv_fav SET
+			mgr_seq = #{mgrSeq}::integer
+
+			<if test="ownerId != null and ownerId != ''">
+				, owner_id = #{ownerId}
+			</if>
+
+			<if test="titleNm != null and titleNm != ''">
+				, title_nm = #{titleNm}
+			</if>
+
+			<if test="jsonTxt != null and jsonTxt != ''">
+				, json_txt = #{jsonTxt}
+			</if>
+
+			<if test="colNum != null and colNum != ''">
+				, col_num = #{colNum}::integer
+			</if>
+
+			<if test="chgDat != null and chgDat != ''">
+				, chg_dat = #{chgDat}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}::integer
+
+	</update>
+
+</mapper>

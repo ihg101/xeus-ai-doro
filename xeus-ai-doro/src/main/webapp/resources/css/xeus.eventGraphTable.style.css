@@ -1,0 +1,378 @@
+@charset "utf-8";
+
+@font-face {
+	font-family: 'Pretendard Variable';
+	font-weight: 45 920;
+	font-style: normal;
+	font-display: swap;
+	src: local('Pretendard Variable'), url('../webfonts/PretendardVariable.woff2') format('woff2-variations');
+}
+
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.stat_wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 750px;
+    box-sizing: border-box;
+    padding: 20px 20px 0 20px;
+    font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.stat_wrap button {
+    font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.stat_wrap select {
+    border: 0;
+    background-color: transparent;
+    padding-right: 15px;
+    font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.stat_wrap input[type="date"],
+.stat_wrap input[type="month"],
+.stat_wrap input[type="number"]{
+    border: 0;
+    outline: 0;
+    background-color: transparent;
+    font-size: 13px;
+    font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator {
+    margin-left: -10px;
+    background-image: url(../img/icon_cal.svg);
+    filter: none;
+}
+
+
+
+/* 차트 */
+
+.stat_wrap .stat_top {
+    display: flex;
+    justify-content: space-between;
+    flex: none;
+    height: 40px;
+}
+
+.stat_wrap .stat_top .select_wrap select {
+    margin-right: 20px;
+    font-size: 13px;
+}
+
+.stat_wrap .stat_top .select_wrap input {
+    margin-right: 20px;
+}
+
+
+.stat_wrap .stat_top .select_wrap .btn_box {
+    float: left;
+    margin-right : 25px;
+}
+
+.stat_wrap .stat_top .select_wrap .btn_search {
+    width: 58px;
+    height: 26px;
+    background-color: #0078d4;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #fff;
+}
+
+.stat_contents {
+    flex: none;
+    height: calc(100% - 40px);
+}
+
+.stat_contents > div {
+    display: none;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 100%;
+}
+
+.stat_contents > div.active {
+    display: flex;
+}
+
+.stat_contents .stat_graph .chart_box {
+    position: relative;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 65%;
+    box-sizing: border-box;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+}
+
+.stat_contents .stat_graph .chart_box:nth-child(1) {
+    border-right: 0;
+}
+
+.stat_contents .stat_graph .chart_box.wide {
+    width: 100%;
+    height: 35%;
+    border: 0;
+    background-color: #fff;
+}
+
+.stat_contents .stat_graph .chart_box .chart_title {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.stat_contents .stat_graph .chart_box .chart {
+    flex: none;
+    height: 93%;
+}
+
+.btn_box .btn_stat {
+    padding: 3px 8px;
+    border: 1px solid #a3a3a3;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.btn_box .btn_stat.active {
+    background-color: #e7f3ff;
+    border-color: #006bd0;
+    color: #006bd0;
+}
+
+.stat_contents .stat_graph .chart_box .btn_box {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+}
+
+.btn_box .btn_stat.gray {
+    border-color: #666;
+    color: #666;
+}
+
+/* 테이블 */
+
+.stat_contents .stat_table {
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 30px 0;
+}
+
+.stat_contents .stat_table .table_box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 10px 0;
+}
+
+.stat_contents .stat_table .table_box:nth-child(1) {
+    width: 28%;
+}
+
+.stat_contents .stat_table .table_box:nth-child(2) {
+    width: 71%;
+}
+
+.stat_contents .stat_table .table_box .table_top_box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: none;
+    height: 25px;
+    margin-bottom: 10px;
+}
+
+.stat_contents .stat_table .table_box .result_text {
+    font-size: 13px;
+}
+
+.stat_contents .stat_table .table_box .result_text > .date {
+    color: #0090ff;
+}
+
+.stat_contents .stat_table .table_box .table {
+    flex: none;
+    height: 98%;
+}
+
+.stat_contents .stat_table .table_box table {
+    width: 100%;
+    margin: 0;
+    table-layout: fixed;
+    text-align: center;
+    font-size: 13px;
+}
+
+.stat_contents .stat_table .table_box .table > table {
+    background-color: #fafafa;
+    border-top: 1px solid #858585;
+}
+
+.stat_contents .stat_table .table_box table thead th {
+    padding: 16px 0;
+    background-color: #d1d1d1;
+    border-bottom: 1px solid #858585;
+    font-size: 14px;
+/*     font-weight: bold; */
+    font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+
+
+.stat_contents .stat_table .table_box table tbody td {
+    padding: 14px 5px;
+    border-bottom: 1px solid #ddd;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight : 500;
+    font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.stat_contents .stat_table .table_box table tfoot td {
+    padding: 14px 5px;
+    background-color: #f3f3f3;
+    border-bottom: 1px solid #ddd;
+/*     font-weight: bold; */
+    font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.stat_contents .stat_table .table_box table tfoot:hover {
+	cursor: pointer;
+	font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.stat_contents .stat_table .table_box .fold > td {
+    padding: 0;
+    border: 0;
+    font-family: 'Pretendard Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.stat_table .more + .fold {
+    display: none;
+}
+
+.stat_table .more.open + .fold {
+    display: table-row;
+}
+
+.stat_table .fold table {
+    background-color: #f3f3f3;
+
+}
+
+.stat_table .fold table tr:hover td {
+	background-color: #fafafa;
+	cursor: pointer;
+}
+
+.stat_table .fold table tr.active td {
+	color: #0090ff;
+}
+
+.stat_table .more {
+    cursor: pointer;
+}
+
+.stat_table .more > td:first-child:before {
+    content:"\f078";
+    display: inline-block;
+    margin-right: 10px;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+.stat_table .more.open > td:first-child:before {
+    content:"\f077";
+}
+
+
+/* 페이지 선택 */
+
+.stat_contents .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.stat_contents .pagination .number_list {
+    display: flex;
+}
+
+.stat_contents .pagination .number_list > li {
+    width: 22px;
+    height: 22px;
+    margin: 0 3px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.stat_contents .pagination .number_list > li:hover {
+    color: #0078d4;
+}
+
+.stat_contents .pagination .number_list > li.active {
+    background-color: #0078d4;
+    color: #fff;
+}
+
+.stat_wrap .select_wrap input,select,button{
+	font-weight: 500;
+}
+
+/* 스크롤 커스텀 */
+
+.custom_scroll {
+    overflow: overlay;
+}
+
+.custom_scroll::-webkit-scrollbar {
+    width: 14px;
+}
+
+.custom_scroll::-webkit-scrollbar-thumb {
+    border: 5px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    -webkit-border-radius: 24px;
+    background-color: #c9ced3;
+    -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+}
+
+.custom_scroll::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.custom_scroll::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+
+.custom_scroll::-webkit-scrollbar-track {
+    border: 5px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    -webkit-border-radius: 24px;
+    background-color: #ecf0f4;
+}

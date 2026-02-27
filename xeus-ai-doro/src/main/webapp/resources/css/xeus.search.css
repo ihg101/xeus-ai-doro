@@ -1,0 +1,189 @@
+@CHARSET "UTF-8";
+
+.subTab {
+    width: 150px;
+/*     border: none; */
+}
+
+/* #jibunTab, #tmTab { */
+/*     background: blue; */
+/* } */
+
+/* #doroTab, #lnglatTab { */
+/*     background: gray; */
+/* } */
+
+#bon, #bu {
+    width: 80px
+}
+
+.lastTd {
+    text-align: center;
+}
+
+#srchHeader {
+    margin: 10px 0 10px 0;
+    text-align: center;
+}
+
+#srchHeader b {
+    font-size: 20px;
+}
+
+.resultTableTr {
+    display: block;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #30303a;
+}
+
+.resultTableTdName {
+    width: 220px;
+    color: white;
+}
+
+.resultTableTdButton {
+    text-align: right;
+}
+
+
+.searchResultWrapper #tableWrapper {
+	height: 95%;
+    overflow: auto;
+}
+
+.searchResultWrapper #tableWrapper table {
+	width: 100%;
+	min-width: 1400px;
+    border-top: 1px #adadad solid;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #666;
+}
+
+.searchResultWrapper #tableWrapper table tr.detailBtn {
+	cursor: pointer;
+}
+
+.searchResultWrapper #tableWrapper table tr.detailBtn:hover {
+	background: white;
+	text-decoration: underline;
+}
+
+.searchResultWrapper #tableWrapper table th {
+    height: 30px;
+	cursor: default;
+}
+
+.searchResultWrapper #tableWrapper table th:first-child {
+    border-left: none;
+}
+
+.searchResultWrapper #tableWrapper table td {
+   	background: white;
+    border-left: 1px #dddddd solid;
+    border-bottom: 1px #dddddd solid;
+}
+
+.searchResultWrapper #tableWrapper table td:first-child {
+    border-left: none;
+}
+
+/* .searchResultWrapper #tableWrapper table  */td#imgWrapper span.imgBox {
+    position: relative;
+	display: inline-block;
+}
+
+/* .searchResultWrapper #tableWrapper table  */td#imgWrapper span.imgBox img.close {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	cursor: pointer;
+}
+
+/* .searchResultWrapper #tableWrapper table  */td#imgWrapper span.imgBox img.imgs {
+	width: 250px;
+	cursor: pointer;
+}
+
+.searchResultWrapper > #tableWrapper table tbody tr {
+	height: 25px;
+}
+
+.searchResultWrapper > #tableWrapper table td input[type=text] {
+	border: none;
+	outline: none;
+}
+
+.searchResultWrapper > #tableWrapper table td select {
+	border: none;
+	outline: none;
+}
+
+.searchWrapper table td {
+    background: white;
+    /* 171212 */
+    border-left: 1px #dddddd solid;
+    border-bottom: 1px #dddddd solid;
+}
+
+/* 171212 */
+.searchWrapper table th:first-child, .searchWrapper table td:first-child {
+    border-left: none;
+}
+
+.searchWrapper table th, .searchResultWrapper table th {
+    /* height: 30px;
+    background: #2B5E93;
+    color: white; */
+    /* 171212 */
+    height: 30px;
+    background: #f3f3f3;
+    border-left: 1px #dddddd solid;
+    border-bottom: 1px #dddddd solid;
+}
+
+.searchWrapper button.tab, .searchResultWrapper button.tab {
+/*     background: white; */
+/*     border: 1px solid gray; */
+/*     border-bottom: none; */
+/*     padding: 5px 10px; */
+/*     font-size: 14px; */
+/*     cursor: pointer; */
+/*     outline: none; */
+
+	display: inline-block;
+	height: 24px;
+	padding: 5px 10px 0 10px;
+	font-size: 10pt;
+    font-weight: normal;
+    color: #999999;
+    background-color: #ffffff;
+    border: none;
+    border-bottom: solid 1px #E4E4E4;
+    outline: none;
+    cursor: pointer;
+}
+.searchWrapper button.tab[active=active], .searchResultWrapper button.tab[active=active] {
+/*     font-weight: bold; */
+/*     border-top: 2px solid #2B5E93; */
+
+    color: #333333;
+    background-color: #ffffff;
+	border-left: solid 1px #1f1f24;
+    border-top: solid 1px #1f1f24;
+    border-right: solid 1px #1f1f24;
+    border-bottom: solid 1px #ffffff;
+    font-weight: bold;
+    cursor: default;
+}
+
+/*
+	180208 영상반출 리스트용
+	검색결과 테이블 td의 min-height를 주기 위한 설정
+	min-height 설정이 따로 없고 height로 적용하면 자동으로 설정 됨.
+*/
+.searchList table td {
+    height: 35px;
+}

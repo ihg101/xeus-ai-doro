@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.log.service.LogStatMapper">
+
+    <select id="get112List" parameterType="HashMap" resultType="LogStatVo">
+
+        SELECT   '총계' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                		, if_112_log.evt_typ
+                		, substring(evt_dtm, 1, 4) AS yy
+                		, substring(evt_dtm, 5, 2) AS mm
+                	FROM xeus.if_112_log
+                  <where>
+                    <!-- <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if> -->
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '교통사고' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_112_log.evt_typ
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_112_log
+                  <where>
+                    if_112_log.evt_typ = '교통사고'
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '강력범죄' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_112_log.evt_typ
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_112_log
+                  <where>
+                    if_112_log.evt_typ = '강력범죄'
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+
+
+    </select>
+
+    <select id="get119List" parameterType="HashMap" resultType="LogStatVo">
+
+        SELECT   '총계' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_119_log.evt_nm
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_119_log
+                  <where>
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '화재' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_119_log.evt_nm
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_119_log
+                  <where>
+                    if_119_log.evt_nm = '화재'
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '구급' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_119_log.evt_nm
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_119_log
+                  <where>
+                    if_119_log.evt_nm = '구급'
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '구조' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_119_log.evt_nm
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_119_log
+                  <where>
+                    if_119_log.evt_nm = '구조'
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '기타' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_119_log.evt_nm
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_119_log
+                  <where>
+                    if_119_log.evt_nm = '기타'
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '공백' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_119_log.evt_nm
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_119_log
+                  <where>
+                    if_119_log.evt_nm = ''
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+    </select>
+
+    <select id="getDscList" parameterType="HashMap" resultType="LogStatVo">
+
+        SELECT   '총계' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_dsc_log.svc_typ
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_dsc_log
+                  <where>
+
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '기어S2' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_dsc_log.svc_typ
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_dsc_log
+                  <where>
+                    if_dsc_log.svc_typ = '기어S2'
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '프로기' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_dsc_log.svc_typ
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_dsc_log
+                  <where>
+                    if_dsc_log.svc_typ = '프로기'
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '공백' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT send_num
+                        , if_dsc_log.svc_typ
+                        , substring(evt_dtm, 1, 4) AS yy
+                        , substring(evt_dtm, 5, 2) AS mm
+                    FROM xeus.if_dsc_log
+                  <where>
+                    if_dsc_log.svc_typ = ''
+                    <if test="year != null and year != ''">
+                        AND evt_dtm BETWEEN #{year}||'0101000000' AND #{year}||'1231235959'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+    </select>
+
+   <select id="getEs112List" parameterType="HashMap" resultType="LogStatVo">
+
+	   SELECT   '총계' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT evt_ocr_no
+                      , substring(replace(RGS_DATE::text, '-', ''), 1, 4) AS yy
+                      , substring(replace(RGS_DATE::text, '-', ''), 5, 2) AS mm
+                FROM xeus.es_112_mtmda_recept
+                <where>
+                    <if test="year != null and year != ''">
+                        AND replace(RGS_DATE::text, '-', '') BETWEEN #{year}||'0101' AND #{year}||'1231'
+                    </if>
+
+                </where>
+
+                ) AS r
+    </select>
+
+</mapper>

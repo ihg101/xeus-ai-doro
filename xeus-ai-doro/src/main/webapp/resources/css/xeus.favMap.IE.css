@@ -1,0 +1,220 @@
+@CHARSET "UTF-8";
+
+/* 검색 */
+#search-parent {
+    position: absolute;
+    width: 100%;
+    height: 33px;
+    z-index: 1;
+    list-style: none;
+    top: 0px;
+    left: 136px;
+    background: #3e3f48;
+    color: white;
+    display: none;
+    padding-left: 5px;
+}
+#searchWrap {
+    text-align: left;
+    margin: 1px;
+}
+#searchWrap td {
+    line-height: 26px;
+    padding: 0px 5px;
+    color: white;
+    font-size: 12px;
+}
+#searchWrap td input[type=checkbox] {
+    vertical-align: middle;
+}
+#searchWrap select {
+    background: #30303A;
+    color: white;
+    border: none;
+    font-size: 12px;
+    padding: 3px 0px;
+}
+#searchWrap select::-ms-expand {
+    display: none;
+}
+#searchWrap input[type=text] {
+    background: #30303A;
+    color: white;
+    border: none;
+    padding: 3px 0px;
+    padding-left: 5px;
+}
+/* 171212 추가 */
+#searchWrap #jibunSearch {
+    position: absolute;
+    top: 0px;
+    height: 30px;
+}
+#searchHead {
+    position: relative;
+    border-top: 1px solid #30303a;
+    background: #3E3F48;
+    margin-top: 3px;
+}
+#searchMode {
+    float: left;
+    margin: 4px;
+}
+#searchToggle {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+/* 스케일 */
+#scale-wrap {
+    position: absolute;
+    width: 89px;
+    z-index: 1;
+    list-style: none;
+    top: 0px;
+    left: 41px;
+    padding: 7px;
+    background: #3e3f48;
+    color: white;
+    display: none;
+    padding-left: 15px;
+    border-right: 1px solid #30303A;
+}
+
+#scale-val {
+    width: 63px;
+    height: 18px;
+    outline: none;
+    background: #30303A;
+    color: white;
+    padding: 2px 0px 2px 5px;
+}
+.searchBtn {
+	padding: 3px 15px;
+}
+/* #scale-menu {
+    position: absolute; width: 100px; z-index: 1; list-style: none; top: 0px; left: 15px;
+}
+
+#scale-wrap {
+    position: relative;
+}
+
+#scale-selector {
+    position: absolute; z-index: 9999; display: none; top: 21px; width: 91px;
+}
+
+#scale-val {
+    position: absolute; width: 91px; height: 19px; outline: none; border: none;
+}
+
+#scale-opener {
+    position: absolute; left: 62px;
+} */
+
+/* 관심영역 */
+#fav-wrap {
+    display: none;
+    position: absolute;
+    left: 50px;
+    top: 325px;
+    width: 300px;
+    height: 250px;
+    background: white;
+    border: 1px solid #D3D3D3;
+    border-radius: 0px 0px 10px 10px;
+}
+
+#fav-wrap #fav-header {
+    width: 100%;
+    height: 30px;
+    background: #3E3F48;
+}
+
+#fav-wrap #fav-body {
+    width: 280px;
+    height: 200px;
+    padding: 10px;
+}
+
+#fav-wrap #fav-body #fav-name {
+    width: 188px;
+    height: 26px;
+    border: 1px solid #E8E8E8;
+    font-size: 14px;
+    color: #3a4452;
+    font-weight: bold;
+    padding-left: 10px;
+    border-radius: 5px 0px 0px 5px;
+}
+
+#fav-wrap #fav-body #fav-add {
+    width: 78px;
+    height: 30px;
+    border: 1px solid #E8E8E8;
+    font-size: 14px;
+    color: #3a4452;
+    font-weight: bold;
+    border-radius: 0px 5px 5px 0px;
+    background: #EFEFEF;
+    cursor: pointer;
+}
+
+#fav-wrap #fav-content {
+    width: 100%;
+    height: 160px;
+    overflow: auto;
+    margin-top: 10px;
+}
+
+#fav-wrap #fav-content .fav-list {
+    padding: 7px;
+    color: black;
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 2px solid #B4B4B4;
+}
+
+#fav-wrap #fav-content .fav-list:hover {
+    background: #f1f1f1;
+}
+
+#fav-wrap #fav-content .fav-list span {
+    width: 224px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#fav-wrap #fav-content .fav-list .fav-del {
+    font-size: 14px;
+    font-weight: normal;
+    padding: 0px;
+    background: none;
+    border: none;
+    /* border-bottom: 1px solid gray;
+    position: absolute;
+    right: 35px; */
+    outline: none;
+    cursor: pointer;
+/*     text-decoration: underline; */
+}
+
+#fav-wrap #fav-content .fav-list .fav-del:hover {
+    font-weight: bold;
+}
+
+#fav-wrap #fav-title {
+    position: absolute;
+    font-weight: bold;
+    font-size: 14px;
+    color: white;
+    left: 10px;
+    top: 7px;
+}
+
+#fav-wrap #fav-header #popup-closer {
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+}

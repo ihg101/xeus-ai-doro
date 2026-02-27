@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.NetwkThemeMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="NetwkThemeVo">
+		SELECT mgr_no, net_gbn_cd, theme_nm, ring_no, cable_typ, line_color, link_gbn_cd
+
+		FROM xeus.asset_netwk_theme
+
+		<where>
+
+			<if test="mgrNo != null and mgrNo != ''">
+				AND mgr_no = #{mgrNo}::numeric
+			</if>
+
+			<if test="netGbnCd != null and netGbnCd != ''">
+				AND net_gbn_cd = #{netGbnCd}
+			</if>
+
+			<if test="themeNm != null and themeNm != ''">
+				AND theme_nm LIKE '%'||#{themeNm}||'%'
+			</if>
+
+			<if test="ringNo != null and ringNo != ''">
+				AND ring_no LIKE '%'||#{ringNo}||'%'
+			</if>
+
+			<if test="cableTyp != null and cableTyp != ''">
+				AND cable_typ = #{cableTyp}
+			</if>
+
+			<if test="lineColor != null and lineColor != ''">
+				AND line_color = #{lineColor}
+			</if>
+
+			<if test="linkGbnCd != null and linkGbnCd != ''">
+				AND link_gbn_cd = #{linkGbnCd}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				mgr_no DESC
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="NetwkThemeVo">
+		SELECT mgr_no, net_gbn_cd, theme_nm, ring_no, cable_typ, line_color, link_gbn_cd
+
+		FROM xeus.asset_netwk_theme
+
+		<where>
+
+			<if test="mgrNo != null and mgrNo != ''">
+				AND mgr_no = #{mgrNo}::numeric
+			</if>
+
+			<if test="netGbnCd != null and netGbnCd != ''">
+				AND net_gbn_cd = #{netGbnCd}
+			</if>
+
+			<if test="themeNm != null and themeNm != ''">
+				AND theme_nm = #{themeNm}
+			</if>
+
+			<if test="ringNo != null and ringNo != ''">
+				AND ring_no = #{ringNo}
+			</if>
+
+			<if test="cableTyp != null and cableTyp != ''">
+				AND cable_typ = #{cableTyp}
+			</if>
+
+			<if test="lineColor != null and lineColor != ''">
+				AND line_color = #{lineColor}
+			</if>
+
+			<if test="linkGbnCd != null and linkGbnCd != ''">
+				AND link_gbn_cd = #{linkGbnCd}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.asset_netwk_theme
+
+		<where>
+
+			<if test="mgrNo != null and mgrNo != ''">
+				AND mgr_no = #{mgrNo}::numeric
+			</if>
+
+			<if test="netGbnCd != null and netGbnCd != ''">
+				AND net_gbn_cd = #{netGbnCd}
+			</if>
+
+			<if test="themeNm != null and themeNm != ''">
+				AND theme_nm LIKE '%'||#{themeNm}||'%'
+			</if>
+
+			<if test="ringNo != null and ringNo != ''">
+				AND ring_no LIKE '%'||#{ringNo}||'%'
+			</if>
+
+			<if test="cableTyp != null and cableTyp != ''">
+				AND cable_typ = #{cableTyp}
+			</if>
+
+			<if test="lineColor != null and lineColor != ''">
+				AND line_color = #{lineColor}
+			</if>
+
+			<if test="linkGbnCd != null and linkGbnCd != ''">
+				AND link_gbn_cd = #{linkGbnCd}
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.asset_netwk_theme WHERE mgr_no = #{mgrNo}::numeric
+	</delete>
+
+
+	<insert id="add" parameterType="NetwkThemeVo">
+		INSERT INTO xeus.asset_netwk_theme(
+			net_gbn_cd, theme_nm, ring_no, cable_typ, line_color, link_gbn_cd
+		) VALUES (
+			#{netGbnCd}, #{themeNm}, #{ringNo}, #{cableTyp}, #{lineColor}, #{linkGbnCd}
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="NetwkThemeVo">
+		UPDATE xeus.asset_netwk_theme SET
+			mgr_no = #{mgrNo}::numeric
+
+			<if test="netGbnCd != null and netGbnCd != ''">
+				, net_gbn_cd = #{netGbnCd}
+			</if>
+
+			<if test="themeNm != null and themeNm != ''">
+				, theme_nm = #{themeNm}
+			</if>
+
+			<if test="ringNo != null and ringNo != ''">
+				, ring_no = #{ringNo}
+			</if>
+
+			<if test="cableTyp != null and cableTyp != ''">
+				, cable_typ = #{cableTyp}
+			</if>
+
+			<if test="lineColor != null and lineColor != ''">
+				, line_color = #{lineColor}
+			</if>
+
+			<if test="linkGbnCd != null and linkGbnCd != ''">
+				, link_gbn_cd = #{linkGbnCd}
+			</if>
+
+		WHERE mgr_no = #{mgrNo}::numeric
+
+	</update>
+
+</mapper>

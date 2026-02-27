@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gmx.gis.layer.service.GMT_LayerMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerVo">
+		SELECT DISTINCT lyr.mgr_seq, schem_nm, lyr.tbl_id, lyr_nm, lyr_typ, grp_mgr_seq, use_yn, geo_offset_x, geo_offset_y, lyr.mk_user, lyr.mk_dat, lyr_zidx, thm_use_yn, visible_yn, heat_yn, min_resolution, max_resolution
+
+
+		<if test="tabName != null and tabName != ''">
+		 	,platform_tab_auth, auth.mod_yn
+		</if>
+
+		FROM xeus.gis_lyr_list lyr
+
+		LEFT JOIN xeus.gis_lyr_grp grp ON grp.mgr_seq =lyr.grp_mgr_seq
+
+		LEFT JOIN xeus.mt_auth_lyr auth ON lyr.tbl_id=auth.tbl_id
+
+		LEFT JOIN xeus.mt_usr_desc usr ON usr.auth_grp_no = auth.auth_grp_no
+		<where>
+<!-- 			통플 -->
+			<if test="userId != null and userId != '' and tabName != null and tabName != ''"  >
+				AND (
+						<!--나의 레이어와 임시레이어와 공유레이어를 제외한 권한이 있는 모든 레이어 -->
+						(usr.user_id = #{userId} AND  grp.mgr_seq != 3 AND grp.mgr_seq != 6 AND auth.platform_tab_auth LIKE '%'||#{tabName}||'%')
+						OR
+						<!--나의 레이어 -->
+						(grp.mgr_seq = 3 AND lyr.mk_user=#{userId})
+					)
+			</if>
+<!-- 			관리툴 -->
+			<if test="userId != null and userId != '' and (tabName == '' or tabName == null)">
+				AND (
+						<!--나의 레이어와 임시레이어와 공유레이어를 제외한 권한이 있는 모든 레이어 -->
+						(usr.user_id = #{userId} AND  grp.mgr_seq != 3 AND grp.mgr_seq != 6)
+						OR
+						<!--나의 레이어 -->
+						(grp.mgr_seq = 3 AND lyr.mk_user=#{userId})
+					)
+			</if>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="schemNm != null and schemNm != ''">
+				AND schem_nm = #{schemNm}
+			</if>
+
+			<if test="tblId != null and tblId != ''">
+				AND tbl_id = #{tblId}
+			</if>
+
+			<if test="lyrNm != null and lyrNm != ''">
+				AND lyr_nm = #{lyrNm}
+			</if>
+
+			<if test="lyrTyp != null and lyrTyp != ''">
+				AND lyr_typ = #{lyrTyp}
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				AND grp_mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				AND grp.grp_nm = #{grpNm}
+			</if>
+
+			<if test="useYn != null">
+				AND use_yn = #{useYn}::boolean
+			</if>
+
+			<if test="geoOffsetX != null and geoOffsetX != ''">
+				AND geo_offset_x = #{geoOffsetX}::numeric
+			</if>
+
+			<if test="geoOffsetY != null and geoOffsetY != ''">
+				AND geo_offset_y = #{geoOffsetY}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND lyr.mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND lyr.mk_dat = #{mkDat}
+			</if>
+
+			<if test="lyrZidx != null and lyrZidx != ''">
+				AND lyr_zidx = #{lyrZidx}::numeric
+			</if>
+
+			<if test="thmUseYn != null">
+				AND thm_use_yn = #{thmUseYn}::boolean
+			</if>
+
+			<if test="visibleYn != null">
+				AND visible_yn = #{visibleYn}::boolean
+			</if>
+
+			<if test="heatYn != null">
+				AND heat_yn = #{heatYn}::boolean
+			</if>
+
+			<if test="minResolution != null">
+				AND min_resolution = #{minResolution}
+			</if>
+
+			<if test="maxResolution != null">
+				AND max_resolution = #{maxResolution}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				lyr_zidx asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getShareList" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerVo">
+		SELECT DISTINCT lyr.mgr_seq, schem_nm, lyr.tbl_id, lyr_nm, lyr_typ, grp_mgr_seq, use_yn, geo_offset_x, geo_offset_y, lyr.mk_user, lyr.mk_dat, lyr_zidx, thm_use_yn, visible_yn, heat_yn, min_resolution, max_resolution
+
+		FROM xeus.gis_lyr_list lyr
+
+		LEFT JOIN xeus.gis_lyr_grp grp ON grp.mgr_seq =lyr.grp_mgr_seq
+
+		LEFT JOIN xeus.mt_auth_lyr auth ON lyr.tbl_id=auth.tbl_id
+
+		<where>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				AND grp.mgr_seq = #{grpMgrSeq} ::numeric
+			</if>
+
+			<if test="userId != null and userId != ''">
+				AND auth.auth_grp_no = (SELECT auth_grp_no FROM xeus.mt_usr_desc WHERE user_id = #{userId})
+			</if>
+			<if test="userId != null and userId != ''">
+				AND lyr.mk_user != #{userId}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				lyr_zidx asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+
+	<select id="getItem" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerVo">
+		SELECT mgr_seq, schem_nm, tbl_id, lyr_nm, lyr_typ, grp_mgr_seq, use_yn, geo_offset_x, geo_offset_y, mk_user, mk_dat, lyr_zidx, thm_use_yn, visible_yn, heat_yn, min_resolution, max_resolution
+
+		FROM xeus.gis_lyr_list
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="schemNm != null and schemNm != ''">
+				AND schem_nm = #{schemNm}
+			</if>
+
+			<if test="tblId != null and tblId != ''">
+				AND tbl_id = #{tblId}
+			</if>
+
+			<if test="lyrNm != null and lyrNm != ''">
+				AND lyr_nm = #{lyrNm}
+			</if>
+
+			<if test="lyrTyp != null and lyrTyp != ''">
+				AND lyr_typ = #{lyrTyp}
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				AND grp_mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="useYn != null and useYn != ''">
+				AND use_yn = #{useYn}::boolean
+			</if>
+
+			<if test="geoOffsetX != null and geoOffsetX != ''">
+				AND geo_offset_x = #{geoOffsetX}::numeric
+			</if>
+
+			<if test="geoOffsetY != null and geoOffsetY != ''">
+				AND geo_offset_y = #{geoOffsetY}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+			<if test="lyrZidx != null and lyrZidx != ''">
+				AND lyr_zidx = #{lyrZidx}::numeric
+			</if>
+
+			<if test="thmUseYn != null">
+				AND thm_use_yn = #{thmUseYn}::boolean
+			</if>
+
+			<if test="visibleYn != null">
+				AND visible_yn = #{visibleYn}::boolean
+			</if>
+
+			<if test="heatYn != null">
+				AND heat_yn = #{heatYn}::boolean
+			</if>
+
+			<if test="minResolution != null">
+				AND min_resolution = #{minResolution}
+			</if>
+
+			<if test="maxResolution != null">
+				AND max_resolution = #{maxResolution}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.gis_lyr_list
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="schemNm != null and schemNm != ''">
+				AND schem_nm = #{schemNm}
+			</if>
+
+			<if test="tblId != null and tblId != ''">
+				AND tbl_id = #{tblId}
+			</if>
+
+			<if test="lyrNm != null and lyrNm != ''">
+				AND lyr_nm = #{lyrNm}
+			</if>
+
+			<if test="lyrTyp != null and lyrTyp != ''">
+				AND lyr_typ = #{lyrTyp}
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				AND grp_mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="useYn != null and useYn != ''">
+				AND use_yn = #{useYn}::boolean
+			</if>
+
+			<if test="geoOffsetX != null and geoOffsetX != ''">
+				AND geo_offset_x = #{geoOffsetX}::numeric
+			</if>
+
+			<if test="geoOffsetY != null and geoOffsetY != ''">
+				AND geo_offset_y = #{geoOffsetY}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				AND mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				AND mk_dat = #{mkDat}
+			</if>
+
+			<if test="lyrZidx != null and lyrZidx != ''">
+				AND lyr_zidx = #{lyrZidx}::numeric
+			</if>
+
+			<if test="thmUseYn != null">
+				AND thm_use_yn = #{thmUseYn}::boolean
+			</if>
+
+			<if test="visibleYn != null">
+				AND visible_yn = #{visibleYn}::boolean
+			</if>
+
+			<if test="heatYn != null">
+				AND heat_yn = #{heatYn}::boolean
+			</if>
+
+			<if test="minResolution != null">
+				AND min_resolution = #{minResolution}
+			</if>
+
+			<if test="maxResolution != null">
+				AND max_resolution = #{maxResolution}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="getLayerListByAuth" parameterType="HashMap" resultType="gmx.gis.layer.service.GMT_LayerVo">
+		SELECT
+			DISTINCT lyr.mgr_seq,
+			lyr.schem_nm,
+			lyr.tbl_id,
+			lyr.lyr_nm,
+			lyr_typ,
+			lyr.grp_mgr_seq,
+			lyr.use_yn,
+			geo_offset_x,
+			geo_offset_y,
+			lyr.mk_user,
+			lyr.mk_dat,
+			lyr.lyr_zidx,
+			lyr.thm_use_yn,
+			lyr.visible_yn,
+			auth.platform_tab_auth,
+			auth.mod_yn
+		FROM
+			xeus.gis_lyr_list lyr
+
+			LEFT JOIN xeus.gis_lyr_grp grp ON lyr.grp_mgr_seq=grp.mgr_seq
+
+			LEFT JOIN xeus.mt_auth_lyr auth ON lyr.tbl_id=auth.tbl_id
+
+		<where>
+			<if test="grpMgrSeq != null">
+				AND lyr.grp_mgr_seq =#{grpMgrSeq}::numeric
+			</if>
+			<if test="grpNm != null">
+				AND grp.grp_nm =#{grpNm}
+			</if>
+			<if test="authGrpNo != null">
+				AND auth.auth_grp_no =#{authGrpNo}
+			</if>
+			<if test="mkUser != null and mkUser != ''">
+				AND lyr.mk_user = #{mkUser}
+			</if>
+			<if test="useYn != null and useYn != ''">
+				AND use_yn = #{useYn}::boolean
+			</if>
+
+				AND auth.tbl_id IS NOT NULL
+		</where>
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				lyr_zidx asc
+			</if>
+		</trim>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.gis_lyr_list WHERE mgr_seq = #{mgrSeq}::numeric
+	</delete>
+	<delete id="delExcelLayer" parameterType="gmx.gis.layer.service.GMT_LayerVo">
+		DELETE FROM xeus.gis_lyr_list
+		WHERE
+			schem_nm = #{schemNm} AND
+			tbl_id = #{tblId};
+	</delete>
+
+	<insert id="add" parameterType="gmx.gis.layer.service.GMT_LayerVo">
+		INSERT INTO xeus.gis_lyr_list(
+			schem_nm, tbl_id, lyr_nm, lyr_typ grp_mgr_seq, use_yn, geo_offset_x, geo_offset_y, mk_user, mk_dat,
+
+			lyr_zidx,
+
+			thm_use_yn, visible_yn, heat_yn, min_resolution, max_resolution
+		) VALUES (
+			#{schemNm}, #{tblId}, #{lyrNm}, #{lyrTyp}, #{grpMgrSeq}::numeric, #{useYn}::boolean, #{geoOffsetX}::numeric, #{geoOffsetY}::numeric, #{mkUser}, #{mkDat},
+
+			(select coalesce(max(lyr_zidx)+1, 1) from xeus.gis_lyr_list where grp_mgr_seq = #{grpMgrSeq}::numeric),
+
+			#{thmUseYn}::boolean, #{visibleYn}::boolean, #{heatYn}::boolean, #{minResolution}, #{maxResolution}
+		);
+	</insert>
+
+
+	<select id="addAndgetItem" parameterType="gmx.gis.layer.service.GMT_LayerVo" resultType="gmx.gis.layer.service.GMT_LayerVo">
+		INSERT INTO xeus.gis_lyr_list ( schem_nm, tbl_id, lyr_nm, lyr_typ, grp_mgr_seq, mk_user, lyr_zidx)
+			VALUES
+				(
+					#{ schemNm },
+					#{ tblId },
+					#{ lyrNm },
+					#{ lyrTyp },
+					#{ grpMgrSeq }:: NUMERIC,
+					#{ mkUser },
+					(select coalesce(max(lyr_zidx)+1, 1) from xeus.gis_lyr_list where grp_mgr_seq = #{grpMgrSeq}::numeric)
+				) RETURNING *;
+	</select>
+
+
+	<update id="edit" parameterType="gmx.gis.layer.service.GMT_LayerVo">
+		UPDATE xeus.gis_lyr_list SET
+			mgr_seq = #{mgrSeq}::numeric
+
+			<if test="schemNm != null and schemNm != ''">
+				, schem_nm = #{schemNm}
+			</if>
+
+			<if test="tblId != null and tblId != ''">
+				, tbl_id = #{tblId}
+			</if>
+
+			<if test="lyrNm != null and lyrNm != ''">
+				, lyr_nm = #{lyrNm}
+			</if>
+
+			<if test="lyrTyp != null and lyrTyp != ''">
+				, lyr_typ = #{lyrTyp}
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				, grp_mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="useYn != null">
+				, use_yn = #{useYn}::boolean
+			</if>
+
+			<if test="geoOffsetX != null and geoOffsetX != ''">
+				, geo_offset_x = #{geoOffsetX}::numeric
+			</if>
+
+			<if test="geoOffsetY != null and geoOffsetY != ''">
+				, geo_offset_y = #{geoOffsetY}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				, mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				, mk_dat = #{mkDat}
+			</if>
+
+			<if test="lyrZidx != null and lyrZidx != ''">
+				, lyr_zidx = #{lyrZidx}::numeric
+			</if>
+
+			<if test="thmUseYn != null">
+				, thm_use_yn = #{thmUseYn}::boolean
+			</if>
+
+			<if test="visibleYn != null">
+				, visible_yn = #{visibleYn}::boolean
+			</if>
+
+			<if test="heatYn != null">
+				, heat_yn = #{heatYn}::boolean
+			</if>
+
+			<if test="minResolution != null">
+				, min_resolution = #{minResolution}
+			</if>
+
+			<if test="maxResolution != null">
+				, max_resolution = #{maxResolution}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}::numeric
+
+	</update>
+
+
+	<update id="editGrpMgrSeq" parameterType="gmx.gis.layer.service.GMT_LayerVo">
+		UPDATE xeus.gis_lyr_list SET
+			mgr_seq = #{mgrSeq}::numeric
+
+			<if test="schemNm != null and schemNm != ''">
+				, schem_nm = #{schemNm}
+			</if>
+
+			<if test="tblId != null and tblId != ''">
+				, tbl_id = #{tblId}
+			</if>
+
+			<if test="lyrNm != null and lyrNm != ''">
+				, lyr_nm = #{lyrNm}
+			</if>
+
+			<if test="lyrTyp != null and lyrTyp != ''">
+				, lyr_typ = #{lyrTyp}
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				, grp_mgr_seq = #{grpMgrSeq}::numeric
+			</if>
+
+			<if test="grpMgrSeq != null and grpMgrSeq != ''">
+				, lyr_zidx = (SELECT COALESCE(MAX(lyr_zidx)+1,1) FROM xeus.gis_lyr_list WHERE grp_mgr_seq =#{grpMgrSeq}::numeric)
+			</if>
+
+			<if test="useYn != null">
+				, use_yn = #{useYn}::boolean
+			</if>
+
+			<if test="geoOffsetX != null and geoOffsetX != ''">
+				, geo_offset_x = #{geoOffsetX}::numeric
+			</if>
+
+			<if test="geoOffsetY != null and geoOffsetY != ''">
+				, geo_offset_y = #{geoOffsetY}::numeric
+			</if>
+
+			<if test="mkUser != null and mkUser != ''">
+				, mk_user = #{mkUser}
+			</if>
+
+			<if test="mkDat != null and mkDat != ''">
+				, mk_dat = #{mkDat}
+			</if>
+
+			<if test="thmUseYn != null">
+				, thm_use_yn = #{thmUseYn}::boolean
+			</if>
+
+			<if test="visibleYn != null">
+				, visible_yn = #{visibleYn}::boolean
+			</if>
+
+			<if test="heatYn != null">
+				, heat_yn = #{heatYn}::boolean
+			</if>
+
+			<if test="minResolution != null">
+				, min_resolution = #{minResolution}
+			</if>
+
+			<if test="maxResolution != null">
+				, max_resolution = #{maxResolution}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}::numeric
+
+	</update>
+
+	<update id="dropTable" parameterType="HashMap">
+        DROP TABLE IF EXISTS ${schema}.${table} CASCADE;
+    </update>
+
+
+	<update id="dropViewTable" parameterType="HashMap">
+        DROP VIEW IF EXISTS ${schema}.${table} CASCADE;
+    </update>
+
+
+	<update id="setLayersIndex" parameterType="HashMap">
+		<foreach collection="list" item="map">
+			UPDATE xeus.gis_lyr_list SET lyr_zidx = #{map.lyrZidx}::numeric WHERE mgr_seq = #{map.mgrSeq}::numeric;
+		</foreach>
+	</update>
+
+
+
+
+</mapper>

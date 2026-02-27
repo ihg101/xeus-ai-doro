@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.sysmgr.service.IpMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="IpVo">
+		SELECT ip.mgr_seq, ip.start_ip_no, ip.end_ip_no, ip.org_mgr_no, ip.worker_id, ip.last_mdfy_dat, ip.use_yn
+               ,orgz.org_nm
+
+        FROM xeus.mt_allow_ip AS ip
+        LEFT JOIN xeus.mt_orgz_desc AS orgz ON ip.org_mgr_no = orgz.org_mgr_no
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND ip.mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="startIpNo != null and startIpNo != ''">
+                AND ip.start_ip_no = #{startIpNo}
+            </if>
+
+            <if test="endIpNo != null and endIpNo != ''">
+                AND ip.end_ip_no = #{endIpNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND ip.org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND ip.worker_id = #{workerId}
+            </if>
+
+            <if test="lastMdfyDat != null and lastMdfyDat != ''">
+                AND ip.last_mdfy_dat = #{lastMdfyDat}
+            </if>
+
+            <if test="useYn != null and useYn != ''">
+                AND ip.use_yn = #{useYn}
+            </if>
+
+            <if test="orgNm != null and orgMgrNo != ''">
+                AND orgz.org_nm = #{orgNm}
+            </if>
+        </where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="IpVo">
+        SELECT ip.mgr_seq, ip.start_ip_no, ip.end_ip_no, ip.org_mgr_no, ip.worker_id, ip.last_mdfy_dat, ip.use_yn
+               ,orgz.org_nm
+
+        FROM xeus.mt_allow_ip AS ip
+        LEFT JOIN xeus.mt_orgz_desc AS orgz ON ip.org_mgr_no = orgz.org_mgr_no
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND ip.mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="startIpNo != null and startIpNo != ''">
+                AND ip.start_ip_no = #{startIpNo}
+            </if>
+
+            <if test="endIpNo != null and endIpNo != ''">
+                AND ip.end_ip_no = #{endIpNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND ip.org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND ip.worker_id = #{workerId}
+            </if>
+
+            <if test="lastMdfyDat != null and lastMdfyDat != ''">
+                AND ip.last_mdfy_dat = #{lastMdfyDat}
+            </if>
+
+            <if test="useYn != null and useYn != ''">
+                AND ip.use_yn = #{useYn}
+            </if>
+
+            <if test="orgNm != null and orgMgrNo != ''">
+                AND orgz.org_nm = #{orgNm}
+            </if>
+		</where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(ip.*) FROM xeus.mt_allow_ip AS ip
+        LEFT JOIN xeus.mt_orgz_desc AS orgz ON ip.org_mgr_no = orgz.org_mgr_no
+
+		<where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND ip.mgr_seq = #{mgrSeq}::integer
+            </if>
+
+            <if test="startIpNo != null and startIpNo != ''">
+                AND ip.start_ip_no = #{startIpNo}
+            </if>
+
+            <if test="endIpNo != null and endIpNo != ''">
+                AND ip.end_ip_no = #{endIpNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND ip.org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND ip.worker_id = #{workerId}
+            </if>
+
+            <if test="lastMdfyDat != null and lastMdfyDat != ''">
+                AND ip.last_mdfy_dat = #{lastMdfyDat}
+            </if>
+
+            <if test="useYn != null and useYn != ''">
+                AND ip.use_yn = #{useYn}
+            </if>
+
+            <if test="orgNm != null and orgMgrNo != ''">
+                AND orgz.org_nm = #{orgNm}
+            </if>
+        </where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.mt_allow_ip WHERE mgr_seq = #{mgrSeq}::integer
+	</delete>
+
+
+	<insert id="add" parameterType="IpVo">
+		INSERT INTO xeus.mt_allow_ip(mgr_seq, start_ip_no, end_ip_no, org_mgr_no, worker_id, last_mdfy_dat, use_yn)
+	    VALUES ((SELECT max(mgr_seq) + 1 AS mgr_seq FROM xeus.mt_allow_ip), #{startIpNo}, #{endIpNo}, #{orgMgrNo}, #{workerId}, #{lastMdfyDat}, #{useYn});
+	</insert>
+
+
+	<update id="edit" parameterType="IpVo">
+		UPDATE xeus.mt_allow_ip
+
+		SET
+                start_ip_no = #{startIpNo}
+
+                , end_ip_no = #{endIpNo}
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                , org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                , worker_id = #{workerId}
+            </if>
+
+            <if test="lastMdfyDat != null and lastMdfyDat != ''">
+                , last_mdfy_dat = #{lastMdfyDat}
+            </if>
+
+            <if test="useYn != null and useYn != ''">
+                , use_yn = #{useYn}
+            </if>
+
+		WHERE mgr_seq = #{mgrSeq}::integer
+	</update>
+
+</mapper>

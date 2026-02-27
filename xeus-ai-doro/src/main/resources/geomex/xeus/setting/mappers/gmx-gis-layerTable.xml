@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gmx.gis.layerTable.service.GMT_LayerTableMapper">
+
+	<select id="create" parameterType="gmx.gis.layerTable.service.GMT_LayerTableVo">
+<!-- 		${sql} -->
+		<!-- CREATE SEQUENCE "draw"."${tableName}__fid_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1; -->
+		CREATE SEQUENCE "draw"."${tableName}__gid_seq" INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+
+		CREATE TABLE "draw"."${tableName}" (
+			<!-- _fid int8 NOT NULL DEFAULT nextval( 'draw.${tableName}__fid_seq' :: regclass ), -->
+			_gid int8 DEFAULT nextval( 'draw.${tableName}__gid_seq' :: regclass ),
+			_annox NUMERIC ( 20, 4 ),
+			_annoy NUMERIC ( 20, 4 ),
+			<foreach item="map" index="index" collection="columnTypeMapList" separator=",">
+			 	"${map.colNm}" ${map.colType}
+			 </foreach>
+			,_geometry geometry ( ${layerType}, 5186 ),
+			<!-- CONSTRAINT "${tableName}_pk" PRIMARY KEY ("_fid") -->
+			CONSTRAINT "${tableName}_pk" PRIMARY KEY ("_gid")
+		);
+
+		COMMENT ON TABLE "draw"."${tableName}" IS '${tableKoreaName}';
+
+		COMMENT ON COLUMN "draw"."${tableName}"."_gid" IS '식별번호';
+		COMMENT ON COLUMN "draw"."${tableName}"."_annox" IS '주기X좌표';
+		COMMENT ON COLUMN "draw"."${tableName}"."_annoy" IS '주기Y좌표';
+		<foreach item="map" index="index" collection="columnKrNmMapList" separator=";">
+			COMMENT ON COLUMN "draw"."${tableName}"."${map.colNm}" IS '${map.colKrNm}';
+		</foreach>
+		COMMENT ON COLUMN "draw"."${tableName}"."_geometry" IS '도형식별번호';
+
+		<!-- ALTER SEQUENCE "draw"."${tableName}__fid_seq" OWNED BY "draw"."${tableName}"._fid; -->
+		ALTER SEQUENCE "draw"."${tableName}__gid_seq" OWNED BY "draw"."${tableName}"._gid;
+
+		<!-- CREATE INDEX "draw_${tableName}__fid_idx" ON "draw"."${tableName}" USING btree ( _fid ); -->
+		CREATE INDEX "draw_${tableName}__gid_idx" ON "draw"."${tableName}" USING btree ( _gid );
+		CREATE INDEX "draw_${tableName}_geom_idx" ON "draw"."${tableName}" USING gist ( _geometry );
+	</select>
+
+
+	<select id="alter" parameterType="gmx.gis.layerTable.service.GMT_LayerTableVo">
+		<foreach item="type" index="column" collection="columnNewNmMap" separator=";" close=";">
+		 	ALTER TABLE ${schema}.${tableName} RENAME COLUMN "${column}" TO "${type}"
+		</foreach>
+
+		<foreach item="map" index="index" collection="columnTypeMapList" separator=";" close=";">
+		 	ALTER TABLE ${schema}.${tableName} ALTER COLUMN "${map.colNm}" TYPE ${map.colType}
+		</foreach>
+
+		<foreach item="map" index="index" collection="columnKrNmMapList" separator=";" close=";">
+			COMMENT ON COLUMN ${schema}."${tableName}"."${map.colNm}" IS '${map.colKrNm}'
+		</foreach>
+	</select>
+
+
+	<select id="addOneColumn" parameterType="gmx.gis.layerTable.service.GMT_LayerTableVo">
+
+	 	ALTER TABLE ${schema}.${tableName} ADD COLUMN "${colNm}" ${type};
+
+		COMMENT ON COLUMN ${schema}."${tableName}"."${colNm}" IS '${colKrNm}';
+	</select>
+
+	<select id="deleteOneColumn" parameterType="gmx.gis.layerTable.service.GMT_LayerTableVo">
+
+	 	ALTER TABLE ${schema}.${tableName} DROP COLUMN "${colNm}";
+
+	</select>
+
+
+
+	<update id="drop" parameterType="gmx.gis.layerTable.service.GMT_LayerTableVo">
+		DROP TABLE IF EXISTS "draw"."${tableName}" CASCADE;
+	</update>
+
+
+	<update id="addPKey" parameterType="HashMap">
+		ALTER TABLE ${schemNm}."${tblNm}" DROP CONSTRAINT "${tblNm}_pkey";
+
+		ALTER TABLE ${schemNm}."${tblNm}" ADD CONSTRAINT "${tblNm}_pkey" PRIMARY KEY (_gid);
+	</update>
+
+
+</mapper>

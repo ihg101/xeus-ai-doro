@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.bigdata.service.BigDataAnalyzeResultMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="BigDataAnalyzeResultVo">
+		SELECT mgr_seq, analy_mgr_seq, grid10m_gid, grid100m_gid, jibn_addr, road_addr, result_val, rgb_txt, grp_nm
+
+		, st_x (st_centroid(_geometry)) as tmx
+		, st_y (st_centroid(_geometry)) as tmy
+
+		, st_x (st_centroid(st_transform(_geometry, 4326))) as lon
+		, st_y (st_centroid(st_transform(_geometry, 4326))) as lat
+
+		<!-- <if test="isExcel == null or isExcel == ''">
+			, (select st_x(st_centroid(_geometry)) from xeus.bigdata_grid_10m where _gid = grid10m_gid) as tmx
+			, (select st_y(st_centroid(_geometry)) from xeus.bigdata_grid_10m where _gid = grid10m_gid) as tmy
+		</if>
+
+		<if test="isExcel != null and isExcel == 'isExcel'">
+			, (select st_x(st_centroid(st_transform(_geometry, 4326))) from xeus.bigdata_grid_10m where _gid = grid10m_gid) as lon
+			, (select st_y(st_centroid(st_transform(_geometry, 4326))) from xeus.bigdata_grid_10m where _gid = grid10m_gid) as lat
+		</if> -->
+
+		FROM ${tblId} as rst
+		LEFT JOIN xeus.bigdata_grid_10m AS grid10m ON rst.grid10m_gid = grid10m._gid
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="analyMgrSeq != null and analyMgrSeq != ''">
+				AND analy_mgr_seq = #{analyMgrSeq}::numeric
+			</if>
+
+			<if test="grid10mGid != null and grid10mGid != ''">
+				AND grid10m_gid = #{grid10mGid}::numeric
+			</if>
+
+			<if test="grid100mGid != null and grid100mGid != ''">
+				AND grid100m_gid = #{grid100mGid}::numeric
+			</if>
+
+			<if test="jibnAddr != null and jibnAddr != ''">
+				AND jibn_addr = #{jibnAddr}
+			</if>
+
+			<if test="roadAddr != null and roadAddr != ''">
+				AND road_addr = #{roadAddr}
+			</if>
+
+			<if test="resultVal != null and resultVal != ''">
+				AND result_val = #{resultVal}::numeric
+			</if>
+
+			<if test="rgbTxt != null and rgbTxt != ''">
+				AND rgb_txt = #{rgbTxt}
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				AND grp_nm = #{grpNm}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+    <select id="getDetailResultList" parameterType="HashMap" resultType="BigDataAnalyzeResultVo">
+		SELECT grid._geometry,
+		       grid.grid_txt,
+		       st_x(st_centroid(grid._geometry)) AS tmx,
+		       st_y(st_centroid(grid._geometry)) AS tmy,
+		       result.result_val,
+		       result.rgb_txt,
+		       result.analy_mgr_seq,
+		       result.jibn_addr,
+		       result.road_addr
+
+		FROM
+		xeus.bigdata_grid_10m grid,
+		xeus.bigdata_analy_result${analyMgrSeq} result
+
+		WHERE grid._gid = result.grid10m_gid
+		AND result.result_val BETWEEN #{min}::numeric AND #{max}::numeric
+
+		ORDER BY result_val
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="BigDataAnalyzeResultVo">
+		SELECT mgr_seq, analy_mgr_seq, grid1k_gid, grid100m_gid, grid10m_gid, grid_txt, jibn_addr, road_addr, result_val, rgb_txt, grp_nm
+
+		FROM ${tblId}
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="analyMgrSeq != null and analyMgrSeq != ''">
+				AND analy_mgr_seq = #{analyMgrSeq}::numeric
+			</if>
+
+			<if test="grid1kGid != null and grid1kGid != ''">
+				AND grid1k_gid = #{grid1kGid}::numeric
+			</if>
+
+			<if test="grid100mGid != null and grid100mGid != ''">
+				AND grid100m_gid = #{grid100mGid}::numeric
+			</if>
+
+			<if test="grid10mGid != null and grid10mGid != ''">
+				AND grid10m_gid = #{grid10mGid}::numeric
+			</if>
+
+			<if test="gridTxt != null and gridTxt != ''">
+				AND grid_txt = #{gridTxt}
+			</if>
+
+			<if test="jibnAddr != null and jibnAddr != ''">
+				AND jibn_addr = #{jibnAddr}
+			</if>
+
+			<if test="roadAddr != null and roadAddr != ''">
+				AND road_addr = #{roadAddr}
+			</if>
+
+			<if test="resultVal != null and resultVal != ''">
+				AND result_val = #{resultVal}::numeric
+			</if>
+
+			<if test="rgbTxt != null and rgbTxt != ''">
+				AND rgb_txt = #{rgbTxt}
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				AND grp_nm = #{grpNm}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="createTable" parameterType="String">
+		CREATE SEQUENCE xeus.bigdata_analy_weight${value}_mgr_seq_seq;
+
+		CREATE TABLE xeus.bigdata_analy_weight${value}
+		(
+		    mgr_seq bigint NOT NULL DEFAULT nextval('xeus.bigdata_analy_weight${value}_mgr_seq_seq'::regclass),
+		    analy_mgr_seq numeric(32,0) NOT NULL,
+		    layer_id character varying(100) COLLATE pg_catalog."default" NOT NULL,
+		    item_nm character varying(100) COLLATE pg_catalog."default",
+		    min_val numeric(8,0),
+		    max_val numeric(8,0),
+		    weight_val numeric(8,0),
+		    impact_m numeric(8,0),
+		    CONSTRAINT bigdata_analy_weight${value}_pk PRIMARY KEY (mgr_seq)
+		);
+
+		CREATE INDEX bigdata_analy_weight${value}_mgr_seq_idx ON xeus.bigdata_analy_weight${value} USING btree (analy_mgr_seq, layer_id COLLATE pg_catalog."default") TABLESPACE pg_default;
+	</select>
+
+
+	<update id="dropTable" parameterType="String">
+		DROP TABLE IF EXISTS ${value} CASCADE;
+	</update>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM ${tblId}
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="analyMgrSeq != null and analyMgrSeq != ''">
+				AND analy_mgr_seq = #{analyMgrSeq}::numeric
+			</if>
+
+			<if test="grid1kGid != null and grid1kGid != ''">
+				AND grid1k_gid = #{grid1kGid}::numeric
+			</if>
+
+			<if test="grid100mGid != null and grid100mGid != ''">
+				AND grid100m_gid = #{grid100mGid}::numeric
+			</if>
+
+			<if test="grid10mGid != null and grid10mGid != ''">
+				AND grid10m_gid = #{grid10mGid}::numeric
+			</if>
+
+			<if test="gridTxt != null and gridTxt != ''">
+				AND grid_txt = #{gridTxt}
+			</if>
+
+			<if test="jibnAddr != null and jibnAddr != ''">
+				AND jibn_addr = #{jibnAddr}
+			</if>
+
+			<if test="roadAddr != null and roadAddr != ''">
+				AND road_addr = #{roadAddr}
+			</if>
+
+			<if test="resultVal != null and resultVal != ''">
+				AND result_val = #{resultVal}::numeric
+			</if>
+
+			<if test="rgbTxt != null and rgbTxt != ''">
+				AND rgb_txt = #{rgbTxt}
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				AND grp_nm = #{grpNm}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getMinMax" parameterType="HashMap" resultType="HashMap">
+		SELECT max(result_val) AS max_val, min(result_val) AS min_val, count(*) FROM ${tblId}
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.bigdata_analy_result${analyMgrSeq} WHERE mgr_seq = #{mgrSeq}::numeric
+	</delete>
+
+
+	<insert id="add" parameterType="BigDataAnalyzeResultVo">
+		INSERT INTO xeus.bigdata_analy_result${analyMgrSeq}(
+			analy_mgr_seq, grid1k_gid, grid100m_gid, grid10m_gid, grid_txt, jibn_addr, road_addr, result_val, rgb_txt, grp_nm
+		) VALUES (
+			#{analyMgrSeq}::numeric, #{grid1kGid}::numeric, #{grid100mGid}::numeric, #{grid10mGid}::numeric, #{gridTxt}, #{jibnAddr}, #{roadAddr}, #{resultVal}::numeric, #{rgbTxt}, #{grpNm}
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="BigDataAnalyzeResultVo">
+		UPDATE xeus.bigdata_analy_result${analyMgrSeq} SET
+			mgr_seq = #{mgrSeq}::numeric
+
+			<if test="analyMgrSeq != null and analyMgrSeq != ''">
+				, analy_mgr_seq = #{analyMgrSeq}::numeric
+			</if>
+
+			<if test="grid1kGid != null and grid1kGid != ''">
+				, grid1k_gid = #{grid1kGid}::numeric
+			</if>
+
+			<if test="grid100mGid != null and grid100mGid != ''">
+				, grid100m_gid = #{grid100mGid}::numeric
+			</if>
+
+			<if test="grid10mGid != null and grid10mGid != ''">
+				, grid10m_gid = #{grid10mGid}::numeric
+			</if>
+
+			<if test="gridTxt != null and gridTxt != ''">
+				, grid_txt = #{gridTxt}
+			</if>
+
+			<if test="jibnAddr != null and jibnAddr != ''">
+				, jibn_addr = #{jibnAddr}
+			</if>
+
+			<if test="roadAddr != null and roadAddr != ''">
+				, road_addr = #{roadAddr}
+			</if>
+
+			<if test="resultVal != null and resultVal != ''">
+				, result_val = #{resultVal}::numeric
+			</if>
+
+			<if test="rgbTxt != null and rgbTxt != ''">
+				, rgb_txt = #{rgbTxt}
+			</if>
+
+			<if test="grpNm != null and grpNm != ''">
+				, grp_nm = #{grpNm}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}::numeric
+
+	</update>
+
+</mapper>

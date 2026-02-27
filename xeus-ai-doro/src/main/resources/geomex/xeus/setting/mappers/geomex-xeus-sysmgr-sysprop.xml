@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.sysmgr.service.SysPropMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="SysPropVo">
+        SELECT prop_key, prop_nm, prop_value
+
+        FROM xeus.mt_sys_prop
+
+        <where>
+            <if test="propKey != null and propKey != ''">
+                AND prop_key = #{propKey}
+            </if>
+
+            <if test="propValue != null and propValue != ''">
+                AND prop_value = #{propValue}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                prop_key ASC
+            </if>
+        </trim>
+
+    </select>
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*) FROM xeus.mt_sys_prop
+
+        <where>
+            <if test="propKey != null and propKey != ''">
+                AND prop_key = #{propKey}
+            </if>
+
+            <if test="propNm != null and propNm != ''">
+                AND prop_nm = #{propNm}
+            </if>
+
+            <if test="propValue != null and propValue != ''">
+                AND prop_value = #{propValue}
+            </if>
+
+        </where>
+    </select>
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.mt_sys_prop WHERE prop_key = #{propKey}
+    </delete>
+
+
+    <insert id="add" parameterType="SysPropVo">
+        INSERT INTO xeus.mt_sys_prop(prop_key, prop_nm, prop_value)
+        VALUES (#{propKey}, #{propNm}, #{propValue}
+    </insert>
+
+
+    <update id="edit" parameterType="SysPropVo">
+        UPDATE xeus.mt_sys_prop
+
+        SET
+            prop_value = #{propValue},
+            prop_nm = #{propNm}
+
+        WHERE prop_key = #{propKey}
+    </update>
+
+    <update id="editSysParam" parameterType="SysPropVo">
+
+		<foreach collection="map.entrySet()" item="value" index="key">
+    		UPDATE xeus.mt_sys_prop SET prop_value = #{value} WHERE prop_key = #{key};
+    	</foreach>
+    	
+    	<if test="VO.cctvNetDistLimit != null and VO.cctvNetDistLimit != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.cctvNetDistLimit} WHERE prop_key = 'cctv.net_dist_limit';
+        </if>
+
+        <if test="VO.sysLoginLockCnt != null and VO.sysLoginLockCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.sysLoginLockCnt} WHERE prop_key = 'sys.login_lock_cnt';
+        </if>
+
+        <if test="VO.tviusAdminSmsList != null">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusAdminSmsList} WHERE prop_key = 'tvius.admin_sms_list';
+        </if>
+
+        <if test="VO.tviusAviPlayCnt != null and VO.tviusAviPlayCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusAviPlayCnt} WHERE prop_key = 'tvius.avi_play_cnt';
+        </if>
+
+        <if test="VO.tviusAviPlayDat != null and VO.tviusAviPlayDat != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusAviPlayDat} WHERE prop_key = 'tvius.avi_play_dat';
+        </if>
+
+        <if test="VO.tviusAviPlayTime != null and VO.tviusAviPlayTime != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusAviPlayTime} WHERE prop_key = 'tvius.avi_play_time';
+        </if>
+
+        <if test="VO.tviusEviPlayCnt != null and VO.tviusEviPlayCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusEviPlayCnt} WHERE prop_key = 'tvius.evi_play_cnt';
+        </if>
+
+        <if test="VO.tviusFileDownCnt != null and VO.tviusFileDownCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusFileDownCnt} WHERE prop_key = 'tvius.file_down_cnt';
+        </if>
+
+        <if test="VO.tviusRenewPlayCnt != null and VO.tviusRenewPlayCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusRenewPlayCnt} WHERE prop_key = 'tvius.renew_play_cnt';
+        </if>
+
+        <if test="VO.tviusRenewPlayDat != null and VO.tviusRenewPlayDat != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusRenewPlayDat} WHERE prop_key = 'tvius.renew_play_dat';
+        </if>
+
+        <if test="VO.tviusRqstLockCnt != null and VO.tviusRqstLockCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusRqstLockCnt} WHERE prop_key = 'tvius.rqst_lock_cnt';
+        </if>
+
+  		<if test="VO.tviusPreviewAvi != null and VO.tviusPreviewAvi != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusPreviewAvi} WHERE prop_key = 'tvius.preview_avi';
+        </if>
+
+        <if test="VO.tviusPreviewPhoto != null and VO.tviusPreviewPhoto != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{VO.tviusPreviewPhoto} WHERE prop_key = 'tvius.preview_photo';
+        </if>
+
+        <!-- <if test="adminSmsList != null and adminSmsList != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{adminSmsList} WHERE prop_key = 'tvius.admin_sms_list';
+        </if>
+
+        <if test="aviPlayCnt != null and aviPlayCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{aviPlayCnt} WHERE prop_key = 'tvius.avi_play_cnt';
+        </if>
+
+        <if test="aviPlayDat != null and aviPlayDat != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{aviPlayDat} WHERE prop_key = 'tvius.avi_play_dat';
+        </if>
+
+        <if test="aviPlayTime != null and aviPlayTime != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{aviPlayTime} WHERE prop_key = 'tvius.avi_play_time';
+        </if>
+
+        <if test="previewAvi != null and previewAvi != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{previewAvi} WHERE prop_key = 'tvius.preview_avi';
+        </if>
+
+        <if test="eviPlayCnt != null and eviPlayCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{eviPlayCnt} WHERE prop_key = 'tvius.evi_play_cnt';
+        </if>
+
+        <if test="fileDownCnt != null and fileDownCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{fileDownCnt} WHERE prop_key = 'tvius.file_down_cnt';
+        </if>
+
+        <if test="lastSmsDat != null and lastSmsDat != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{lastSmsDat} WHERE prop_key = 'tvius.last_sms_dat';
+        </if>
+
+        <if test="loginLockCnt != null and loginLockCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{loginLockCnt} WHERE prop_key = 'sys.login_lock_cnt';
+        </if>
+
+        <if test="previewPhoto != null and previewPhoto != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{previewPhoto} WHERE prop_key = 'tvius.preview_photo';
+        </if>
+
+        <if test="renewPlayCnt != null and renewPlayCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{renewPlayCnt} WHERE prop_key = 'tvius.renew_play_cnt';
+        </if>
+
+        <if test="renewPlayDat != null and renewPlayDat != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{renewPlayDat} WHERE prop_key = 'tvius.renew_play_dat';
+        </if>
+
+        <if test="rqstLockCnt != null and rqstLockCnt != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{rqstLockCnt} WHERE prop_key = 'tvius.rqst_lock_cnt';
+        </if>
+
+        <if test="evt112 != null and evt112 != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{evt112} WHERE prop_key = 'event.evt112';
+        </if>
+
+        <if test="evt119 != null and evt119 != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{evt119} WHERE prop_key = 'event.evt119';
+        </if>
+
+        <if test="evtDsc != null and evtDsc != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{evtDsc} WHERE prop_key = 'event.evtDsc';
+        </if> -->
+
+		<!-- 백업 -->
+
+        <!-- <if test="maskingRouteAf != null and maskingRouteAf != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{maskingRouteAf} WHERE prop_key = 'tvius.mask_route_af';
+        </if>
+
+        <if test="maskingRouteBf != null and maskingRouteBf != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{maskingRouteBf} WHERE prop_key = 'tvius.mask_route_bf';
+        </if>
+
+        <if test="maskingYn != null and maskingYn != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{maskingYn} WHERE prop_key = 'tvius.masking_yn';
+        </if>
+
+        <if test="storagePath != null and storagePath != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{storagePath} WHERE prop_key = 'tvius.storage_path';
+        </if>
+
+        <if test="uploadPath != null and uploadPath != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{uploadPath} WHERE prop_key = 'sys.upload_path';
+        </if>
+
+        <if test="hashFiles != null and hashFiles != ''">
+            UPDATE xeus.mt_sys_prop SET prop_value = #{hashFiles} WHERE prop_key = 'tvius.hash_files';
+        </if> -->
+
+    </update>
+
+</mapper>

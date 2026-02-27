@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.bigdata.service.BigDataLayerSetMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="BigDataLayerSetVo">
+        <!-- SELECT mgr_seq, analy_mgr_seq, layer_id, layer_nm, layer_seq, item_nm, item_val, weight_val, impact_m, jibn_yn -->
+        SELECT mgr_seq, analy_mgr_seq, layer_id, layer_nm, layer_seq, item_nm, weight_val
+
+        , (SELECT EXISTS ( SELECT 1 FROM information_schema.tables WHERE table_schema = split_part(layer_id, '.', 1) AND table_name = split_part(layer_id, '.', 2) )) as is_exists
+
+        FROM xeus.bigdata_layer_set
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="analyMgrSeq != null and analyMgrSeq != ''">
+                AND analy_mgr_seq = #{analyMgrSeq}::numeric
+            </if>
+
+            <if test="layerId != null and layerId != ''">
+                AND layer_id = #{layerId}
+            </if>
+
+            <if test="layerNm != null and layerNm != ''">
+                AND layer_nm = #{layerNm}
+            </if>
+
+            <if test="layerSeq != null and layerSeq != ''">
+                AND layer_seq = #{layerSeq}::numeric
+            </if>
+
+            <if test="itemNm != null and itemNm != ''">
+                AND item_nm = #{itemNm}
+            </if>
+
+            <!-- <if test="itemVal != null and itemVal != ''"> -->
+            <!-- AND item_val = #{itemVal}::numeric -->
+            <!-- </if> -->
+
+            <if test="weightVal != null and weightVal != ''">
+                AND weight_val = #{weightVal}::numeric
+            </if>
+
+            <!-- <if test="impactM != null and impactM != ''"> -->
+            <!-- AND impact_m = #{impactM}::numeric -->
+            <!-- </if> -->
+
+            <!-- <if test="jibnYn != null and jibnYn != ''"> -->
+            <!-- AND jibn_yn = #{jibnYn} -->
+            <!-- </if> -->
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                mgr_seq asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="BigDataLayerSetVo">
+        <!-- SELECT mgr_seq, analy_mgr_seq, layer_id, layer_nm, layer_seq, item_nm, item_val, weight_val, impact_m, jibn_yn -->
+        SELECT mgr_seq, analy_mgr_seq, layer_id, layer_nm, layer_seq, item_nm, weight_val
+
+        , (SELECT EXISTS ( SELECT 1 FROM information_schema.tables WHERE table_schema = split_part(layer_id, '.', 1) AND table_name = split_part(layer_id, '.', 2) )) as is_exists
+
+        FROM xeus.bigdata_layer_set
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="analyMgrSeq != null and analyMgrSeq != ''">
+                AND analy_mgr_seq = #{analyMgrSeq}::numeric
+            </if>
+
+            <if test="layerId != null and layerId != ''">
+                AND layer_id = #{layerId}
+            </if>
+
+            <if test="layerNm != null and layerNm != ''">
+                AND layer_nm = #{layerNm}
+            </if>
+
+            <if test="layerSeq != null and layerSeq != ''">
+                AND layer_seq = #{layerSeq}::numeric
+            </if>
+
+            <if test="itemNm != null and itemNm != ''">
+                AND item_nm = #{itemNm}
+            </if>
+
+            <!-- <if test="itemVal != null and itemVal != ''"> -->
+            <!-- AND item_val = #{itemVal}::numeric -->
+            <!-- </if> -->
+
+            <if test="weightVal != null and weightVal != ''">
+                AND weight_val = #{weightVal}::numeric
+            </if>
+
+            <!-- <if test="impactM != null and impactM != ''"> -->
+            <!-- AND impact_m = #{impactM}::numeric -->
+            <!-- </if> -->
+
+            <!-- <if test="jibnYn != null and jibnYn != ''"> -->
+            <!-- AND jibn_yn = #{jibnYn} -->
+            <!-- </if> -->
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.bigdata_layer_set
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="analyMgrSeq != null and analyMgrSeq != ''">
+                AND analy_mgr_seq = #{analyMgrSeq}::numeric
+            </if>
+
+            <if test="layerId != null and layerId != ''">
+                AND layer_id = #{layerId}
+            </if>
+
+            <if test="layerNm != null and layerNm != ''">
+                AND layer_nm = #{layerNm}
+            </if>
+
+            <if test="layerSeq != null and layerSeq != ''">
+                AND layer_seq = #{layerSeq}::numeric
+            </if>
+
+            <if test="itemNm != null and itemNm != ''">
+                AND item_nm = #{itemNm}
+            </if>
+
+            <!-- <if test="itemVal != null and itemVal != ''"> -->
+            <!-- AND item_val = #{itemVal}::numeric -->
+            <!-- </if> -->
+
+            <if test="weightVal != null and weightVal != ''">
+                AND weight_val = #{weightVal}::numeric
+            </if>
+
+            <!-- <if test="impactM != null and impactM != ''"> -->
+            <!-- AND impact_m = #{impactM}::numeric -->
+            <!-- </if> -->
+
+            <!-- <if test="jibnYn != null and jibnYn != ''"> -->
+            <!-- AND jibn_yn = #{jibnYn} -->
+            <!-- </if> -->
+
+        </where>
+    </select>
+
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.bigdata_layer_set WHERE analy_mgr_seq = #{analyMgrSeq}::numeric
+    </delete>
+
+
+    <insert id="add" parameterType="BigDataLayerSetVo">
+        <!-- INSERT INTO xeus.bigdata_layer_set( -->
+        <!-- analy_mgr_seq, layer_id, layer_nm, layer_seq, item_nm, item_val, weight_val, impact_m, jibn_yn -->
+        <!-- ) VALUES ( -->
+        <!-- #{analyMgrSeq}::numeric, #{layerId}, #{layerNm}, #{layerSeq}::numeric, #{itemNm}, #{itemVal}::numeric, #{weightVal}::numeric,
+            #{impactM}::numeric, #{jibnYn} -->
+        <!-- ); -->
+        INSERT INTO xeus.bigdata_layer_set(
+        analy_mgr_seq, layer_id, layer_nm, layer_seq, item_nm, weight_val
+        ) VALUES (
+        #{analyMgrSeq}::numeric, #{layerId}, #{layerNm}, #{layerSeq}::numeric, #{itemNm}, #{weightVal}::numeric
+        );
+    </insert>
+
+
+    <update id="edit" parameterType="BigDataLayerSetVo">
+        UPDATE xeus.bigdata_layer_set SET
+        mgr_seq = #{mgrSeq}::numeric
+
+        <if test="analyMgrSeq != null and analyMgrSeq != ''">
+            , analy_mgr_seq = #{analyMgrSeq}::numeric
+        </if>
+
+        <if test="layerId != null and layerId != ''">
+            , layer_id = #{layerId}
+        </if>
+
+        <if test="layerNm != null and layerNm != ''">
+            , layer_nm = #{layerNm}
+        </if>
+
+        <if test="layerSeq != null and layerSeq != ''">
+            , layer_seq = #{layerSeq}::numeric
+        </if>
+
+        <if test="itemNm != null and itemNm != ''">
+            , item_nm = #{itemNm}
+        </if>
+
+        <!-- <if test="itemVal != null and itemVal != ''"> -->
+        <!-- , item_val = #{itemVal}::numeric -->
+        <!-- </if> -->
+
+        <if test="weightVal != null and weightVal != ''">
+            , weight_val = #{weightVal}::numeric
+        </if>
+
+        <!-- <if test="impactM != null and impactM != ''"> -->
+        <!-- , impact_m = #{impactM}::numeric -->
+        <!-- </if> -->
+
+        <!-- <if test="jibnYn != null and jibnYn != ''"> -->
+        <!-- , jibn_yn = #{jibnYn} -->
+        <!-- </if> -->
+
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+</mapper>

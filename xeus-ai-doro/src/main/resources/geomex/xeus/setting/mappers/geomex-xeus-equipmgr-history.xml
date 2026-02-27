@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.HistoryMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="HistoryVo">
+        SELECT fa_mgr_no,
+
+                (case substring(fa_mgr_no, 1, 3)
+                                when 'CTV' then (SELECT cctv_nm FROM xeus.asset_cctv WHERE mgr_no = fa_mgr_no)
+                                when 'INF' then (SELECT facility_nm FROM xeus.asset_infra WHERE mgr_no = fa_mgr_no)
+                end) AS fa_nm,
+
+                chk_gbn_cd, chk_nm, chk_stat_cd, reg_dat, reg_rsn, reg_user_id,
+                rept_dat, work_dat, worker_id, err_typ_cd, work_typ_cd, work_desc, cncl_req_dat,
+                cncl_resn, cncl_rslt_cd, cncl_acpt_id, cncl_acpt_dat
+
+        FROM xeus.asset_hist AS hist
+        LEFT JOIN xeus.asset_cctv AS cctv ON hist.fa_mgr_no = cctv.mgr_no
+
+        <if test="emdCd != null and emdCd != ''">
+            , xeus.kais_emd_as AS emd
+        </if>
+
+        <where>
+
+            <if test="emdCd != null and emdCd != ''">
+                st_intersects(emd._geometry, cctv._geometry)
+
+                AND emd.emd_cd = #{emdCd}
+            </if>
+
+            <if test="faType != null and faType != ''">
+                AND substring(fa_mgr_no, 1, 3) = #{faType}
+            </if>
+
+            <if test="faMgrNo != null and faMgrNo != ''">
+                AND fa_mgr_no = #{faMgrNo}
+            </if>
+
+            <if test="chkGbnCd != null and chkGbnCd != ''">
+                AND chk_gbn_cd = #{chkGbnCd}
+            </if>
+
+            <if test="chkNm != null and chkNm != ''">
+                <!-- AND chk_nm = #{chkNm} -->
+                AND chk_nm LIKE '%'||#{chkNm}||'%'
+            </if>
+
+            <if test="chkStatCd != null and chkStatCd != ''">
+                AND chk_stat_cd = #{chkStatCd}
+            </if>
+
+            <if test="regDat != null and regDat != ''">
+                AND reg_dat = #{regDat}
+            </if>
+
+            <if test="regRsn != null and regRsn != ''">
+                AND reg_rsn = #{regRsn}
+            </if>
+
+            <if test="regUserId != null and regUserId != ''">
+                <!-- AND reg_user_id = #{regUserId} -->
+                AND reg_user_id LIKE '%'||#{regUserId}||'%'
+            </if>
+
+            <if test="reptDat != null and reptDat != ''">
+                AND rept_dat = #{reptDat}
+            </if>
+
+            <if test="workDat != null and workDat != ''">
+                AND work_dat = #{workDat}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                <!-- AND worker_id = #{workerId} -->
+                AND worker_id LIKE '%'||#{workerId}||'%'
+            </if>
+
+            <if test="errTypCd != null and errTypCd != ''">
+                AND err_typ_cd = #{errTypCd}
+            </if>
+
+            <if test="workTypCd != null and workTypCd != ''">
+                AND work_typ_cd = #{workTypCd}
+            </if>
+
+            <if test="workDesc != null and workDesc != ''">
+                AND work_desc = #{workDesc}
+            </if>
+
+            <if test="cnclReqDat != null and cnclReqDat != ''">
+                AND cncl_req_dat = #{cnclReqDat}
+            </if>
+
+            <if test="cnclResn != null and cnclResn != ''">
+                AND cncl_resn = #{cnclResn}
+            </if>
+
+            <if test="cnclAll != null and cnclAll == 'all'">
+                AND cncl_resn IS NOT NULL
+            </if>
+
+            <if test="cnclRsltCd != null and cnclRsltCd != ''">
+                AND cncl_rslt_cd = #{cnclRsltCd}
+            </if>
+
+            <if test="cnclAcptId != null and cnclAcptId != ''">
+                AND cncl_acpt_id = #{cnclAcptId}
+            </if>
+
+            <if test="cnclAcptDat != null and cnclAcptDat != ''">
+                AND cncl_acpt_dat = #{cnclAcptDat}
+            </if>
+
+
+            <if test="sRegDat != null and sRegDat != ''">
+                AND substring(reg_dat, 1, 8) >= #{sRegDat}
+            </if>
+
+            <if test="eRegDat != null and eRegDat != ''">
+            <![CDATA[
+                AND substring(reg_dat, 1, 8) <= #{eRegDat}
+            ]]>
+            </if>
+
+            <if test="sWorkDat != null and sWorkDat != ''">
+                AND substring(work_dat, 1, 8) >= #{sWorkDat}
+            </if>
+
+            <if test="eWorkDat != null and eWorkDat != ''">
+            <![CDATA[
+                AND substring(work_dat, 1, 8) <= #{eWorkDat}
+            ]]>
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                hist.fa_mgr_no desc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <select id="getChkNmList" parameterType="HashMap" resultType="HistoryVo">
+        SELECT distinct(chk_nm) AS chk_nm
+
+        FROM xeus.asset_hist
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol == null and sortTyp == null">
+                chk_nm asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="HistoryVo">
+        SELECT fa_mgr_no,
+
+                (case substring(fa_mgr_no, 1, 3)
+                        when 'CTV' then (SELECT cctv_nm FROM xeus.asset_cctv WHERE mgr_no = fa_mgr_no)
+                        when 'INF' then (SELECT facility_nm FROM xeus.asset_infra WHERE mgr_no = fa_mgr_no)
+                end) AS fa_nm,
+
+                chk_gbn_cd, chk_nm, chk_stat_cd, reg_dat, reg_rsn, reg_user_id,
+                rept_dat, work_dat, worker_id, err_typ_cd, work_typ_cd, work_desc, cncl_req_dat,
+                cncl_resn, cncl_rslt_cd, cncl_acpt_id, cncl_acpt_dat
+
+        FROM xeus.asset_hist
+
+        <where>
+
+            <if test="faMgrNo != null and faMgrNo != ''">
+                AND fa_mgr_no = #{faMgrNo}
+            </if>
+
+            <if test="faType != null and faType != ''">
+                AND substring(fa_mgr_no, 1, 3) = #{faType}
+            </if>
+
+            <if test="chkGbnCd != null and chkGbnCd != ''">
+                AND chk_gbn_cd = #{chkGbnCd}
+            </if>
+
+            <if test="chkNm != null and chkNm != ''">
+                AND chk_nm = #{chkNm}
+            </if>
+
+            <if test="chkStatCd != null and chkStatCd != ''">
+                AND chk_stat_cd = #{chkStatCd}
+            </if>
+
+            <if test="regDat != null and regDat != ''">
+                AND reg_dat = #{regDat}
+            </if>
+
+            <if test="regRsn != null and regRsn != ''">
+                AND reg_rsn = #{regRsn}
+            </if>
+
+            <if test="regUserId != null and regUserId != ''">
+                AND reg_user_id = #{regUserId}
+            </if>
+
+            <if test="reptDat != null and reptDat != ''">
+                AND rept_dat = #{reptDat}
+            </if>
+
+            <if test="workDat != null and workDat != ''">
+                AND work_dat = #{workDat}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                AND worker_id = #{workerId}
+            </if>
+
+            <if test="errTypCd != null and errTypCd != ''">
+                AND err_typ_cd = #{errTypCd}
+            </if>
+
+            <if test="workTypCd != null and workTypCd != ''">
+                AND work_typ_cd = #{workTypCd}
+            </if>
+
+            <if test="workDesc != null and workDesc != ''">
+                AND work_desc = #{workDesc}
+            </if>
+
+            <if test="cnclReqDat != null and cnclReqDat != ''">
+                AND cncl_req_dat = #{cnclReqDat}
+            </if>
+
+            <if test="cnclResn != null and cnclResn != ''">
+                AND cncl_resn = #{cnclResn}
+            </if>
+
+            <if test="cnclRsltCd != null and cnclRsltCd != ''">
+                AND cncl_rslt_cd = #{cnclRsltCd}
+            </if>
+
+            <if test="cnclAcptId != null and cnclAcptId != ''">
+                AND cncl_acpt_id = #{cnclAcptId}
+            </if>
+
+            <if test="cnclAcptDat != null and cnclAcptDat != ''">
+                AND cncl_acpt_dat = #{cnclAcptDat}
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.asset_hist
+
+        <where>
+
+            <if test="faMgrNo != null and faMgrNo != ''">
+                AND fa_mgr_no = #{faMgrNo}
+            </if>
+
+            <if test="chkGbnCd != null and chkGbnCd != ''">
+                AND chk_gbn_cd = #{chkGbnCd}
+            </if>
+
+            <if test="chkNm != null and chkNm != ''">
+                <!-- AND chk_nm = #{chkNm} -->
+                AND chk_nm LIKE '%'||#{chkNm}||'%'
+            </if>
+
+            <if test="chkStatCd != null and chkStatCd != ''">
+                AND chk_stat_cd = #{chkStatCd}
+            </if>
+
+            <if test="regDat != null and regDat != ''">
+                AND reg_dat = #{regDat}
+            </if>
+
+            <if test="regRsn != null and regRsn != ''">
+                AND reg_rsn = #{regRsn}
+            </if>
+
+            <if test="regUserId != null and regUserId != ''">
+                <!-- AND reg_user_id = #{regUserId} -->
+                AND reg_user_id LIKE '%'||#{regUserId}||'%'
+            </if>
+
+            <if test="reptDat != null and reptDat != ''">
+                AND rept_dat = #{reptDat}
+            </if>
+
+            <if test="workDat != null and workDat != ''">
+                AND work_dat = #{workDat}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                <!-- AND worker_id = #{workerId} -->
+                AND worker_id LIKE '%'||#{workerId}||'%'
+            </if>
+
+            <if test="errTypCd != null and errTypCd != ''">
+                AND err_typ_cd = #{errTypCd}
+            </if>
+
+            <if test="workTypCd != null and workTypCd != ''">
+                AND work_typ_cd = #{workTypCd}
+            </if>
+
+            <if test="workDesc != null and workDesc != ''">
+                AND work_desc = #{workDesc}
+            </if>
+
+            <if test="cnclReqDat != null and cnclReqDat != ''">
+                AND cncl_req_dat = #{cnclReqDat}
+            </if>
+
+            <if test="cnclResn != null and cnclResn != ''">
+                AND cncl_resn = #{cnclResn}
+            </if>
+
+            <if test="cnclRsltCd != null and cnclRsltCd != ''">
+                AND cncl_rslt_cd = #{cnclRsltCd}
+            </if>
+
+            <if test="cnclAcptId != null and cnclAcptId != ''">
+                AND cncl_acpt_id = #{cnclAcptId}
+            </if>
+
+            <if test="cnclAcptDat != null and cnclAcptDat != ''">
+                AND cncl_acpt_dat = #{cnclAcptDat}
+            </if>
+
+        </where>
+    </select>
+
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.asset_hist
+
+        <where>
+            <if test="chkNm != null and chkNm != ''">
+                AND chk_nm = #{chkNm}
+            </if>
+
+            <if test="faMgrNo != null and faMgrNo != ''">
+                AND fa_mgr_no = #{faMgrNo}
+            </if>
+        </where>
+    </delete>
+
+
+    <insert id="add" parameterType="HistoryVo">
+        INSERT INTO xeus.asset_hist(
+            fa_mgr_no, chk_gbn_cd, chk_nm, chk_stat_cd, reg_dat, reg_rsn, reg_user_id,
+            rept_dat, work_dat, worker_id, err_typ_cd, work_typ_cd, work_desc, cncl_req_dat,
+            cncl_resn, cncl_rslt_cd, cncl_acpt_id, cncl_acpt_dat
+        ) VALUES (
+            <!-- (SELECT
+              'HIS' ||
+              (case length((num + 1)::text)::integer
+                when 1 then '000000'
+                when 2 then '00000'
+                when 3 then '0000'
+                when 4 then '000'
+                when 5 then '00'
+                when 6 then '0'
+              end) || num + 1 AS val
+            FROM generate_series(
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_hist),
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_hist)
+            ) AS num), -->
+
+            #{faMgrNo}, #{chkGbnCd}, #{chkNm}, #{chkStatCd}, #{regDat}, #{regRsn}, #{regUserId},
+            #{reptDat}, #{workDat}, #{workerId}, #{errTypCd}, #{workTypCd}, #{workDesc}, #{cnclReqDat},
+            #{cnclResn}, #{cnclRsltCd}, #{cnclAcptId}, #{cnclAcptDat}
+        );
+    </insert>
+
+
+    <update id="edit" parameterType="HistoryVo">
+        UPDATE xeus.asset_hist SET
+            fa_mgr_no = #{faMgrNo}
+
+            <if test="chkGbnCd != null and chkGbnCd != ''">
+                , chk_gbn_cd = #{chkGbnCd}
+            </if>
+
+            <if test="chkNm != null and chkNm != ''">
+                , chk_nm = #{chkNm}
+            </if>
+
+            <if test="chkStatCd != null and chkStatCd != ''">
+                , chk_stat_cd = #{chkStatCd}
+            </if>
+
+            <if test="regDat != null and regDat != ''">
+                , reg_dat = #{regDat}
+            </if>
+
+            <if test="regRsn != null and regRsn != ''">
+                , reg_rsn = #{regRsn}
+            </if>
+
+            <if test="regUserId != null and regUserId != ''">
+                , reg_user_id = #{regUserId}
+            </if>
+
+            <if test="reptDat != null and reptDat != ''">
+                , rept_dat = #{reptDat}
+            </if>
+
+            <if test="workDat != null and workDat != ''">
+                , work_dat = #{workDat}
+            </if>
+
+            <if test="workerId != null and workerId != ''">
+                , worker_id = #{workerId}
+            </if>
+
+            <if test="errTypCd != null and errTypCd != ''">
+                , err_typ_cd = #{errTypCd}
+            </if>
+
+            <if test="workTypCd != null and workTypCd != ''">
+                , work_typ_cd = #{workTypCd}
+            </if>
+
+            <if test="workDesc != null and workDesc != ''">
+                , work_desc = #{workDesc}
+            </if>
+
+            <if test="cnclReqDat != null and cnclReqDat != ''">
+                , cncl_req_dat = #{cnclReqDat}
+            </if>
+
+            <if test="cnclResn != null and cnclResn != ''">
+                , cncl_resn = #{cnclResn}
+            </if>
+
+            <if test="cnclRsltCd != null and cnclRsltCd != ''">
+                , cncl_rslt_cd = #{cnclRsltCd}
+            </if>
+
+            <if test="cnclAcptId != null and cnclAcptId != ''">
+                , cncl_acpt_id = #{cnclAcptId}
+            </if>
+
+            <if test="cnclAcptDat != null and cnclAcptDat != ''">
+                , cncl_acpt_dat = #{cnclAcptDat}
+            </if>
+
+        WHERE fa_mgr_no = #{faMgrNo}
+
+        <!-- <if test="faMgrNo != null and faMgrNo != ''">
+            AND fa_mgr_no = #{faMgrNo}
+        </if> -->
+
+    </update>
+</mapper>

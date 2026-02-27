@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsPrevAviMapper">
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+        FROM xeus.crms_prev_avi As avi
+
+        <where>
+
+            <!-- rk관련 그냥 넣어주면 될거같음. -->
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                avi.rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsPrevAviVo">
+
+        SELECT avi.mgr_seq, avi.rqst_mgr_seq, avi.cctv_mgr_no, avi.sec_st_dat, avi.sec_ed_dat, avi.play_limit_cnt, avi.play_limit_dat, avi.avi_conts_id, avi.hdd_serial, avi.mac_serial, avi.bak_stat_cd
+                , vdwk.file_seq AS vdwk_file_seq, vdwk.file_nm AS vdwk_file_nm, vdwk.down_cnt AS vdwk_down_cnt, vdwk.sec_st_dat AS vdwk_sec_st_dat, vdwk.sec_ed_dat AS vdwk_sec_ed_dat
+                , vdwk.work_stat_cd AS vdwk_work_stat_cd, vdwk_work_stat_cd_rel.cde_nm AS vdwk_work_stat_cd_rel_cde_nm, vdwk.work_rslt_msg as vdwk_work_rslt_msg
+                , cctv_no_rel.cctv_nm AS cctv_no_rel_label
+
+        FROM xeus.crms_prev_avi AS avi
+
+        LEFT JOIN xeus.crms_prev_work AS vdwk                   ON vdwk.avi_mgr_seq = avi.mgr_seq
+                                                                AND vdwk.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.mt_cmm_cde AS vdwk_work_stat_cd_rel      ON vdwk_work_stat_cd_rel.grp_cde = 'C57'
+                                                                AND vdwk_work_stat_cd_rel.cde_cde = vdwk.work_stat_cd
+        LEFT JOIN xeus.asset_cctv AS cctv_no_rel                ON cctv_no_rel.mgr_no = avi.cctv_mgr_no
+
+        <where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND avi.mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND avi.rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND avi.cctv_mgr_no = #{cctvMgrNo}
+            </if>
+
+            <if test="secStDat != null and secStDat != ''">
+                AND avi.sec_st_dat = #{secStDat}
+            </if>
+
+            <if test="secEdDat != null and secEdDat != ''">
+                AND avi.sec_ed_dat = #{secEdDat}
+            </if>
+
+            <if test="playLimitCnt != null and playLimitCnt != ''">
+                AND avi.play_limit_cnt = #{playLimitCnt}::numeric
+            </if>
+
+            <if test="playLimitDat != null and playLimitDat != ''">
+                AND avi.play_limit_dat = #{playLimitDat}
+            </if>
+
+            <if test="aviContsId != null and aviContsId != ''">
+                AND avi.avi_conts_id = #{aviContsId}
+            </if>
+
+            <if test="hddSerial != null and hddSerial != ''">
+                AND avi.hdd_serial = #{hddSerial}
+            </if>
+
+            <if test="macSerial != null and macSerial != ''">
+                AND avi.mac_serial = #{macSerial}
+            </if>
+
+            <if test="bakStatCd != null and bakStatCd != ''">
+                AND avi.bak_stat_cd = #{bakStatCd}
+            </if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                avi.mgr_seq ASC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <insert id="add" parameterType="CrmsPrevAviVo">
+        INSERT INTO xeus.crms_prev_avi ( mgr_seq, rqst_mgr_seq, cctv_mgr_no, sec_st_dat, sec_ed_dat, play_limit_cnt, play_limit_dat, avi_conts_id, mac_serial, hdd_serial, bak_stat_cd )
+        VALUES ( #{mgrSeq}::numeric, #{rqstMgrSeq}::numeric, #{cctvMgrNo}, #{secStDat}, #{secEdDat}, #{playLimitCnt}::numeric, #{playLimitDat}, #{aviContsId}, #{macSerial}, #{hddSerial}, #{bakStatCd} );
+    </insert>
+
+    <update id="update" parameterType="CrmsPrevAviVo">
+        UPDATE xeus.crms_prev_avi
+        SET
+            cctv_mgr_no = #{cctvMgrNo}
+            , sec_st_dat = #{secStDat}
+            , sec_ed_dat = #{secEdDat}
+            , play_limit_cnt = #{playLimitCnt}::numeric
+            , play_limit_dat = #{playLimitDat}
+            , avi_conts_id = #{aviContsId}
+            , hdd_serial = #{hddSerial}
+            , mac_serial = #{macSerial}
+            , bak_stat_cd = #{bakStatCd}
+
+        WHERE mgr_seq = #{mgrSeq}::numeric
+            AND rqst_mgr_seq = #{rqstMgrSeq}::numeric;
+
+    </update>
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.crms_trans_avi
+        WHERE rqst_mgr_seq = ${rqstMgrSeq}::numeric
+                AND mgr_seq = ${aviMgrSeq}::numeric;
+    </delete>
+
+</mapper>

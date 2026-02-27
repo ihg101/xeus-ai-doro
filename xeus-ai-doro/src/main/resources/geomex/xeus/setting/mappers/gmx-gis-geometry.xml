@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gmx.gis.geometry.service.GMT_GeometryMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="gmx.gis.geometry.service.GMT_GeometryVo">
+		SELECT *
+			, (SELECT lyr_nm FROM xeus.gis_lyr_list WHERE tbl_id = f_table_name)
+			, (SELECT (table_type = 'VIEW') as is_view FROM information_schema.tables WHERE table_schema = f_table_schema AND table_name = f_table_name)
+
+		FROM geometry_columns
+
+		WHERE f_table_schema IN ('public', 'xeus', 'draw', 'excel', 'shp')
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				f_table_schema, f_table_name asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="gmx.gis.geometry.service.GMT_GeometryVo">
+		SELECT *, (SELECT lyr_nm FROM xeus.gis_lyr_list WHERE tbl_id = f_table_name)
+
+		FROM geometry_columns
+
+		WHERE f_table_schema IN ('public', 'xeus', 'draw', 'excel', 'shp')
+
+		<where>
+
+			<if test="fTableName != null and fTableName != ''">
+				AND f_table_name = #{fTableName}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getNextPrimaryKey" parameterType="HashMap" resultType="String">
+		<if test="table == 'asset_cctv'">
+			SELECT
+				'CTV' ||
+				(case length((num + 1)::text)::integer
+					when 1 then '000000'
+					when 2 then '00000'
+					when 3 then '0000'
+					when 4 then '000'
+					when 5 then '00'
+					when 6 then '0'
+					when 7 then ''
+				end) || num + 1 AS val
+			FROM generate_series(
+					(SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv),
+					(SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_cctv)
+			) AS num;
+		</if>
+	</select>
+
+
+</mapper>

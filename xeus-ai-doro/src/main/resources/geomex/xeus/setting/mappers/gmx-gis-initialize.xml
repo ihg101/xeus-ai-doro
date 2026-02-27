@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 초기 구동시 필수 테이블 생성 -->
+<mapper namespace="gmx.gis.geometry.service.GMT_GeometryMapper">
+
+	<!-- <select id="createSketch" parameterType="HashMap" resultType="gmx.gis.geometry.service.GMT_GeometryVo">
+		CREATE TABLE IF NOT EXISTS draw.user_sketch_geom(
+			label_txt text,
+			mk_user character varying(100),
+			mk_dat character varying(14) DEFAULT to_char(now(), 'YYYYMMDDHH24MISS'::text),
+			_gid serial NOT NULL,
+			_geometry geometry(Geometry,5186),
+			CONSTRAINT user_sketch_geom_pk PRIMARY KEY (_gid)
+		);
+		COMMENT ON TABLE draw.user_sketch_geom IS '사용자 스케치';
+		COMMENT ON COLUMN draw.user_sketch_geom.label_txt IS '라벨';
+		COMMENT ON COLUMN draw.user_sketch_geom.mk_user IS '생성자';
+		COMMENT ON COLUMN draw.user_sketch_geom.mk_dat IS '생성일';
+		COMMENT ON COLUMN draw.user_sketch_geom._gid IS '도형고유번호';
+		COMMENT ON COLUMN draw.user_sketch_geom._geometry IS '도형정보';
+	</select>
+
+	<select id="createLayerGroup" parameterType="HashMap" resultType="gmx.gis.geometry.service.GMT_GeometryVo">
+		CREATE TABLE xeus.gis_lyr_grp(
+			mgr_seq serial NOT NULL,
+			grp_nm character varying(100) NOT NULL,
+			grp_zidx integer DEFAULT 0,
+			mk_user character varying(100),
+			mk_dat character varying(14) DEFAULT to_char(now(), 'YYYYMMDDHH24MISS'::text),
+			CONSTRAINT gis_lyr_grp_pk PRIMARY KEY (mgr_seq)
+		);
+		COMMENT ON TABLE xeus.gis_lyr_grp IS '레이어 그룹';
+		COMMENT ON COLUMN xeus.gis_lyr_grp.mgr_seq IS '관리번호';
+		COMMENT ON COLUMN xeus.gis_lyr_grp.grp_nm IS '그룹명';
+		COMMENT ON COLUMN xeus.gis_lyr_grp.grp_zidx IS '그룹순번';
+		COMMENT ON COLUMN xeus.gis_lyr_grp.mk_user IS '생성자';
+		COMMENT ON COLUMN xeus.gis_lyr_grp.mk_dat IS '생성일';
+	</select>
+
+	<select id="createLayerIcon" parameterType="HashMap" resultType="gmx.gis.geometry.service.GMT_GeometryVo">
+		CREATE TABLE xeus.gis_lyr_icon(
+			mgr_seq serial NOT NULL,
+			img_base64 text,
+			use_yn boolean DEFAULT true,
+			mk_user character varying(100),
+			mk_dat character varying(14) DEFAULT to_char(now(), 'YYYYMMDDHH24MISS'::text),
+			CONSTRAINT gis_lyr_icon_pk PRIMARY KEY (mgr_seq)
+		);
+		COMMENT ON TABLE xeus.gis_lyr_icon IS '레이어 심볼';
+		COMMENT ON COLUMN xeus.gis_lyr_icon.mgr_seq IS '관리번호';
+		COMMENT ON COLUMN xeus.gis_lyr_icon.img_base64 IS '아이콘 Base64';
+		COMMENT ON COLUMN xeus.gis_lyr_icon.use_yn IS '사용 여부';
+		COMMENT ON COLUMN xeus.gis_lyr_icon.mk_user IS '생성자';
+		COMMENT ON COLUMN xeus.gis_lyr_icon.mk_dat IS '생성일';
+	</select>
+
+	<select id="createLayerStyle" parameterType="HashMap" resultType="gmx.gis.geometry.service.GMT_GeometryVo">
+
+	</select>
+
+	<select id="createLayerTheme" parameterType="HashMap" resultType="gmx.gis.geometry.service.GMT_GeometryVo">
+
+	</select> -->
+
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="geomex.xeus.sysmgr.service.ColumnInfoVo" alias="ColumnVo" />
+        <!-- 긴급재난상황 -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliFoaForestMapVo" alias="EliFoaForestMapVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliHrfRfhrVo" alias="EliHrfRfhrVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliKhcAccVo" alias="EliKhcAccVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliKmaAws10mVo" alias="EliKmaAws10mVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliKmaDfsShrtVo" alias="EliKmaDfsShrtVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliKmaEarthInfmVo" alias="EliKmaEarthInfmVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliKmaInformVo" alias="EliKmaInformVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliNemEmreVo" alias="EliNemEmreVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliNemFirsVo" alias="EliNemFirsVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliRtsaOccuridVo" alias="EliRtsaOccuridVo" /> -->
+
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliLayerVo" alias="EliLayerVo" /> -->
+<!--         <typeAlias type="geomex.xeus.eventmonitor.service.EliLogStatVo" alias="EliLogStatVo" /> -->
+    </typeAliases>
+
+</configuration>

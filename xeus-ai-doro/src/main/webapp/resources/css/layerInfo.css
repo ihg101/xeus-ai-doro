@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+/* Default Style */
+@font-face { font-family: 'Nanum'; src: url('./font/NanumGothic.woff') format('woff'); font-weight: normal; font-style: normal; }
+html, body { width: 100%; height: 100%; padding: 0px; margin: 0px; }
+* { font-family: 'Nanum' !important; }
+
+/* 스크롤 디자인 변경 */
+.customScroll::-webkit-scrollbar {width: 15px;}
+.customScroll::-webkit-scrollbar-thumb {border: 5px solid rgba(0, 0, 0, 0); background-clip: padding-box; -webkit-border-radius: 24px; background-color: #dbdbdb; -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);}
+.customScroll::-webkit-scrollbar-button {width: 0; height: 0; display: none;}
+.customScroll::-webkit-scrollbar-corner {background-color: transparent;}
+.customScroll::-webkit-scrollbar-track {border: 5px solid rgba(0, 0, 0, 0); background-clip: padding-box; -webkit-border-radius: 24px; background-color: #fafafa;}

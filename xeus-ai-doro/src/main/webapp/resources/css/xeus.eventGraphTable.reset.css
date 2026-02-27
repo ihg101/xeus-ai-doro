@@ -1,0 +1,102 @@
+/************ reset ************/
+
+html,
+body,
+div,
+span,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+img,
+ol,
+ul,
+li,
+header,
+nav,
+section,
+footer {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+a,
+a:hover {
+    color: #333;
+    text-decoration: none;
+}
+
+table,
+thead,
+tbody,
+tr,
+th,
+td {
+    border-collapse: collapse;
+}
+
+button,
+input[type="button"] {
+    border: none;
+    outline: 0;
+    cursor: pointer;
+    background-color: transparent;
+    transition: 0.2s;
+}
+
+select::-ms-expand {
+    display: none
+}
+
+p,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    transform: skew(-0.1deg);
+}
+
+img {
+    image-rendering: -moz-crisp-edges;
+    /* Firefox */
+    image-rendering: -o-crisp-edges;
+    /* Opera */
+    image-rendering: -webkit-optimize-contrast;
+    /* Webkit (non-standard naming) */
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;
+    /* IE (non-standard property) */
+}
+
+/************ Image Replacement ************/
+
+.ir {
+    overflow: hidden;
+    display: inline-block;
+    border: 0;
+    margin: -1px;
+    width: 1px;
+    height: 1px;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+}
+
+
+/* ci.. */
+.ci {
+    cursor: pointer;
+}

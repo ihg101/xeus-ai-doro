@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsTransAviMapper">
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+
+        FROM xeus.crms_trans_avi AS avi
+
+        LEFT JOIN xeus.crms_trans_work   AS vdwk                     ON vdwk.avi_mgr_seq = avi.mgr_seq
+                                                                        AND vdwk.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.mt_cmm_cde        AS vdwk_work_stat_cd_rel    ON vdwk_work_stat_cd_rel.grp_cde = 'C57'
+                                                                        AND vdwk_work_stat_cd_rel.cde_cde = vdwk.work_stat_cd
+        LEFT JOIN xeus.asset_cctv        AS cctv_no_rel          ON cctv_no_rel.mgr_no = avi.cctv_mgr_no
+        LEFT JOIN xeus.mt_cmm_cde        AS bak_stat_cd_rel          ON bak_stat_cd_rel.grp_cde = 'C62'
+                                                                        AND bak_stat_cd_rel.cde_cde = avi.bak_stat_cd
+        <!-- 연장 신청 여부 받을 예정 -->
+        LEFT JOIN xeus.crms_rqst_renew      AS renew                 ON renew.rqst_mgr_seq = vdwk.rqst_mgr_seq
+                                                                        AND renew.avi_mgr_seq = vdwk.avi_mgr_seq
+                                                                        AND renew.file_seq = vdwk.file_seq
+
+        <where>
+
+            <!-- rk관련 그냥 넣어주면 될거같음. -->
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                avi.rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsTransAviVo">
+
+        SELECT cctv_no_rel.cctv_nm AS cctv_label, avi.mgr_seq AS mgr_seq, avi.rqst_mgr_seq AS rqst_mgr_seq, avi.cctv_mgr_no AS cctv_mgr_no
+                , avi.sec_st_dat AS sec_st_dat, avi.sec_ed_dat AS sec_ed_dat,
+                avi.play_limit_cnt AS play_limit_cnt, avi.play_limit_dat AS avi_play_limit_dat
+                , avi.avi_conts_id AS avi_conts_id, avi.mask_chk AS mask_chk, avi.exp_avi_pw AS exp_avi_pw, bak_stat_cd_rel.cde_nm AS bak_stat_cd
+                , vdwk.file_seq AS vdwk_file_seq, vdwk.file_nm AS vdwk_file_nm, vdwk.down_cnt AS vdwk_down_cnt, vdwk.sec_st_dat AS vdwk_sec_st_dat
+                , vdwk.sec_ed_dat AS vdwk_sec_ed_dat, vdwk.work_stat_cd AS vdwk_work_stat_cd, vdwk_work_stat_cd_rel.cde_nm AS vdwk_work_stat_cd_rel_cde_nm, vdwk.sha_cde AS vdwk_sha_cde, vdwk.md5_cde AS vdwk_md5_cde
+                <!-- 연장 신청 여부 -->
+                , CASE WHEN renew1.mgr_seq is not null
+                    THEN 'Y'
+                    ELSE 'N'
+                    END AS renew_ext_yn
+                , CASE WHEN renew2.mgr_seq is not null
+                    THEN 'Y'
+                    ELSE 'N'
+                    END AS renew_evi_yn
+                , CASE WHEN renew2.mgr_seq is not null AND renew2.acpt_yn = 'Y'
+                    THEN renew2.play_limit_cnt
+                    ELSE
+                        CASE WHEN renew1.mgr_seq is not null AND renew1.acpt_yn = 'Y'
+                            THEN renew1.play_limit_cnt
+                            ELSE null
+                        END
+                    END AS renew_play_limit_cnt
+                , CASE WHEN renew2.mgr_seq is not null AND renew2.acpt_yn = 'Y'
+                    THEN renew2.play_limit_dat
+                    ELSE
+                        CASE WHEN renew1.mgr_seq is not null AND renew1.acpt_yn = 'Y'
+                            THEN renew1.play_limit_dat
+                            ELSE null
+                        END
+                    END AS renew_play_limit_dat,
+                    renew2.acpt_yn AS renew_acpt_yn,
+					renew2.mgr_seq AS renew_mgr_seq,
+					renew2.acpt_user_id AS renew_acpt_user_id,
+					renew2.acpt_dat AS renew_acpt_dat,
+					renew2.reqst_dat AS renew_reqst_dat,
+					renew2.reqst_resn AS renew_reqst_resn,
+					rqst.req_gbn_cd,
+					vdwk.avi_mgr_seq AS vdwk_avi_mgr_seq, smy_send_yn, rqst.car_info, rqst.video_smy
+
+
+
+        FROM xeus.crms_trans_avi AS avi
+
+        LEFT JOIN xeus.crms_trans_work   AS vdwk                     ON vdwk.avi_mgr_seq = avi.mgr_seq
+                                                                        AND vdwk.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.mt_cmm_cde        AS vdwk_work_stat_cd_rel    ON vdwk_work_stat_cd_rel.grp_cde = 'C57'
+                                                                        AND vdwk_work_stat_cd_rel.cde_cde = vdwk.work_stat_cd
+        LEFT JOIN xeus.asset_cctv        AS cctv_no_rel              ON cctv_no_rel.mgr_no = avi.cctv_mgr_no
+        LEFT JOIN xeus.mt_cmm_cde        AS bak_stat_cd_rel          ON bak_stat_cd_rel.grp_cde = 'C62'
+                                                                        AND bak_stat_cd_rel.cde_cde = avi.bak_stat_cd
+        <!-- 연장 신청 여부 받을 예정 -->
+        LEFT JOIN xeus.crms_rqst_renew   AS renew1                   ON renew1.rqst_mgr_seq = vdwk.rqst_mgr_seq
+                                                                        AND renew1.avi_mgr_seq = vdwk.avi_mgr_seq
+                                                                        AND renew1.file_seq = vdwk.file_seq
+                                                                        AND renew1.renew_typ = '11'
+        LEFT JOIN xeus.crms_rqst_renew   AS renew2                   ON renew2.rqst_mgr_seq = vdwk.rqst_mgr_seq
+                                                                        AND renew2.avi_mgr_seq = vdwk.avi_mgr_seq
+                                                                        AND renew2.file_seq = vdwk.file_seq
+                                                                        AND renew2.renew_typ = '12'
+
+		LEFT JOIN xeus.crms_trans_rqst AS rqst ON avi.rqst_mgr_seq = rqst.mgr_seq
+
+        <where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND avi.mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND avi.rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND avi.cctv_mgr_no = #{cctvMgrNo}
+            </if>
+
+            <if test="secStDat != null and secStDat != ''">
+                AND avi.sec_st_dat = #{secStDat}
+            </if>
+
+            <if test="secEdDat != null and secEdDat != ''">
+                AND avi.sec_ed_dat = #{secEdDat}
+            </if>
+
+            <if test="playLimitCnt != null and playLimitCnt != ''">
+                AND avi.play_limit_cnt = #{playLimitCnt}::numeric
+            </if>
+
+            <if test="playLimitDat != null and playLimitDat != ''">
+                AND avi.play_limit_dat = #{playLimitDat}
+            </if>
+
+            <if test="aviContsId != null and aviContsId != ''">
+                AND avi.avi_conts_id = #{aviContsId}
+            </if>
+
+            <if test="maskChk != null and maskChk != ''">
+                AND avi.mask_chk = #{maskChk}
+            </if>
+
+            <if test="hddSerial != null and hddSerial != ''">
+                AND avi.hdd_serial = #{hddSerial}
+            </if>
+
+            <if test="macSerial != null and macSerial != ''">
+                AND avi.mac_serial = #{macSerial}
+            </if>
+
+            <if test="expAviPw != null and expAviPw != ''">
+                AND avi.exp_avi_pw = #{expAviPw}
+            </if>
+
+            <if test="bakStatCd != null and bakStatCd != ''">
+                AND avi.bak_stat_cd = #{bakStatCd}
+            </if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                avi.mgr_seq ASC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <select id="getPrintCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*) FROM (
+            <![CDATA[
+
+            SELECT
+                tt.rqst_mgr_seq AS rqst_mgr_seq,
+                tt5.cde_nm AS req_gbn_cd,
+                SUBSTRING( tt2.reqst_dat, 0, 9)::TEXT AS reqst_dat,
+                tt2.acpt_user_id||' / '||tt10.user_nm AS acpt_user_info,
+                tt2.reqst_id||' / '||tt9.user_nm||' / '||tt9.office_nm||'_'||tt9.dept_nm||' / '||tt9.pos_nm||' / '||tt9.tel_num AS rqst_user_info,
+                tt2.reqst_resn AS reqst_resn,
+                tt2.reqst_detail AS reqst_detail,
+                tt2.doc_no AS doc_no,
+                tt2.recv_mthd AS recv_mthd,
+
+        		CASE WHEN MIN(tt8.play_limit_dat) is null THEN
+        			MAX(substring( tt.play_limit_dat, 0, 9))
+        		WHEN MIN(tt8.play_limit_dat) = '0' THEN
+        			MIN(tt8.play_limit_dat)
+        		ELSE
+        			MAX(tt8.play_limit_dat)
+        		END AS play_limit_dat,
+
+                CASE to_char(now(), 'yyyyMMdd')::TEXT > SUBSTRING( MAX(tt.play_limit_dat), 0, 9)::TEXT WHEN true THEN '파기' ELSE '' END AS dest_avi,
+                tt3.cde_nm AS crime_nm,
+                SUBSTRING( tt2.acpt_dat, 0, 9)::TEXT AS acpt_dat,
+                tt4.cde_nm AS use_rs_cd,
+                CASE WHEN tt6.cctv_nm is null
+                	THEN ARRAY_TO_STRING(ARRAY_AGG('조회불가 CCTV_'||tt7.sec_st_dat||'_'||tt7.sec_ed_dat),'||')
+                	ELSE ARRAY_TO_STRING(ARRAY_AGG(tt6.cctv_nm||'_'||tt7.sec_st_dat||'_'||tt7.sec_ed_dat),'||')
+                END AS file_list,
+                ARRAY_TO_STRING(ARRAY_AGG(tt6.cctv_nm),'||') AS cctv_list
+
+            FROM xeus.crms_trans_avi AS tt
+            LEFT JOIN xeus.crms_trans_rqst AS tt2   ON tt2.mgr_seq = tt.rqst_mgr_seq
+            LEFT JOIN xeus.mt_cmm_cde AS tt3        ON tt3.grp_cde = 'C51' AND tt3.cde_cde = tt2.crime_typ
+            LEFT JOIN xeus.mt_cmm_cde AS tt4        ON tt4.grp_cde = 'C55' AND tt4.cde_cde = tt2.use_rs_cd
+            LEFT JOIN xeus.mt_cmm_cde AS tt5        ON tt5.grp_cde = 'C58' AND tt5.cde_cde = tt2.req_gbn_cd
+            LEFT JOIN xeus.asset_cctv AS tt6        ON tt6.mgr_no = tt.cctv_mgr_no
+            LEFT JOIN xeus.crms_trans_work AS tt7   ON tt7.rqst_mgr_seq = tt.rqst_mgr_seq AND tt7.avi_mgr_seq = tt.mgr_seq
+	   		LEFT JOIN xeus.crms_rqst_renew AS tt8   ON tt8.rqst_mgr_seq = tt7.rqst_mgr_seq AND tt8.avi_mgr_seq = tt7.avi_mgr_seq AND tt8.file_seq = tt7.file_seq AND tt8.mgr_seq = (select MAX(mgr_seq) from xeus.crms_rqst_renew where rqst_mgr_seq = tt8.rqst_mgr_seq)
+            LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS tt9       ON tt9.user_id = tt2.reqst_id
+			LEFT JOIN xeus.mt_usr_desc as tt10 on tt10.user_id = tt2.acpt_user_id
+            ]]>
+
+            <where>
+                tt2.proc_stat_cd = 'SK'
+
+                <if test="reqstId != null and reqstId != ''">
+                    AND tt2.reqst_id LIKE '%'||#{reqstId}||'%'
+                </if>
+
+                <if test="userNm != null and userNm != ''">
+                    AND tt9.user_nm LIKE '%'||#{userNm}||'%'
+                </if>
+
+                <if test="crimeTyp != null and crimeTyp != ''">
+                    AND tt2.crime_typ = #{crimeTyp}
+                </if>
+
+                <if test="reqGbnCd != null and reqGbnCd != ''">
+                    AND tt2.req_gbn_cd = #{reqGbnCd}
+                </if>
+
+                <if test="startDat!= null and startDat != ''">
+                    AND tt2.reqst_dat <![CDATA[ >= ]]> #{startDat}
+                </if>
+
+                <if test="endDat != null and endDat != ''">
+                    AND tt2.reqst_dat <![CDATA[ <= ]]> #{endDat}
+                </if>
+            </where>
+
+            GROUP BY    tt.rqst_mgr_seq, tt3.cde_nm, tt5.cde_nm, tt2.doc_no, tt2.reqst_dat, tt4.cde_nm, tt2.acpt_dat, tt2.reqst_id, tt2.reqst_resn, tt6.cctv_nm,
+                    tt2.acpt_user_id, tt2.reqst_detail, tt2.recv_mthd, tt9.user_nm, tt9.pos_nm, tt9.tel_num, tt9.dept_nm, tt9.office_nm, tt10.user_nm
+        ) AS T1
+
+    </select>
+
+    <select id="getPrintList" parameterType="HashMap" resultType="CrmsTransAviVo">
+        <!--
+        tt9(mt_usr_desc)관련 테이블 변경되면 수정하기
+        180116 이은규
+        crms_rqst_renew 테이블과 조인하여 정확한 재생만료일을 받아옴
+        -->
+        <![CDATA[
+
+            SELECT
+                tt.rqst_mgr_seq AS rqst_mgr_seq,
+                tt5.cde_nm AS req_gbn_cd,
+                SUBSTRING( tt2.reqst_dat, 0, 9)::TEXT AS reqst_dat,
+                tt2.acpt_user_id||' / '||tt10.user_nm AS acpt_user_info,
+                tt2.reqst_id||' / '||tt9.user_nm||' / '||tt9.office_nm||'_'||tt9.dept_nm||' / '||tt9.pos_nm||' / '||tt9.tel_num AS rqst_user_info,
+                tt2.reqst_resn AS reqst_resn,
+                tt2.reqst_detail AS reqst_detail,
+                tt2.doc_no AS doc_no,
+                tt2.recv_mthd AS recv_mthd,
+
+        		CASE WHEN MIN(tt8.play_limit_dat) is null THEN
+        			MAX(substring( tt.play_limit_dat, 0, 9))
+        		WHEN MIN(tt8.play_limit_dat) = '0' THEN
+        			MIN(tt8.play_limit_dat)
+        		ELSE
+        			MAX(tt8.play_limit_dat)
+        		END AS play_limit_dat,
+
+                CASE to_char(now(), 'yyyyMMdd')::TEXT > SUBSTRING( MAX(tt.play_limit_dat), 0, 9)::TEXT WHEN true THEN '파기' ELSE '' END AS dest_avi,
+                tt3.cde_nm AS crime_nm,
+                SUBSTRING( tt2.acpt_dat, 0, 9)::TEXT AS acpt_dat,
+                tt4.cde_nm AS use_rs_cd,
+                CASE WHEN tt6.cctv_nm is null
+                	THEN ARRAY_TO_STRING(ARRAY_AGG('조회불가 CCTV_'||tt7.sec_st_dat||'_'||tt7.sec_ed_dat),'||')
+                	ELSE ARRAY_TO_STRING(ARRAY_AGG(tt6.cctv_nm||'_'||tt7.sec_st_dat||'_'||tt7.sec_ed_dat),'||')
+                END AS file_list,
+                ARRAY_TO_STRING(ARRAY_AGG(tt6.cctv_nm),'||') AS cctv_list
+
+            FROM xeus.crms_trans_avi AS tt
+            LEFT JOIN xeus.crms_trans_rqst AS tt2   ON tt2.mgr_seq = tt.rqst_mgr_seq
+            LEFT JOIN xeus.mt_cmm_cde AS tt3        ON tt3.grp_cde = 'C51' AND tt3.cde_cde = tt2.crime_typ
+            LEFT JOIN xeus.mt_cmm_cde AS tt4        ON tt4.grp_cde = 'C55' AND tt4.cde_cde = tt2.use_rs_cd
+            LEFT JOIN xeus.mt_cmm_cde AS tt5        ON tt5.grp_cde = 'C58' AND tt5.cde_cde = tt2.req_gbn_cd
+            LEFT JOIN xeus.asset_cctv AS tt6        ON tt6.mgr_no = tt.cctv_mgr_no
+            LEFT JOIN xeus.crms_trans_work AS tt7   ON tt7.rqst_mgr_seq = tt.rqst_mgr_seq AND tt7.avi_mgr_seq = tt.mgr_seq
+	    LEFT JOIN xeus.crms_rqst_renew AS tt8   ON tt8.rqst_mgr_seq = tt7.rqst_mgr_seq AND tt8.avi_mgr_seq = tt7.avi_mgr_seq AND tt8.file_seq = tt7.file_seq AND tt8.mgr_seq = (select MAX(mgr_seq) from xeus.crms_rqst_renew where rqst_mgr_seq = tt8.rqst_mgr_seq)
+            LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS tt9       ON tt9.user_id = tt2.reqst_id
+           LEFT JOIN xeus.mt_usr_desc as tt10 on tt10.user_id = tt2.acpt_user_id
+        ]]>
+
+        <where>
+            tt2.proc_stat_cd = 'SK'
+
+            <if test="reqstId != null and reqstId != ''">
+                AND tt2.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND tt9.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="crimeTyp != null and crimeTyp != ''">
+                AND tt2.crime_typ = #{crimeTyp}
+            </if>
+
+            <if test="reqGbnCd != null and reqGbnCd != ''">
+                AND tt2.req_gbn_cd = #{reqGbnCd}
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND tt2.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND tt2.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+        </where>
+
+        GROUP BY    tt.rqst_mgr_seq, tt3.cde_nm, tt5.cde_nm, tt2.doc_no, tt2.reqst_dat, tt4.cde_nm, tt2.acpt_dat, tt2.reqst_id, tt2.reqst_resn, tt6.cctv_nm,
+                    tt2.acpt_user_id, tt2.reqst_detail, tt2.recv_mthd, tt9.user_nm, tt9.pos_nm, tt9.tel_num, tt9.dept_nm, tt9.office_nm, tt10.user_nm
+
+		<trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                play_limit_dat DESC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+    </select>
+
+    <!-- getRqstMgrSeq 사용되지 않는것 같음. -->
+
+    <!--
+        171113 수정
+        연장, 증거 재생횟수, 기간 쿼리문 변경
+        Group By가 필요하지 않아 삭제
+    -->
+    <select id="getExpDatCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+
+        FROM xeus.crms_trans_avi AS avi
+
+        LEFT JOIN xeus.crms_trans_rqst AS rqst      ON rqst.mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.asset_cctv AS cctv           ON cctv.mgr_no = avi.cctv_mgr_no
+        LEFT JOIN xeus.crms_trans_work AS workfile  ON workfile.avi_mgr_seq = avi.mgr_seq
+                                                        AND workfile.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.mt_cmm_cde AS crime_typ_rel  ON crime_typ_rel.grp_cde = 'C51'
+                                                        AND crime_typ_rel.cde_cde = rqst.crime_typ
+        LEFT JOIN xeus.mt_cmm_cde AS cctv_rel       ON cctv_rel.grp_cde = 'C58' AND cctv_rel.cde_cde = rqst.req_gbn_cd
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS reqst_id_rel  ON reqst_id_rel.user_id = rqst.reqst_id
+        LEFT JOIN (
+            SELECT avi_mgr_seq, rqst_mgr_seq ,file_seq, play_limit_cnt, play_limit_dat
+            FROM xeus.crms_rqst_renew
+            WHERE mgr_seq NOT IN (
+                SELECT MIN(mgr_seq)
+                FROM xeus.crms_rqst_renew
+                WHERE acpt_yn = 'Y'
+                GROUP BY rqst_mgr_seq, avi_mgr_seq, file_seq
+                HAVING COUNT(mgr_seq) > 1
+                ) AND acpt_yn = 'Y'
+            ) AS renew                              ON renew.avi_mgr_seq = workfile.avi_mgr_seq
+                                                        AND renew.rqst_mgr_seq = workfile.rqst_mgr_seq
+                                                        AND renew.file_seq = workfile.file_seq
+
+        <where>
+            workfile.work_stat_cd = '18'
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="cctvNm != null and cctvNm != ''">
+                AND cctv.cctv_nm LIKE '%'||#{cctvNm}||'%'
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+            <if test="playLimitDat != null and playLimitDat != ''">
+                AND renew.play_limit_dat = #{playLimitDat}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getExpDatList" parameterType="HashMap" resultType="CrmsTransAviVo">
+
+        SELECT avi.rqst_mgr_seq AS rqst_mgr_seq
+            , rqst.reqst_id AS reqst_id
+            , reqst_id_rel.user_nm AS user_nm
+            , crime_typ_rel.cde_nm AS crime_nm
+            , cctv.cctv_nm AS cctv_label
+            , CASE WHEN renew.play_limit_cnt is null
+                THEN avi.play_limit_cnt
+                ELSE renew.play_limit_cnt
+                END AS play_limit_cnt
+            , CASE WHEN renew.play_limit_dat is null
+                THEN avi.play_limit_dat
+                ELSE renew.play_limit_dat
+                END AS play_limit_dat
+            , avi.exp_avi_pw AS exp_avi_pw
+            , avi.bak_stat_cd AS bak_stat_cd
+            , workfile.file_nm AS vdwk_file_nm, cctv_rel.cde_nm AS req_gbn_cd
+            , CASE WHEN renew.play_limit_dat IS NOT NULL
+                THEN CASE WHEN renew.play_limit_dat = '0' THEN '증거자료'
+                ELSE CASE to_char(now(), 'yyyyMMdd')::TEXT > SUBSTRING( ( renew.play_limit_dat), 0, 9)::TEXT WHEN true THEN '파기' ELSE '파기예정' END
+                END
+                ELSE CASE to_char(now(), 'yyyyMMdd')::TEXT > SUBSTRING( ( avi.play_limit_dat), 0, 9)::TEXT WHEN true THEN '파기' ELSE '파기예정' END
+                END AS dest_avi
+            <!-- , renew.play_limit_cnt AS renew_play_limit_cnt
+            , renew.play_limit_dat AS renew_play_limit_dat -->
+
+        FROM xeus.crms_trans_avi AS avi
+
+        LEFT JOIN xeus.crms_trans_rqst AS rqst      ON rqst.mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.asset_cctv AS cctv           ON cctv.mgr_no = avi.cctv_mgr_no
+        LEFT JOIN xeus.crms_trans_work AS workfile  ON workfile.avi_mgr_seq = avi.mgr_seq
+                                                        AND workfile.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.mt_cmm_cde AS crime_typ_rel  ON crime_typ_rel.grp_cde = 'C51'
+                                                        AND crime_typ_rel.cde_cde = rqst.crime_typ
+        LEFT JOIN xeus.mt_cmm_cde AS cctv_rel       ON cctv_rel.grp_cde = 'C58' AND cctv_rel.cde_cde = rqst.req_gbn_cd
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS reqst_id_rel  ON reqst_id_rel.user_id = rqst.reqst_id
+        LEFT JOIN (
+            SELECT avi_mgr_seq, rqst_mgr_seq ,file_seq, play_limit_cnt, play_limit_dat
+            FROM xeus.crms_rqst_renew
+            WHERE mgr_seq NOT IN (
+                SELECT MIN(mgr_seq)
+                FROM xeus.crms_rqst_renew
+                WHERE acpt_yn = 'Y'
+                GROUP BY rqst_mgr_seq, avi_mgr_seq, file_seq
+                HAVING COUNT(mgr_seq) > 1
+                ) AND acpt_yn = 'Y'
+            ) AS renew                              ON renew.avi_mgr_seq = workfile.avi_mgr_seq
+                                                        AND renew.rqst_mgr_seq = workfile.rqst_mgr_seq
+                                                        AND renew.file_seq = workfile.file_seq
+
+        <where>
+            workfile.work_stat_cd = '18'
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="cctvNm != null and cctvNm != ''">
+                AND cctv.cctv_nm LIKE '%'||#{cctvNm}||'%'
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+            <if test="playLimitDat != null and playLimitDat != ''">
+                AND renew.play_limit_dat = #{playLimitDat}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                avi.play_limit_dat DESC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+    </select>
+
+    <!-- 이전 재생만료 현황 카운트, 리스트 백업
+    <select id="getExpDatCount" parameterType="HashMap" resultType="int">
+        SELECT COUNT(*)
+
+        FROM xeus.crms_trans_avi AS avi
+
+        LEFT JOIN xeus.crms_trans_rqst  AS rqst     ON rqst.mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.asset_cctv AS cctv           ON cctv.cctv_id = avi.cctv_mgr_id
+        LEFT JOIN xeus.crms_trans_work AS workfile  ON workfile.avi_mgr_seq = avi.mgr_seq
+                                                        AND workfile.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.mt_cmm_cde AS cd_rel         ON cd_rel.grp_cde = 'C51'
+                                                        AND cd_rel.cde_cde = rqst.crime_typ
+        LEFT JOIN xeus.mt_cmm_cde AS req_gbn_cd_rel ON req_gbn_cd_rel.grp_cde = 'C58' AND req_gbn_cd_rel.cde_cde = rqst.req_gbn_cd
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS reqst_id_rel  ON reqst_id_rel.user_id = rqst.reqst_id
+
+        <where>
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="cctvLabel != null and cctvLabel != ''">
+                AND cctv.cctv_nm LIKE '%'||#{cctvLabel}||'%'
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{endDat}
+            </if>
+
+        </where>
+    </select>
+
+     <select id="getExpDatList" parameterType="HashMap" resultType="CrmsTransAviVo">
+
+        SELECT avi.rqst_mgr_seq AS rqst_mgr_seq, rqst.reqst_id AS reqst_id, reqst_id_rel.user_nm AS user_nm, crime_typ_rel.cde_nm AS crime_nm
+                , cctv.cctv_nm AS cctv_label, avi.play_limit_cnt AS play_limit_cnt, avi.play_limit_dat AS play_limit_dat, avi.exp_avi_pw AS exp_avi_pw, avi.bak_stat_cd AS bak_stat_cd
+                , workfile.file_nm AS vdwk_file_nm, cctv_rel.cde_nm AS req_gbn_cd
+                , CASE to_char(now(), 'yyyyMMdd')::TEXT > SUBSTRING( MAX(avi.play_limit_dat), 0, 9)::TEXT WHEN true THEN '파기' ELSE '' END AS dest_avi
+
+        FROM xeus.crms_trans_avi AS avi
+
+        LEFT JOIN xeus.crms_trans_rqst AS rqst      ON rqst.mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.asset_cctv AS cctv           ON cctv.mgr_no = avi.cctv_mgr_no
+        LEFT JOIN xeus.crms_trans_work AS workfile  ON workfile.avi_mgr_seq = avi.mgr_seq
+                                                        AND workfile.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.mt_cmm_cde AS crime_typ_rel  ON crime_typ_rel.grp_cde = 'C51'
+                                                        AND crime_typ_rel.cde_cde = rqst.crime_typ
+        LEFT JOIN xeus.mt_cmm_cde AS cctv_rel       ON cctv_rel.grp_cde = 'C58' AND cctv_rel.cde_cde = rqst.req_gbn_cd
+        LEFT JOIN (
+                SELECT crms_user.user_id,
+                    orgz.org_nm AS office_nm,
+                    crms_user.user_nm,
+                    crms_user.depart_nm AS dept_nm,
+                    crms_user.pos_nm,
+                    crms_user.tel_num,
+                    crms_user.auth_stat_cd AS user_stat_cd
+                FROM xeus.mt_usr_desc crms_user
+                LEFT JOIN xeus.mt_orgz_desc orgz ON orgz.org_mgr_no = crms_user.org_mgr_no
+                ) AS reqst_id_rel  ON reqst_id_rel.user_id = rqst.reqst_id
+
+        <where>
+            <if test="reqstId != null and reqstId != ''">
+                AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+            </if>
+
+            <if test="userNm != null and userNm != ''">
+                AND reqst_id_rel.user_nm LIKE '%'||#{userNm}||'%'
+            </if>
+
+            <if test="cctvLabel != null and cctvLabel != ''">
+                AND cctv.cctv_nm LIKE '%'||#{cctvLabel}||'%'
+            </if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{endDat}
+            </if>
+        </where>
+            GROUP BY avi.rqst_mgr_seq, rqst.reqst_id, reqst_id_rel.user_nm, avi.play_limit_cnt, avi.play_limit_dat, avi.avi_file_cnt, avi.exp_avi_pw, avi.bak_stat_cd
+                    , crime_typ_rel.cde_nm, cctv.cctv_nm, workfile.file_nm, cctv_rel.cde_nm
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                avi.play_limit_dat DESC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+    </select> -->
+
+    <!-- getList나 getFileList나 같아서 생략 (count 포함) -->
+
+    <!-- getExpDatList나 getExpDatXls나 같아서 생략 (count 포함) -->
+
+    <!-- getList나 getXls나 같아서 생략 (count 포함) -->
+
+    <!-- getList로 getItem 대체 -->
+
+    <insert id="add" parameterType="CrmsTransAviVo">
+        INSERT INTO xeus.crms_trans_avi (
+        	mgr_seq, rqst_mgr_seq, cctv_mgr_no, sec_st_dat, sec_ed_dat
+        	, play_limit_cnt, play_limit_dat, mac_serial, hdd_serial
+        	, avi_conts_id
+        	, mask_chk
+        	, exp_avi_pw
+        	, bak_stat_cd
+        )
+        VALUES (
+        	#{mgrSeq}::numeric, #{rqstMgrSeq}::numeric, #{cctvMgrNo}, #{secStDat}, #{secEdDat}
+        	, #{playLimitCnt}::numeric, #{playLimitDat}, #{macSerial}, #{hddSerial}
+       		, #{aviContsId}
+       		, #{maskChk}
+       		, #{expAviPw}
+       		, #{bakStatCd}
+       	);
+    </insert>
+
+    <update id="update" parameterType="CrmsTransAviVo">
+        UPDATE xeus.crms_trans_avi
+        SET
+        	mgr_seq = #{mgrSeq}::numeric
+            , rqst_mgr_seq = #{rqstMgrSeq}::numeric
+
+            <if test="cctvMgrNo != null and cctvMgrNo != ''">
+            	, cctv_mgr_no = #{cctvMgrNo}
+            </if>
+            <if test="secStDat != null and secStDat != ''">
+            	, sec_st_dat = #{secStDat}
+            </if>
+            <if test="secEdDat != null and secEdDat != ''">
+            	, sec_ed_dat = #{secEdDat}
+            </if>
+            <if test="playLimitCnt != null and playLimitCnt != ''">
+            	, play_limit_cnt = #{playLimitCnt}::numeric
+            </if>
+            <if test="playLimitDat != null and playLimitDat != ''">
+            	, play_limit_dat = #{playLimitDat}
+            </if>
+            <if test="hddSerial != null and hddSerial != ''">
+            	, hdd_serial = #{hddSerial}
+            </if>
+            <if test="macSerial != null and macSerial != ''">
+            	, mac_serial = #{macSerial}
+            </if>
+            <if test="aviContsId != null and aviContsId != ''">
+            	, avi_conts_id = #{aviContsId}
+            </if>
+            <if test="maskChk != null and maskChk != ''">
+            	, mask_chk = #{maskChk}
+            </if>
+            <if test="expAviPw != null and expAviPw != ''">
+            	, exp_avi_pw = #{expAviPw}
+            </if>
+            <if test="bakStatCd != null and bakStatCd != ''">
+            	, bak_stat_cd = #{bakStatCd}
+            </if>
+            <if test="smySendYn != null and smySendYn != ''">
+            	, smy_send_yn = #{smySendYn}
+            </if>
+
+            WHERE mgr_seq = #{mgrSeq}::numeric
+            AND rqst_mgr_seq = #{rqstMgrSeq}::numeric;
+
+        <!-- 얘는 통째로 renew로 넘어가는게 맞는거. -->
+        <!-- <if test="bakStatCd.val != 'B0' ">(useRsCdNullChk eq 'Y'.toString())
+            UPDATE xeus.crms_trans_work
+            SET
+                reenc_yn = 'Y',
+                down_cnt = 0
+            WHERE avi_mgr_seq = #{mgrSeq}::numeric
+                AND rqst_mgr_seq = #{rqstMgrSeq}::numeric;
+
+            UPDATE xeus.crms_trans_rqst
+            SET
+                proc_stat_cd = 'SN'
+            WHERE mgr_seq = #{rqstMgrSeq}::numeric;
+        </if> -->
+
+    </update>
+
+    <update id="editDrm" parameterType="CrmsTransAviVo">
+        UPDATE xeus.crms_trans_avi
+        SET
+            play_limit_cnt = #{playLimitCnt}::numeric
+            <if test="playLimitDat != null and playLimitDat != ''">
+                , play_limit_dat = #{playLimitDat}
+            </if>
+        WHERE
+            mgr_seq = #{mgrSeq}::numeric
+            AND rqst_mgr_seq = #{rqstMgrSeq}::numeric;
+
+        <if test="vdwkWorkStatCd != null and (vdwkWorkStatCd eq 'Y'.toString())">
+        UPDATE xeus.crms_trans_rqst
+        SET
+            proc_stat_cd = 'SN'
+        WHERE mgr_seq = #{rqstMgrSeq}::numeric;
+
+        UPDATE xeus.crms_trans_work
+        SET
+            reenc_yn = 'Y',
+            down_cnt = 0
+        WHERE
+            avi_mgr_seq = #{mgrSeq}::numeric
+            AND rqst_mgr_seq = #{rqstMgrSeq}::numeric
+
+            <if test="eviChk != null and (eviChk eq 'Y'.toString())">
+            AND file_seq NOT IN (
+                SELECT file_seq
+                FROM xeus.crms_rqst_renew
+                WHERE rqst_mgr_seq = #{rqstMgrSeq}::numeric
+                    AND avi_mgr_seq = #{mgrSeq}::numeric
+                    AND renew_typ = '12'
+                );
+            </if>
+        </if>
+
+
+    </update>
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.crms_trans_avi
+
+        <where>
+			rqst_mgr_seq = ${rqstMgrSeq}::numeric
+
+            <if test="aviMgrSeq != null and aviMgrSeq != ''">
+                AND mgr_seq = ${aviMgrSeq}::numeric
+            </if>
+        </where>
+
+
+    </delete>
+
+    <update id="editAviInfo" parameterType="HashMap">
+        UPDATE xeus.crms_trans_avi
+        SET
+            rqst_mgr_seq = #{rqstMgrSeq}::numeric
+
+            <if test="bakStatCd != null and bakStatCd != ''">
+            	, bak_stat_cd = #{bakStatCd}
+            </if>
+
+            <if test="playLimitCnt != null and playLimitCnt != ''">
+            	, play_limit_cnt = #{playLimitCnt}::numeric
+            </if>
+
+            <if test="playLimitDat != null and playLimitDat != ''">
+            	, play_limit_dat = #{playLimitDat}
+            </if>
+
+		<where>
+			rqst_mgr_seq = ${rqstMgrSeq}::numeric
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = ${mgrSeq}::numeric
+            </if>
+        </where>
+    </update>
+
+</mapper>

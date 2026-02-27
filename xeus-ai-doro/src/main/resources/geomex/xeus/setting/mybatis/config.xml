@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="geomex.xeus.equipmgr.service.PatrolVo" alias="PatrolVo" />
+        <typeAlias type="geomex.xeus.eventmonitor.service.FavCctvVo" alias="FavCctvVo" />
+        <typeAlias type="geomex.xeus.eventmonitor.service.TraceVo" alias="TraceVo" />
+        <typeAlias type="geomex.xeus.eventmonitor.service.UserTraceVo" alias="UserTraceVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.ImageVo" alias="ImageVo" />
+        <typeAlias type="geomex.xeus.map.service.GeometryVo" alias="GeometryVo" />
+        <!-- <typeAlias type="geomex.xeus.equipmgr.service.CableVo" alias="CableVo" /> -->
+        <typeAlias type="geomex.xeus.equipmgr.service.CctvUnregVo" alias="CctvUnregVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.CctvVo" alias="CctvVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.CctvModelVo" alias="CctvModelVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.HistoryVo" alias="HistoryVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.StatusVo" alias="StatusVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.AcsryVo" alias="AcsryVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.InfraVo" alias="InfraVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.SiteVo" alias="SiteVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.SiteHistVo" alias="SiteHistVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.StatusHistVo" alias="StatusHistVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.NoticeVo" alias="NoticeVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.OrganizationVo" alias="OrganizationVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.CodeVo" alias="CodeVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.ColumnInfoVo" alias="ColumnVo" />
+        <typeAlias type="geomex.xeus.log.service.AccessVo" alias="AccessVo" />
+        <typeAlias type="geomex.xeus.log.service.MonCctvLogVo" alias="MonCctvLogVo" />
+        <typeAlias type="geomex.xeus.log.service.MonPrevLogVo" alias="MonPrevLogVo" />
+        <typeAlias type="geomex.xeus.log.service.MonStillCutLogVo" alias="MonStillCutLogVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.AuthVo" alias="AuthVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.AuthGrpVo" alias="AuthGrpVo" />
+        <typeAlias type="geomex.xeus.map.service.MapVo" alias="MapVo" />
+        <typeAlias type="geomex.xeus.user.service.UserVo" alias="UserVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.IpVo" alias="IpVo" />
+        <typeAlias type="geomex.xeus.map.service.EmdVo" alias="EmdVo" />
+        <typeAlias type="geomex.xeus.map.service.LiVo" alias="LiVo" />
+        <typeAlias type="geomex.xeus.map.service.JibunSearchVo" alias="JibunSearchVo" />
+        <typeAlias type="geomex.xeus.map.service.DoroSearchVo" alias="DoroSearchVo" />
+        <typeAlias type="geomex.xeus.map.service.DoroVo" alias="DoroVo" />
+        <typeAlias type="geomex.xeus.map.service.BuldVo" alias="BuldVo" />
+        <typeAlias type="geomex.xeus.map.service.LocationVo" alias="LocationVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsTransRqstVo" alias="CrmsTransRqstVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsTransAviVo" alias="CrmsTransAviVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsTransWorkVo" alias="CrmsTransWorkVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsCctvStatVo" alias="CrmsCctvStatVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.SysPropVo" alias="SysPropVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsPrevRqstVo" alias="CrmsPrevRqstVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsPrevAviVo" alias="CrmsPrevAviVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsRqstRenewVo" alias="CrmsRqstRenewVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsStatVo" alias="CrmsStatVo" />
+        <typeAlias type="geomex.xeus.tvius.service.DownloadAuthVo" alias="DownloadAuthVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.VmsVo" alias="VmsVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.NetwkVo" alias="NetwkVo" />
+        <typeAlias type="geomex.xeus.equipmgr.service.NetwkThemeVo" alias="NetwkThemeVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsHeatVo" alias="CrmsHeatVo" />
+        <typeAlias type="geomex.xeus.tvius.carservice.CrmsCarSchVo" alias="CrmsCarSchVo" />
+        <typeAlias type="geomex.xeus.event112.service.CctvPreviewVo" alias="CctvPreviewVo" />
+        <typeAlias type="geomex.xeus.event112.service.CctvPreviewDocVo" alias="CctvPreviewDocVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsImageVo" alias="CrmsImageVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsImageRqstVo" alias="CrmsImageRqstVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.AuthLogVo" alias="AuthLogVo" />
+        <typeAlias type="geomex.xeus.bigdata.service.BigDataAnalyzeVo" alias="BigDataAnalyzeVo" />
+        <typeAlias type="geomex.xeus.bigdata.service.BigDataAnalyHistVo" alias="BigDataAnalyHistVo" />
+        <typeAlias type="geomex.xeus.bigdata.service.BigDataAnalyDataVo" alias="BigDataAnalyDataVo" />
+        <typeAlias type="geomex.xeus.bigdata.service.BigDataAnalyUserVo" alias="BigDataAnalyUserVo" />
+        <typeAlias type="geomex.xeus.bigdata.service.BigDataAnalyWeightVo" alias="BigDataAnalyWeightVo" />
+        <typeAlias type="geomex.xeus.bigdata.service.BigDataLayerSetVo" alias="BigDataLayerSetVo" />
+        <typeAlias type="geomex.xeus.bigdata.service.BigDataAnalyzeResultVo" alias="BigDataAnalyzeResultVo" />
+        <typeAlias type="geomex.xeus.bigdata.service.CctvInstallVo" alias="CctvInstallVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.DashbdVo" alias="DashbdVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.LayerDescVo" alias="LayerDescVo" />
+        <typeAlias type="geomex.xeus.tvius.service.CrmsOfficialDocVo" alias="CrmsOfficialDocVo" />
+
+
+        <!-- 5대연계서비스 로그 -->
+        <typeAlias type="geomex.xeus.log.service.LogStatVo" alias="LogStatVo" />
+
+        <!-- SMS 전송 로그 -->
+        <typeAlias type="geomex.xeus.log.service.MsgLogVo" alias="MsgLogVo" />
+
+        <!-- 시설물 관리 로그 -->
+        <typeAlias type="geomex.xeus.log.service.AssetLogVo" alias="AssetLogVo" />
+
+        <!-- 이벤트 리스트 -->
+        <typeAlias type="geomex.xeus.smartcity.service.EventHistVo" alias="EventHistVo" />
+
+        <!-- SMS 리스트 -->
+        <typeAlias type="geomex.xeus.sysmgr.service.SmsTempVo" alias="SmsTempVo" />
+
+        <!-- 심볼 아이콘 -->
+        <typeAlias type="geomex.xeus.sysmgr.service.SymIconVo" alias="SymIconVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.SymDescVo" alias="SymDescVo" />
+        <typeAlias type="geomex.xeus.sysmgr.service.LyrSymVo" alias="LyrSymVo" />
+
+        <!-- 통계 -->
+        <typeAlias type="geomex.xeus.stat.service.UsrStatVo" alias="UsrStatVo" />
+        <typeAlias type="geomex.xeus.stat.service.MonEvtStatVo" alias="MonEvtStatVo" />
+        <typeAlias type="geomex.xeus.stat.service.AssetStatVo" alias="AssetStatVo" />
+        <typeAlias type="geomex.xeus.stat.service.EvtCctvStatVo" alias="EvtCctvStatVo" />
+
+        <!-- 이벤트 공유 -->
+        <typeAlias type="geomex.xeus.websocket.service.EventShareVo" alias="EventShareVo" />
+        
+        <typeAlias type="geomex.xeus.eocs.service.EocsVO" alias="EocsVo" />
+
+    </typeAliases>
+
+</configuration>

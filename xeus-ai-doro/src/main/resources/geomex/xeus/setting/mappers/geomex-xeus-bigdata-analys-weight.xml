@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.bigdata.service.BigDataAnalyWeightMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="BigDataAnalyWeightVo">
+        <!-- SELECT mgr_seq, analy_mgr_seq, layer_id, item_nm, min_val, max_val, weight_val, impact_m -->
+        <!-- FROM xeus.bigdata_analy_weight${tblNum} -->
+        SELECT mgr_seq, analy_mgr_seq, layer_id, item_nm, min_val, max_val, ope_str, weight_val, impact_m
+
+        FROM xeus.bigdata_analy_weight
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric::numeric
+            </if>
+
+            <if test="analyMgrSeq != null and analyMgrSeq != ''">
+                AND analy_mgr_seq = #{analyMgrSeq}::numeric
+            </if>
+
+            <if test="layerId != null and layerId != ''">
+                AND layer_id = #{layerId}
+            </if>
+
+            <if test="itemNm != null and itemNm != ''">
+                AND item_nm = #{itemNm}
+            </if>
+
+            <if test="minVal != null and minVal != ''">
+                AND min_val = #{minVal}::numeric
+            </if>
+
+            <if test="maxVal != null and maxVal != ''">
+                AND max_val = #{maxVal}::numeric
+            </if>
+
+            <if test="opeStr != null and opeStr != ''">
+                AND ope_str = #{opeStr}
+            </if>
+
+            <if test="weightVal != null and weightVal != ''">
+                AND weight_val = #{weightVal}::numeric
+            </if>
+
+            <if test="impactM != null and impactM != ''">
+                AND impact_m = #{impactM}::numeric
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                mgr_seq asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="BigDataAnalyWeightVo">
+        <!-- SELECT mgr_seq, analy_mgr_seq, layer_id, item_nm, min_val, max_val, weight_val, impact_m -->
+        <!-- FROM xeus.bigdata_analy_weight -->
+        SELECT mgr_seq, analy_mgr_seq, layer_id, item_nm, min_val, max_val, ope_str, weight_val, impact_m
+
+        FROM xeus.bigdata_analy_weight
+
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="analyMgrSeq != null and analyMgrSeq != ''">
+                AND analy_mgr_seq = #{analyMgrSeq}::numeric
+            </if>
+
+            <if test="layerId != null and layerId != ''">
+                AND layer_id = #{layerId}
+            </if>
+
+            <if test="itemNm != null and itemNm != ''">
+                AND item_nm = #{itemNm}
+            </if>
+
+            <if test="minVal != null and minVal != ''">
+                AND min_val = #{minVal}::numeric
+            </if>
+
+            <if test="maxVal != null and maxVal != ''">
+                AND max_val = #{maxVal}::numeric
+            </if>
+
+            <if test="opeStr != null and opeStr != ''">
+                AND ope_str = #{opeStr}
+            </if>
+
+            <if test="weightVal != null and weightVal != ''">
+                AND weight_val = #{weightVal}::numeric
+            </if>
+
+            <if test="impactM != null and impactM != ''">
+                AND impact_m = #{impactM}::numeric
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.bigdata_analy_weight
+        <where>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="analyMgrSeq != null and analyMgrSeq != ''">
+                AND analy_mgr_seq = #{analyMgrSeq}::numeric
+            </if>
+
+            <if test="layerId != null and layerId != ''">
+                AND layer_id = #{layerId}
+            </if>
+
+            <if test="itemNm != null and itemNm != ''">
+                AND item_nm = #{itemNm}
+            </if>
+
+            <if test="minVal != null and minVal != ''">
+                AND min_val = #{minVal}::numeric
+            </if>
+
+            <if test="maxVal != null and maxVal != ''">
+                AND max_val = #{maxVal}::numeric
+            </if>
+
+            <if test="opeStr != null and opeStr != ''">
+                AND ope_str = #{opeStr}
+            </if>
+
+            <if test="weightVal != null and weightVal != ''">
+                AND weight_val = #{weightVal}::numeric
+            </if>
+
+            <if test="impactM != null and impactM != ''">
+                AND impact_m = #{impactM}::numeric
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="createWeightTable" parameterType="String">
+        <!-- CREATE SEQUENCE xeus.bigdata_analy_weight${value}_mgr_seq_seq; -->
+        <!-- CREATE TABLE xeus.bigdata_analy_weight${value} -->
+        CREATE TABLE xeus.bigdata_analy_weight
+        (
+        mgr_seq bigserial,
+        analy_mgr_seq numeric(32,0) NOT NULL,
+        layer_id character varying(100) NOT NULL,
+        item_nm character varying(100),
+        min_val numeric(8,0),
+        max_val numeric(8,0),
+        weight_val numeric(10,4),
+        impact_m numeric(8,0),
+        CONSTRAINT bigdata_analy_weight_pk PRIMARY KEY (mgr_seq)
+        );
+
+        CREATE INDEX bigdata_analy_weight_mgr_seq_idx ON xeus.bigdata_analy_weight
+        USING btree (analy_mgr_seq,layer_id);
+    </select>
+
+
+    <update id="dropTable" parameterType="String">
+        <!-- DROP INDEX IF EXISTS xeus.bigdata_analy_weight${value}_mgr_seq_idx; -->
+        DROP TABLE IF EXISTS xeus.bigdata_analy_weight cascade;
+        <!-- DROP SEQUENCE IF EXISTS xeus.bigdata_analy_weight${value}_mgr_seq_seq; -->
+    </update>
+
+
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.bigdata_analy_weight WHERE analy_mgr_seq = #{analyMgrSeq}::numeric
+    </delete>
+
+
+    <insert id="add" parameterType="BigDataAnalyWeightVo">
+    	INSERT INTO xeus.bigdata_analy_weight(
+        	analy_mgr_seq, layer_id, item_nm, ope_str, weight_val, impact_m
+        ) VALUES (
+        	#{analyMgrSeq}::numeric, #{layerId}, #{itemNm}, #{opeStr}, #{weightVal}::numeric, #{impactM}::numeric
+        );
+        <!-- INSERT INTO xeus.bigdata_analy_weight(
+        	analy_mgr_seq, layer_id, item_nm, min_val, max_val, ope_str,weight_val, impact_m
+        ) VALUES (
+        	#{analyMgrSeq}::numeric, #{layerId}, #{itemNm},#{minVal}::numeric, #{maxVal}::numeric, #{opeStr}, #{weightVal}::numeric, #{impactM}::numeric
+        ); -->
+    </insert>
+
+
+    <update id="edit" parameterType="BigDataAnalyWeightVo">
+        UPDATE xeus.bigdata_analy_weight SET
+        mgr_seq = #{mgrSeq}::numeric
+
+        <if test="analyMgrSeq != null and analyMgrSeq != ''">
+            , analy_mgr_seq = #{analyMgrSeq}::numeric
+        </if>
+
+        <if test="layerId != null and layerId != ''">
+            , layer_id = #{layerId}
+        </if>
+
+        <if test="itemNm != null and itemNm != ''">
+            , item_nm = #{itemNm}
+        </if>
+
+        <if test="minVal != null and minVal != ''">
+            , min_val = #{minVal}::numeric
+        </if>
+
+        <if test="maxVal != null and maxVal != ''">
+            , max_val = #{maxVal}::numeric
+        </if>
+
+        <if test="opeStr != null and opeStr != ''">
+            AND ope_str = #{opeStr}
+        </if>
+
+        <if test="weightVal != null and weightVal != ''">
+            , weight_val = #{weightVal}::numeric
+        </if>
+
+        <if test="impactM != null and impactM != ''">
+            , impact_m = #{impactM}::numeric
+        </if>
+
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+</mapper>

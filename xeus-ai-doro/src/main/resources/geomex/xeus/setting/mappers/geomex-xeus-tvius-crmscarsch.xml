@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.carservice.CrmsCarSchMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsCarSchVo">
+        SELECT lpr_seq,
+        case
+			when cctv_no like 'S%' then substring(cctv_no, 2, 7)
+			else cctv_no
+		END AS cctv_no, car_license_no, car_img_file_nm, lpr_svr_no, car_img_path_nm
+
+        FROM t_lpr0090
+<!--         LEFT JOIN xeus.asset_cctv cctv ON cctv.device_id = cctv_no -->
+
+        <where>
+<!--         	cctv_no NOT LIKE 'S%' -->
+
+            <if test="lprSeq != null and lprSeq != ''">
+                AND lpr_seq = #{lprSeq}
+            </if>
+
+            <if test="cctvNo != null and cctvNo != ''">
+                AND cctv_no LIKE '%'||#{cctvNo}||'%'
+            </if>
+
+            <if test="carLicenseNo != null and carLicenseNo != ''">
+<!--                 AND car_license_no LIKE '%'||#{carLicenseNo}||'%' -->
+                AND car_license_no = #{carLicenseNo}
+            </if>
+
+            <if test="carImgPathNm != null and carImgPathNm != ''">
+                AND car_img_path_nm = #{carImgPathNm}
+            </if>
+
+            <if test="carImgFileNm != null and carImgFileNm != ''">
+                AND car_img_file_nm = #{carImgFileNm}
+            </if>
+
+            <if test="lprSvrNo != null and lprSvrNo != ''">
+                AND lpr_svr_no = #{lprSvrNo}
+            </if>
+
+            <!-- <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND cctv.mgr_no = #{cctvMgrNo}
+            </if> -->
+
+            <if test="startDt != null and startDt != ''">
+                AND lpr_seq <![CDATA[ >= ]]> #{startDt}
+            </if>
+
+            <if test="endDt != null and endDt != ''">
+                AND lpr_seq <![CDATA[ <= ]]> #{endDt}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                cctv_no ASC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+
+    <select id="getItem" parameterType="HashMap" resultType="CrmsCarSchVo">
+        SELECT lpr_seq,
+        case
+			when cctv_no like 'S%' then substring(cctv_no, 2, 7)
+			else cctv_no
+		END AS cctv_no, car_license_no, car_img_file_nm, lpr_svr_no, car_img_path_nm
+
+        FROM t_lpr0090
+
+        <where>
+<!--         	cctv_no NOT LIKE 'S%' -->
+
+            <if test="lprSeq != null and lprSeq != ''">
+                AND lpr_seq = #{lprSeq}
+            </if>
+
+            <if test="cctvNo != null and cctvNo != ''">
+                AND cctv_no LIKE '%'||#{cctvNo}||'%'
+            </if>
+
+            <if test="carLicenseNo != null and carLicenseNo != ''">
+<!--                 AND car_license_no LIKE '%'||#{carLicenseNo}||'%' -->
+				AND car_license_no = #{carLicenseNo}
+            </if>
+
+            <if test="carImgPathNm != null and carImgPathNm != ''">
+                AND car_img_path_nm = #{carImgPathNm}
+            </if>
+
+            <if test="carImgFileNm != null and carImgFileNm != ''">
+                AND car_img_file_nm = #{carImgFileNm}
+            </if>
+
+            <if test="lprSvrNo != null and lprSvrNo != ''">
+                AND lpr_svr_no = #{lprSvrNo}
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM t_lpr0090
+<!--         LEFT JOIN xeus.asset_cctv cctv ON cctv.device_id = cctv_no -->
+
+        <where>
+        	cctv_no NOT LIKE 'S%'
+
+            <if test="lprSeq != null and lprSeq != ''">
+                AND lpr_seq = #{lprSeq}
+            </if>
+
+            <if test="cctvNo != null and cctvNo != ''">
+                AND cctv_no LIKE '%'||#{cctvNo}||'%'
+            </if>
+
+            <if test="carLicenseNo != null and carLicenseNo != ''">
+<!--                 AND car_license_no LIKE '%'||#{carLicenseNo}||'%' -->
+				AND car_license_no = #{carLicenseNo}
+            </if>
+
+            <if test="carImgPathNm != null and carImgPathNm != ''">
+                AND car_img_path_nm = #{carImgPathNm}
+            </if>
+
+            <if test="carImgFileNm != null and carImgFileNm != ''">
+                AND car_img_file_nm = #{carImgFileNm}
+            </if>
+
+            <if test="lprSvrNo != null and lprSvrNo != ''">
+                AND lpr_svr_no = #{lprSvrNo}
+            </if>
+
+            <!-- <if test="cctvMgrNo != null and cctvMgrNo != ''">
+                AND cctv.mgr_no = #{cctvMgrNo}
+            </if> -->
+
+            <if test="startDt != null and startDt != ''">
+                AND lpr_seq <![CDATA[ >= ]]> #{startDt}
+            </if>
+
+            <if test="endDt != null and endDt != ''">
+                AND lpr_seq <![CDATA[ <= ]]> #{endDt}
+            </if>
+
+        </where>
+    </select>
+
+    <!-- 뷰 테이블이기 때문에 delete insert update는 생략 -->
+
+    <select id="getCarNoList" parameterType="HashMap" resultType="CrmsCarSchVo">
+        SELECT DISTINCT car_license_no
+
+        FROM t_lpr0090
+
+        <where>
+<!--         	cctv_no NOT LIKE 'S%' -->
+
+           <if test="lprSeq != null and lprSeq != ''">
+                AND lpr_seq = #{lprSeq}
+            </if>
+
+            <if test="cctvNo != null and cctvNo != ''">
+                AND cctv_no LIKE '%'||#{cctvNo}||'%'
+            </if>
+
+            <if test="carLicenseNo != null and carLicenseNo != ''">
+<!--                 AND car_license_no LIKE '%'||#{carLicenseNo}||'%' -->
+				AND car_license_no = #{carLicenseNo}
+            </if>
+
+            <if test="carImgPathNm != null and carImgPathNm != ''">
+                AND car_img_path_nm = #{carImgPathNm}
+            </if>
+
+            <if test="carImgFileNm != null and carImgFileNm != ''">
+                AND car_img_file_nm = #{carImgFileNm}
+            </if>
+
+            <if test="lprSvrNo != null and lprSvrNo != ''">
+                AND lpr_svr_no = #{lprSvrNo}
+            </if>
+
+            <if test="startDt != null and startDt != ''">
+                AND lpr_seq <![CDATA[ >= ]]> #{startDt}
+            </if>
+
+            <if test="endDt != null and endDt != ''">
+                AND lpr_seq <![CDATA[ <= ]]> #{endDt}
+            </if>
+
+        </where>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+</mapper>

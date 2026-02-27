@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gmx.gis.api.service.GMT_RestAPIMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="gmx.gis.api.service.GMT_RestAPIVo">
+		SELECT mgr_seq, company_nm, developer_nm, api_typ, api_key, reg_usr_id, reg_dat
+
+		FROM xeus.gis_rest_api
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="companyNm != null and companyNm != ''">
+				AND company_nm = #{companyNm}
+			</if>
+
+			<if test="developerNm != null and developerNm != ''">
+				AND developer_nm = #{developerNm}
+			</if>
+
+			<if test="apiTyp != null and apiTyp != ''">
+				AND api_typ = #{apiTyp}
+			</if>
+
+			<if test="apiKey != null and apiKey != ''">
+				AND api_key = #{apiKey}
+			</if>
+
+			<if test="regUsrId != null and regUsrId != ''">
+				AND reg_usr_id = #{regUsrId}
+			</if>
+
+			<if test="regDat != null and regDat != ''">
+				AND reg_dat = #{regDat}
+			</if>
+
+		</where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+			<if test="sortCol == null and sortTyp == null">
+				mgr_seq asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="gmx.gis.api.service.GMT_RestAPIVo">
+		SELECT mgr_seq, company_nm, developer_nm, api_typ, api_key, reg_usr_id, reg_dat
+
+		FROM xeus.gis_rest_api
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="companyNm != null and companyNm != ''">
+				AND company_nm = #{companyNm}
+			</if>
+
+			<if test="developerNm != null and developerNm != ''">
+				AND developer_nm = #{developerNm}
+			</if>
+
+			<if test="apiTyp != null and apiTyp != ''">
+				AND api_typ = #{apiTyp}
+			</if>
+
+			<if test="apiKey != null and apiKey != ''">
+				AND api_key = #{apiKey}
+			</if>
+
+			<if test="regUsrId != null and regUsrId != ''">
+				AND reg_usr_id = #{regUsrId}
+			</if>
+
+			<if test="regDat != null and regDat != ''">
+				AND reg_dat = #{regDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<select id="getItemByAPIKey" parameterType="HashMap" resultType="gmx.gis.api.service.GMT_RestAPIVo">
+		SELECT mgr_seq, company_nm, developer_nm, api_typ, api_key, reg_usr_id, reg_dat
+
+		FROM xeus.gis_rest_api
+
+		WHERE api_key = #{apiKey}
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.gis_rest_api
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND mgr_seq = #{mgrSeq}
+			</if>
+
+			<if test="companyNm != null and companyNm != ''">
+				AND company_nm = #{companyNm}
+			</if>
+
+			<if test="developerNm != null and developerNm != ''">
+				AND developer_nm = #{developerNm}
+			</if>
+
+			<if test="apiTyp != null and apiTyp != ''">
+				AND api_typ = #{apiTyp}
+			</if>
+
+			<if test="apiKey != null and apiKey != ''">
+				AND api_key = #{apiKey}
+			</if>
+
+			<if test="regDat != null and regDat != ''">
+				AND reg_dat = #{regDat}
+			</if>
+
+		</where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.gis_rest_api WHERE mgr_seq = #{mgrSeq}
+	</delete>
+
+
+	<insert id="add" parameterType="gmx.gis.api.service.GMT_RestAPIVo">
+		INSERT INTO xeus.gis_rest_api(
+			company_nm, developer_nm, api_typ, api_key, reg_usr_id, reg_dat
+		) VALUES (
+			#{companyNm}, #{developerNm}, #{apiTyp}, #{apiKey}, #{regUsrId}, (SELECT to_char(now(), 'YYYYMMDDHH24MISS'::text))
+		);
+	</insert>
+
+
+	<update id="edit" parameterType="gmx.gis.api.service.GMT_RestAPIVo">
+		UPDATE xeus.gis_rest_api SET
+			mgr_seq = #{mgrSeq}
+
+			<if test="companyNm != null and companyNm != ''">
+				, company_nm = #{companyNm}
+			</if>
+
+			<if test="developerNm != null and developerNm != ''">
+				, developer_nm = #{developerNm}
+			</if>
+
+			<if test="apiTyp != null and apiTyp != ''">
+				, api_typ = #{apiTyp}
+			</if>
+
+			<if test="apiKey != null and apiKey != ''">
+				, api_key = #{apiKey}
+			</if>
+
+			<if test="regUsrId != null and regUsrId != ''">
+				AND reg_usr_id = #{regUsrId}
+			</if>
+
+			<if test="regDat != null and regDat != ''">
+				, reg_dat = #{regDat}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}
+
+	</update>
+
+
+</mapper>

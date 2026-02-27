@@ -1,0 +1,215 @@
+html, body { background: #EDEDED; margin: 0; padding: 0; }
+img { padding: 0; margin: 0; }
+.hidden { display: none; }
+input, select { outline: none; }
+table { border-collapse: collapse; }
+
+#header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+    height: 50px;
+    background: #3A79E2;
+    border-bottom: 2px solid #255DBA;
+}
+
+#header #ci {
+    margin-left: 18.5%;
+}
+
+#header #back {
+    position: absolute;
+    top: 0px;
+    right: 18.5%;
+    background: gray;
+    color: white;
+    padding: 15px;
+    cursor: pointer;
+}
+
+#header #back:hover {
+    text-decoration: underline;
+}
+
+#wrap {
+    /* width: 1500px;
+    height: 600px;
+    margin: 0 auto;
+    padding-top: 75px; */
+    margin-left: 70px;
+    padding: 20px;
+}
+
+#wrap #title {
+    /* background: #898989;
+    font-weight: bold;
+    color: white;
+    padding: 7px; */
+    font-weight: bold;
+    font-size: 16px;
+    padding-left: 10px;
+}
+
+#wrap #search {
+    position: relative;
+    margin-top: 14px;
+    background: #e4e4e4;
+    padding: 10px;
+}
+
+#wrap #search #searchInput {
+    width: 200px;
+    height: 30px;
+    vertical-align: top;
+    border: 1px solid #DADADA;
+    border-right: none;
+    padding-left: 10px;
+    background: white;
+}
+
+#wrap #search #searchBtn, #addBtn {
+    height: 30px;
+    padding: 0px 15px;
+    background: white;
+    cursor: pointer;
+    color: gray;
+    border: 1px solid #DADADA;
+}
+
+#wrap #search #searchBtn:hover, #addBtn:hover {
+    color: black;
+}
+
+#wrap #search #count {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+/*     color: #666666; */
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#wrap #content {
+    /* width: 100%; */
+    max-height: 600px;
+    margin-top: 12px;
+    overflow: auto;
+/*     background: #e4e4e4; */
+/*     padding: 10px; */
+}
+
+#wrap #content #list {
+    width: 100%;
+}
+
+#wrap #content #list th {
+    background: #F3F3F3;
+    border: 1px solid #F1F1F1;
+    font-size: 13px;
+    padding: 15px;
+    text-align: center;
+    color: black;
+}
+
+#wrap #content #list td {
+    background: white;
+    border: 1px solid #F1F1F1;
+    font-size: 13px;
+    padding: 10px;
+    text-align: center;
+}
+
+#wrap #content #list tbody tr {
+    background: #DEDEDE;
+}
+
+#wrap #content #list tbody tr td .mngBtn, .myBtn {
+	width: 24px;
+	height: 24px;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	background: none;
+    background-image: url("../img/icon_info_normal.png");
+}
+
+#wrap #content #list tbody tr td .mngBtn:hover, .myBtn:hover {
+    background-image: url("../img/icon_info_over.png");
+}
+
+.bpopup {
+    display: none;
+    border: 5px solid #222c38;
+    background: #222c38;
+}
+.bpopup button {
+    background: #4C535C;
+    border: 0px;
+    font-size: 13px;
+    padding: 7px 25px;
+    color: white;
+    cursor: pointer;
+}
+
+#bpop_wrap {
+    padding: 0 10px;
+}
+#bpop_wrap h2 {
+    text-align: center;
+    font-size: 14px;
+    margin: 20px 0px;
+    color: white;
+}
+#bpop_wrap table {
+    /* border-spacing: 0; */
+    border-spacing: 1px;
+    width: 300px;
+}
+#bpop_wrap table tr .top {
+    text-align: right;
+    font-size: 13px;
+    padding: 20px 15px 20px 15px;
+    background-color: #35404C;
+    color: white;
+}
+#bpop_wrap table tr th {
+    width: 35%;
+}
+#bpop_wrap table tr td {
+    border-bottom: 1px solid #D5D5D5;
+    border-right: 1px solid #D5D5D5;
+    /* background: #D5D5D5; */
+    background: white;
+    padding-left: 10px;
+}
+#bpop_wrap table tr td.lastTd {
+    background: #222c38;
+}
+#bpop_wrap table tr .bottom {
+    text-align: right;
+    font-size: 13px;
+    padding: 150px 15px 150px 73px;
+    background-color: #35404C;
+    color: white;
+}
+#bpop_wrap input {
+    height: 25px;
+    width: 95%;
+    /* background: #D5D5D5; */
+    background: white;
+    padding-left: 5px;
+}
+#bpop_wrap input, textarea {
+    border: 0;
+}
+#bpop_wrap select {
+    height: 25px;
+    width: 95%;
+    border: 0;
+    /* background: #D5D5D5; */
+    background: white;
+}
+#bpop_wrap table tr td button {
+    margin: 10px 0px;
+}

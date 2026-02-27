@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+
+    <!-- Transaction 설정 -->
+    <!-- - 여기서는 transaction manager 만을 설정하였고,
+        TestCase 내에서 전역 @Transactional 설정으로 트랜잭션을 일괄 지정(class레벨)하고 있으나
+        보통 AOP 형식(tx:aop)의 트랜잭션 대상 지정으로 비즈니스 서비스의 메서드에 일괄 지정하는 경우가 많다.
+        - @Transactional Annotation 으로 대상 메서드에 개별로 따로 지정할 수도 있다.
+    -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- <tx:annotation-driven> 태그는 등록된 빈 중에서
+        @Transactional 이 붙은 클래스나 인터페이스 또는 메소드를 찾아 트랜잭션 어드바이스를 적용해 준다
+        메소드에 @Transactional이 있으면 클래스 레벨의 @Transactional 선언보다 우선해서 적용된다
+        클래스의 @Transactional 은 인터페이스의 @Transactional 선언보다 우선한다.
+        따라서 @Transactional을 적용하는 우선순위는 클래스의 메소드, 클래스, 인터페이스의 메소드, 인터페이스 순이다.
+    -->
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true" />
+
+    <!-- mysql 추가 -->
+    <!-- <bean id="txManager2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource2" />
+    </bean>
+    <tx:annotation-driven transaction-manager="txManager2" proxy-target-class="true" /> -->
+
+</beans>

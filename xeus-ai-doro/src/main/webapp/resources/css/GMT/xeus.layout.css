@@ -1,0 +1,1954 @@
+@CHARSET "UTF-8";
+
+/* @font-face {
+  font-family: 'Nanum';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./font/NanumBarunGothic.woff) format('woff');
+}
+@font-face {
+  font-family: 'Nanum';
+  font-style: normal;
+  font-weight: 800;
+  src: url(./font/NanumBarunGothicBold.woff) format('woff');
+} */
+
+/* @font-face {
+	font-family: 'Nanum';
+	src: local(※), url('./font/NanumBarunGothic.woff') format('woff'), url('./font/NanumBarunGothic.ttf') format('truetype');
+} */
+@font-face {
+	font-family: 'Nanum';
+	src: url('./font/NanumGothic.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+	padding: 0px;
+	margin: 0px;
+	overflow: hidden;
+	font-family: 'Nanum';
+	font-size: 12px;
+}
+
+* {
+	font-family: 'Nanum' !important;
+}
+
+button {
+	outline: none;
+}
+.hidden {
+	display: none;
+}
+.text-overflow {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+}
+.overflow {
+	overflow: auto;
+}
+
+.noClick {
+	cursor: no-drop !important;
+}
+
+.pointer {
+	cursor: pointer !important;
+}
+
+.noneBack {
+	background: none !important;
+}
+
+.noneBorder {
+	border: none !important;
+}
+
+.left {
+	float: left;
+}
+
+/* 171212 */
+.tLeft {
+	text-align: left;
+}
+
+.tCenter {
+	text-align: center;
+}
+
+.tRight {
+	text-align: right;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+/* 180208 */
+.tBlankLeft {
+	padding-left: 10px;
+}
+
+.blankBottom {
+	margin-bottom: 15px;
+}
+
+.small {
+	width: 25% !important;
+}
+
+.middle {
+	width: 50% !important;
+}
+
+.wide {
+	width: 98.5%;
+}
+
+select.wide {
+	width: 100% !important;
+}
+
+.shortTxt {
+	display: inline-block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+/* 171212 생성 */
+.btnDiv {
+	text-align: center;
+	padding: 10px;
+}
+
+/* 171212 생성 */
+.blackBtn {
+	background: #333333;
+	color: white;
+	border: 1px #333333 solid;
+	font-size: 12px;
+	font-weight: bold;
+	cursor: pointer;
+	padding: 5px;
+	outline: none;
+}
+/* 181130 추가 */
+.blackBtn:hover {
+	background: #4582AC;
+	border: 1px #4582AC solid;
+}
+
+.blackBtn[type=path] {
+	width: 100%;
+	height: 29px;
+	border: 2px solid #666666 !important;
+	background-color: #666666
+}
+
+/* 181224 너비를 가득 채우는 BlackBtn 추가 */
+.blackBtn_Fill {
+	width: 100%;
+	height: 36px;
+	margin: 3px 0px 3px 0px;
+	padding: 5px;
+	background: #3E3F48;
+	border: 1px #3E3F48 solid;
+	font-size: 14px;
+	font-weight: bold;
+	color: white;
+	cursor: pointer;
+}
+
+.blackBtn_Fill:hover {
+	background: #4582AC;
+	border: 1px #4582AC solid;
+}
+
+.greenBtn {
+	background: #009944;
+	color: #ffff;
+	border: 1px #333333 solid;
+	font-size: 12px;
+	font-weight: 800;
+	cursor: pointer;
+	padding: 5px;
+}
+
+.greenBtn:hover {
+	background: #4cb77c;
+}
+
+.redBtn {
+	background: #d93e3e;
+	color: #ffff;
+	border: 1px #333333 solid;
+	font-size: 12px;
+	font-weight: 800;
+	cursor: pointer;
+	padding: 5px;
+}
+
+.redBtn:hover {
+	background: #E47878;
+}
+
+.marginBottom {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+/* 171212 생성 */
+/* 181130 수정 */
+.whiteBtn {
+	background: #ffffff;
+	font-size: 12px;
+	font-weight: 800;
+	color: #666;
+	cursor: pointer;
+	padding: 5px;
+	border: 1px #cccccc solid;
+}
+
+/* 181210 추가 */
+.innerBtn {
+	border: none;
+	background: none;
+	font-size: 12px;
+	font-weight: 800;
+	color: #666;
+	cursor: pointer;
+	padding: 5px;
+}
+
+.innerBtn:hover {
+	color: rgb(65, 105, 225);
+	font-weight: bold;
+}
+
+.innerBtn[type=del]:hover {
+	color: red;
+	font-weight: bold;
+}
+
+/* 181221 추가 */
+.cctvLookup:hover {
+	color: rgb(65, 105, 225);
+	font-weight: bold;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.btn-del {
+	height: 25px;
+	margin: 3px 0px 0px 3px;
+	background: none;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+
+.cctvPrevBtn {
+	background: #F3F3F3;
+	border: 1px solid #ddd;
+	color: #666;
+	padding: 5px;
+	font-size: 12px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+#fclAddBtn {
+	width: 60px;
+	height: 28px;
+	background: #F3F3F3;
+	border: 1px solid #ddd;
+	color: #666;
+}
+
+/* #cctvSrchExcel { */
+/* 	width: 100px !important; */
+/* 	height: 28px !important; */
+/* 	background: #F3F3F3 !important; */
+/* 	border: 1px solid #ddd !important; */
+/* 	color: #666 !important; */
+/* } */
+
+/* 171212 생성 */
+.whiteBtn:hover {
+	background: #cccccc;
+}
+
+.imgBtn {
+	background: none;
+	border: none;
+	padding: 5px 2px 0px 2px;
+	outline: none;
+	/* margin-top:2px; */
+}
+
+.addImageBtn {
+	margin-right: 8px;
+	margin-top: -2px;
+	position: absolute;
+	right: 2px;
+	top: auto;
+	cursor: pointer;
+}
+
+button.locBtn {
+	background: url(/xeus/res/img/places_normal.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+	margin: 5px 5px 0px 5px;
+	outline: none;
+}
+
+button.locBtn:hover {
+	background: url(/xeus/res/img/places_over.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+}
+
+button.photoBtn {
+	background: url(/xeus/res/img/photo_normal.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+	margin: 5px 5px 0px 5px;
+	outline: none;
+}
+
+button.photoBtn:hover {
+	background: url(/xeus/res/img/photo_over.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+}
+
+/* 180424 정보 버튼 추가 */
+button.infoBtn {
+	background: url(/xeus/res/img/icon_info_normal.png) no-repeat;
+	background-size: 20px;
+	width: 20px;
+	height: 20px;
+	border: none;
+	margin: 5px 5px 0px 5px;
+}
+
+button.infoBtn:hover {
+	background: url(/xeus/res/img/icon_info_over.png) no-repeat;
+	background-size: 20px;
+	width: 20px;
+	height: 20px;
+	border: none;
+}
+
+button.delBtn {
+	background: url(/xeus/res/img/delete_normal.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+	margin: 5px 5px 0px 5px;
+}
+
+button.delBtn:hover {
+	background: url(/xeus/res/img/delete_over.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+}
+
+button.editBtn {
+	background: url(/xeus/res/img/edit_normal.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+	margin: 5px 5px 0px 5px;
+}
+
+button.editBtn:hover {
+	background: url(/xeus/res/img/edit_over.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+}
+
+button.chartBtn {
+    background: url(/xeus/res/img/s5.png) no-repeat;
+    background-size: 25px;
+    width: 21px;
+    height: 21px;
+    border: none;
+    /* margin: 5px 5px 0px 5px; */
+}
+
+button.chartBtn:hover {
+	background: url(/xeus/res/img/s6.png) no-repeat;
+    background-size: 25px;
+    width: 21px;
+    height: 21px;
+    border: none;
+    /* margin: 5px 5px 0px 5px; */
+}
+
+button.detailBtn, button.mngBtn {
+	background: url(/xeus/res/img/settings_normal.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+	margin: 5px 5px 0px 5px;
+}
+
+button.detailBtn:hover, button.mngBtn:hover {
+	background: url(/xeus/res/img/settings_over.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: none;
+}
+
+/* .blueBtn { background: #06A6E1; color: white; border: none; cursor: pointer; padding: 5px; } */
+/* 171212 */
+.blueBtn {
+	background: #4582ac;
+	color: white;
+	border: none;
+	font-size: 12px;
+	font-weight: bold;
+	cursor: pointer;
+	padding: 5px;
+}
+
+/* 171212 추가 */
+.grayBtn {
+	color: #ffffff !important;
+	/* padding: 1px 10px; */
+	border: 2px solid #505050 !important;
+	background-color: #505050;
+	padding: 5px;
+	font-size: 12px;
+	font-weight: 800;
+	cursor: pointer;
+	outline: none;
+}
+
+.grayBtn:hover {
+	border: 2px solid #4582ac !important; /* #009789 */
+	background-color: #4582ac; /* #009789 */
+}
+
+/* 171212 수정 */
+.disableBtn {
+	/* padding: 1px 10px;
+    color: #99999b !important;
+    border: 1px solid rgb( 208,208,208 );
+    text-shadow: 1px 1px 1px #fff;
+    background-color: #e1e1e1; */
+	/* 171212 */
+	padding: 5px;
+	color: #999999;
+	font-size: 12px;
+	font-weight: 800;
+	border: 1px solid rgb(208, 208, 208);
+	text-shadow: 1px 1px 1px #fff;
+	background-color: #e1e1e1;
+	outline: none;
+}
+
+.mngSortBtn:hover{
+	cursor: pointer;
+	color: rgb(65, 105, 225);
+}
+
+.overlay-side-bar>button[active=active] {
+	/* background: #06A6E1 !important; */
+	/* 171212 */
+	background: #4582AC !important;
+}
+
+/* #id */
+#layout-body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	/*     height: calc(100% - 30px); */
+	overflow: hidden;
+}
+
+#loadingWrap {
+	position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1000000;
+    display: none;
+}
+
+/***************************************/
+/* 화면 위쪽 North Pane 설정
+/***************************************/
+
+/* layout 위 영역 */
+#layout-body>#layout-north {
+	position: relative;
+	width: 100%;
+	height: 50px;
+	border-bottom: 2px solid #30303A;
+	border-top: 2px solid #30303A;
+}
+
+/* north 메뉴 영역 */
+#layout-body>#layout-north>#north-menu {
+	/* position: relative;
+    width: 100%;
+    height: 100%;
+    background: #3B3B3B; */
+	/* 171212 */
+	position: relative;
+	width: 100%;
+	height: 50px;
+	background: #3E3F48;
+}
+
+/* 왼쪽으로 붙는 메뉴 그룹*/
+.west-menu-group {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	background: #30303a;
+}
+
+/* WEST Pane 슬라이드 열기/접기 */
+#west-slide-btn {
+	display: none;
+	float: left;
+	width: 20px;
+	height: 40px;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	background: transparent;
+	border: none;
+	padding: 0px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+/* 로고 이미지 */
+#system-logo {
+	float: left;
+	width: 230px;
+	height: 40px;
+	outline: none;
+	background: transparent;
+	border: none;
+	padding: 0px;
+	/* margin-top: 5px; */
+	margin-bottom: 5px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+/* 171212 삭제 */
+/* 메뉴 버튼  스타일*/
+.menu-button {
+	/* float: left;
+    width: 80px;
+    height: 40px;
+    cursor: pointer;
+    color: white;
+    outline: none;
+    font-size: 14px;
+    font-weight: bold;
+    background: transparent;
+    border-left: none;
+    border-right: 1px solid #ffffff;
+    border-top: none;
+    border-bottom: none;
+    margin-top: 5px;
+    margin-bottom: 5px; */
+
+}
+
+/* 오른쪽에 붙이는 메뉴 그룹*/
+.east-menu-group {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	background: #30303a;
+}
+
+/* EAST Pane 슬라이드 열기/접기 */
+#east-slide-btn {
+	display: none;
+	float: right;
+	width: 20px;
+	height: 40px;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	background: transparent;
+	border: none;
+	padding: 0px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+/*
+171212
+메인 메뉴 css 생성
+*/
+#main-menu-group {
+	/* 	text-align: center; */
+	text-align: right;
+	margin-right: 55px;
+	padding-right: 25px;
+}
+
+#main-menu-group>.menu-button {
+	/*     float: left; */
+	/*     height: 37px; */
+	cursor: pointer;
+	color: #b8d4e7;
+	outline: none;
+	font-size: 16px;
+	font-weight: 800;
+	background: transparent;
+	border: none;
+	/*     margin-left: 25px; */
+	/*     margin-right: 25px; */
+	/*     margin-top: 8px; */
+	color: rgb(170, 170, 170);
+}
+
+#main-menu-group>.menu-button:hover {
+	color: white !important;
+}
+/* 171212 생성 */
+#main-menu-group input[type=text] {
+	height: 44px;
+}
+
+/* 메인 메뉴의 첫번째 항목 스타일, 왼쪽에 바 생성*/
+#main-menu-group>.menu-button:first-child {
+	/*     margin-left: 180px; */
+	margin-left: -250px;
+}
+
+/* 메뉴버튼, 슬라이드 on/off button hover */
+.menu-button:hover, #left-slide-btn:hover, #right-slide-btn:hover {
+	/* background: #06A6E1; */
+	/* 171212 */
+
+}
+
+/*
+171221 로그아웃 버튼 css 생성
+ */
+/* #east-slide-group> */
+#btn-logout {
+	/* float: left; */
+	position: absolute;
+	top: 0;
+	/*     right: 30px; */
+	height: 100%;
+	cursor: pointer;
+	color: rgb(170, 170, 170);
+	outline: none;
+	font-size: 13px;
+	font-weight: bold;
+	background: transparent;
+	border: none;
+	/*     margin-left: 25px; */
+	/*     margin-right: 25px; */
+}
+
+#btn-logout:hover {
+	color: white;
+}
+
+/* 180430 좌표 표시 span css 지정 */
+#north-menu #coorX, #north-menu #coorY {
+	position: absolute;
+	top: 0;
+	/* right: 150px; */
+	width: 80px;
+	height: 100%;
+	color: rgb(170, 170, 170);
+	outline: none;
+	font-size: 13px;
+	font-weight: bold;
+	background: transparent;
+	border: none;
+	margin-left: 25px;
+	margin-right: 25px;
+	padding-top: 18px;
+}
+
+/***************************************/
+/* 지도영역 설정
+/***************************************/
+#layout-body>#layout-center {
+	position: relative;
+	height: 100%;
+}
+
+/* 지도영역 */
+#layout-body>#layout-center>.map-target {
+	width: 100%;
+	height: 100%;
+	border-left: 1px solid #c0c0c0;
+	background: #f2f2f2;
+}
+
+/* 오버뷰영역 */
+/* #layout-body>#layout-center> */
+#xeus-overview-bigdata, #xeus-overview-boardView,
+	#xeus-overview-eventView, #xeus-overview-nmsView,
+	#xeus-overview-systemView, #xeus-overview-tviusMngView,
+	#xeus-overview-tviusView {
+	width: 150px;
+	height: 150px;
+	border: 3px solid #c0c0c0;
+	position: absolute;
+	right: 5px;
+	bottom: 90px;
+}
+
+/***************************************/
+/* 메인화면 좌우 Overlay Pane 설정
+/***************************************/
+/* overlay title bar class 공통 스타일 */
+.overlay-bar {
+	width: 100%;
+	height: 31px;
+	/* 171212 */
+	/* background: #4E6992; */
+	background: #3e3f48;
+	border-bottom: 1px solid #30303A;
+}
+
+.overlay-bar #closeBtn, #gridpane_btn_close {
+	float: right;
+	width: 40px;
+	height: 26px;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	font-size: 12px;
+	font-weight: bold;
+	background: transparent;
+	margin-top: 3px;
+	margin-bottom: 2px;
+	border: none;
+}
+
+.overlay-bar .listBtn {
+	float: right;
+	width: 40px !important;
+	height: 26px !important;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	font-size: 12px;
+	font-weight: bold;
+	background: transparent;
+	margin-top: 3px;
+	margin-bottom: 2px;
+	border: none;
+}
+
+.overlay-bar .listBtn .open {
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	transform: rotate(90deg);
+}
+
+.overlay-bar .listBtn .close {
+	-webkit-transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	transform: rotate(270deg);
+}
+
+#overlay-east-bar>.blueBtn {
+	float: right;
+	/* margin-top: 5px; */
+	padding: 3px;
+	height: 30px;
+	margin: 0px;
+}
+
+.overlay-bar>.overlay-bar-title {
+	font-size: 14px;
+	line-height: 30px;
+	margin-left: 10px;
+	color: white;
+}
+
+.overlay-bar>.overlay-bar-button {
+	/* float: right;
+    width: 40px;
+    height: 26px;
+    cursor: pointer;
+    color: white;
+    outline: none;
+    font-size: 12px;
+    font-weight: bold;
+    background: transparent;
+    border-top: none;
+    border-bottom: none;
+    margin-top: 2px;
+    margin-bottom: 2px; */
+	/* 171212 */
+	float: right;
+	width: 40px;
+	height: 26px;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	font-size: 12px;
+	font-weight: bold;
+	background: transparent;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: none;
+}
+/* overlay-bar 버튼 hover */
+.overlay-bar>.overlay-bar-button:hover {
+	/* 171212 일단 삭제 */
+	/* background: #06A6E1; */
+
+}
+
+/* overlay-var-button class 공통속성 */
+.overlay-bar>.icon-button {
+	float: right;
+	width: 26px;
+	height: 26px;
+	margin: 2px;
+}
+
+/* 지도 왼쪽(weat) overlay pane */
+#center-overlay-west {
+	/* 171212 */
+	/* border-top: 1px solid #c0c0c0; */
+	position: absolute;
+	left: -310px;
+	top: 0px;
+	width: 300px;
+	height: 100%;
+	float: left;
+	/* background: rgba(242, 242, 242, 1); */
+	background: #ffffff;
+	z-index: 1;
+}
+/* 왼쪽 WEST Contents */
+#overlay-west-side-bar {
+	/* width: 70px;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    display: none;
+    background: #3B3B3B;
+    top: 1px; */
+	/* 171212 */
+	width: 70px;
+	height: 100%;
+	position: absolute;
+	z-index: 2;
+	display: none;
+	background: #3e3f48;
+	top: 0px;
+	border-right: 1px #303035 solid;
+}
+
+#overlay-west-contents {
+	/* position: absolute; */
+	width: 100%;
+	height: 100%;
+}
+
+#overlay-west-contents #layer-over-wrap .legends {
+	font-weight: bold;
+	cursor: default;
+	margin-left: 10px;
+}
+
+#overlay-west-contents #layer-over-wrap .legends:hover {
+	/* background: rgba(241, 241, 241, 0.5); */
+
+}
+
+#overlay-west-contents #layer-over-wrap .legends p {
+	padding: 0px;
+	margin: 0px;
+	height: 30px;
+}
+
+#overlay-west-contents #layer-over-wrap .legends .sym-icon {
+	width: 30px;
+	height: 30px;
+	margin: 0px 5px;
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+#overlay-west-contents #layer-over-wrap .legends svg {
+	cursor: pointer;
+	margin: 0px 5px;
+}
+
+#overlay-west-contents #layer-over-wrap .legends input[type=checkbox] {
+	vertical-align: middle;
+}
+
+#overlay-west-contents #layer-over-wrap .legends input[type=checkbox],
+	label {
+	cursor: pointer;
+	position: relative;
+	font-size: 12px;
+/* 	top: -2px; */
+}
+
+/* WEST 지도기능 메뉴 탭 */
+#center-overlay-west-tab {
+	/* left: 0px;
+    top: 0px;
+    position: absolute;
+    border-top: 1px solid #c0c0c0;
+    border-right: 1px solid #c0c0c0;
+    width: 40px;
+    height: 100%;
+    background: #2B5E93; */
+	left: 0px;
+	top: 0px;
+	position: absolute;
+	border-left: 1px solid #30303A;
+	border-right: 1px solid #30303A;
+	width: 40px;
+	height: 100%;
+	background: #3e3f48;
+	z-index: 1;
+}
+
+/* WEST 지도메뉴 탭 버튼 스타일 */
+#center-overlay-west-tab>.menu-button {
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	font-size: 12px;
+	font-weight: bold;
+	border: none;
+	margin: 0px;
+	background: #3e3f48;
+	border-bottom: 1px solid #303035;
+	/* margin-top: 0px;
+    margin-bottom: 1px; */
+}
+
+#center-overlay-west-tab>.menu-button:hover {
+	background: #4582AC;
+	/* margin-top: 0px;
+    margin-bottom: 1px; */
+}
+
+/* 171212 css3부터 last-child가 적용된다고 함.
+그냥 마지막에 줄 하나 넣든지 빼든지 해야될 듯. */
+/* #overlay-west-side-bar>.menu-button:last-child {
+    border-buttom: none !important;
+} */
+
+/* 171212 추가 */
+#overlay-west-side-bar>.menu-button:first-child {
+	border-top: none !important;
+}
+
+#overlay-west-side-bar>.menu-button {
+	/* width: 100%;
+    height: 40px;
+    cursor: pointer;
+    color: white;
+    outline: none;
+    font-size: 14px;
+    font-weight: bold;
+    background: transparent;
+    margin: 0;
+    border-bottom: 1px solid white !important;
+    border-right: none !important; */
+	/* 171212 */
+	width: 70px;
+	height: 80px;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	font-size: 12px;
+	font-weight: bold;
+	background: transparent;
+	margin: 0;
+	border-right: none !important;
+	border-left: none !important;
+	border-bottom: 1px #303035 solid;
+	border-top: 1px #65656d solid;
+}
+
+#overlay-west-side-bar>.menu-button>img {
+	width: 40px;
+	height: 40px;
+}
+
+/*
+#center-overlay-west-tab>.menu-button:first-child {
+    border-top: 1px solid #ffffff;
+    margin-top: 30px;
+}
+*/
+
+/* 지도 오른쪽(east) overlay pane */
+#layout-body>#layout-center>#center-overlay-east {
+	border-left: 1px solid #30303A;
+	border-top: 2px solid #30303A;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 0px;
+	height: 100%;
+	background: rgba(242, 242, 242, 0.7);
+	z-index: 1;
+}
+
+/**********************************/
+/* CCTV 오버레이 CSS */
+/**********************************/
+
+/* CSS2까지는 콜론(:)이 하나이고, CSS3에서는 콜론이 2개가 된것이다 */
+.cctv-overlay {
+	position: absolute;
+	background-color: #303035;
+	padding: 0px;
+	border-radius: 2px;
+	border: none;
+	bottom: 2px;
+	left: -40px;
+	/*     min-width: 260px; */
+	/* max-height : 300px; */
+	/* overflow: scroll; */
+}
+
+.cctv-overlay::after, .cctv-overlay::before {
+	top: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.cctv-overlay::after {
+	border-top-color: #3b3b3b;
+	border-width: 10px;
+	left: 40px;
+	margin-left: -10px;
+	border-width: 10px;
+}
+
+.cctv-overlay::before {
+	border-top-color: #3b3b3b;
+	border-width: 10px;
+	left: 40px;
+	margin-left: -10px;
+}
+
+.cctv-overlay-closer {
+	text-decoration: none;
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
+
+.cctv-overlay-closer:hover::after {
+	color: #06A6E1;
+	content: "✖";
+}
+
+.cctv-overlay-closer::after {
+	color: #ffffff;
+	content: "✖";
+}
+
+/***********************************/
+/* 팝업에서 CCTV 목록 보여주기 CSS */
+/***********************************/
+.cctv-overlay-content-item {
+	padding: 0 0 0 0;
+	display: table;
+	height: 32px;
+	vertical-align: middle;
+	background: #303035;
+	border-top: none;
+	/* margin: 1px; */
+	/*     border: 1px solid rgba(0, 0, 0, 1); */
+}
+
+.cctv-overlay-content-item:hover {
+	background: #3e3f48;
+}
+
+/* 181220  장대건 */
+.cctv-overlay-content-item .cctv-overlay-content-img-div {
+	border: none;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cctv-overlay-content-item .cctv-overlay-content-txt-div {
+	border: none;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+/****************/
+.cctv-overlay-content-img-div {
+	margin: 0px;
+	border: 0;
+	padding: 0;
+	display: table-cell;
+	vertical-align: middle;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	border-left: 1px solid rgba(255, 255, 255, 0.1);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cctv-overlay-content-img {
+	margin: 0px;
+	border: 0;
+	padding: 0;
+	vertical-align: middle;
+	-webkit-filter: sepia(0);
+	filter: sepia(0);
+	width: 32px;
+	height: 32px;
+}
+
+.cctv-overlay-content-img:hover {
+	-webkit-filter: sepia(100%);
+	filter: sepia(100%);
+}
+
+.cctv-overlay-content-txt-div {
+	width: 100%;
+	/* border-left: 1px solid #cccccc; */
+	display: table-cell;
+	vertical-align: middle;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	border-right: 1px solid rgba(255, 255, 255, 0.1);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cctv-overlay-content-txt {
+	margin: 0;
+	margin-left: 5px;
+	color: #ffffff;
+	font-size: 13px;
+	cursor: default;
+	text-decoration: none;
+}
+
+.cctv-overlay-content-txt:hover {
+	color: #06A6E1;
+	cursor: pointer;
+}
+
+.cctv-overlay-content-txt-div a:active {
+	text-decoration: none;
+}
+
+/***********************************/
+/* 가상 지도영역 스타일      */
+/***********************************/
+#virtual-map-boundary {
+	position: absolute;
+	left: 40px;
+	top: 0px;
+	width: 1000px;
+	height: 700px;
+	background: transparent; /* rgba(35, 59, 85, 0.5); */
+	zIndex: 1;
+	pointer-events: none;
+	margin: 0;
+	padding: 0 0 0 0;
+	zIndex: 1;
+}
+
+/***********************************/
+/* CCTV영상보기 Dialog 타이틀      */
+/***********************************/
+.xeus-dialog-title-div {
+	margin: 0;
+	/* margin-top: 8px; */
+	padding: 0 0 0 0;
+	display: table;
+}
+
+.xeus-dialog-title-icon {
+	margin: 0;
+	border: 0;
+	width: 30px;
+	height: 30px;
+	display: table-cell;
+	vertical-align: middle;
+	display: table-cell;
+}
+
+.xeus-dialog-title-txt {
+	width: 100%;
+	display: table-cell;
+	vertical-align: middle;
+	margin: 0;
+	border: 0;
+	margin-left: 10px;
+	font-size: 13px;
+}
+
+/* Jquery Dialog Hack.....*/
+.ui-dialog {
+	padding: 0;
+	margin: 0;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	padding: 0px;
+	margin: 1px;
+	/* float: left; */
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hide-title-bar .ui-dialog-titlebar {
+	display: none;
+}
+
+/* dialog에 새창으로 열기 버튼 스타일 */
+.ui-dialog-titlebar-newwin {
+	position: absolute;
+	right: 2em;
+	top: 50%;
+	width: 20px;
+	margin: -10px 0 0 0;
+	padding: 1px;
+	height: 20px;
+}
+
+/* Jquery Dialog Hack.....*/
+.ui-dialog .ui-dialog-title {
+	padding: 0;
+	width: 90%;
+	/* margin: 0.5em 1.0em; */
+}
+/* Jquery Dialog Hack.....*/
+.ui-dialog .ui-dialog-content {
+	padding: 0;
+	background: #303035;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+	text-align: left;
+	border-width: 1px 0 0 0;
+	background-image: none;
+	margin-top: 0;
+	padding: 0;
+}
+
+/* Jquery Dialog Hack.....*/
+.ui-draggable-helper {
+	z-index: 5000;
+}
+
+.ui-widget-header {
+	border: 0;
+}
+/* Jquery round Hack ....*/
+.ui-corner-all {
+	border-radius: 3px;
+	-moz-border-radius-bottomright: 3px;
+	-moz-border-radius-bottomleft: 3px;
+	-moz-border-radius-topright: 3px;
+	-moz-border-radius-topleft: 3px;
+}
+
+/************************************************************/
+#overlay-east-contents {
+	overflow-x: hidden;
+	overflow-y: auto;
+	margin: 0px;
+	/* padding: 10px; */
+	border: 0px;
+	height: 100%;
+	z-index: 1;
+}
+
+#overlay-east-contents table.list {
+	color: #666;
+	width: 100%;
+}
+
+#overlay-east-contents table.list th:first-child, #overlay-east-contents table.list td:first-child
+	{
+	border-left: none;
+}
+
+#overlay-east-contents table.list th {
+	height: 32px;
+	width: 110px;
+	text-align: left;
+	font-size: 14px;
+	font-weight: 300;
+	color: white;
+	padding-left: 14px;
+	background: #3b3b3b;
+	border-left: 1px solid #30303A;
+	border-bottom: 1px solid #30303A;
+}
+
+#overlay-east-contents table.list td {
+	color: white;
+	height: 30px;
+	background: #333;
+	border-left: 1px solid #30303A;
+	border-bottom: 1px solid #30303A;
+}
+
+#overlay-east-contents table.list input {
+	padding-left: 10px;
+	color: white;
+}
+
+#overlay-east-contents table.list select, input {
+	background: none;
+	border: none;
+	outline: none;
+}
+
+#overlay-east-contents table.list select {
+	color: white;
+	background: #333;
+}
+
+#overlay-east-contents .gridster>ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#overlay-east-contents .gridster>li {
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 1em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	-webkit-padding-start: 40px
+}
+
+/* #overlay-east-contents #addBtn {
+    background: #3b3b3b;
+    color: #ffffff;
+    border: none;
+    margin: 0px;
+    width: 100% !important;
+    height: 100%;
+} */
+
+/*
+ * 180411 이은규
+ * CCTV 속성정보 css 추가
+ */
+#cctvInfo, #previewInfo {
+	overflow-x: hidden;
+	overflow-y: auto;
+	margin: 0px;
+	/* border: 0px; */
+	/* height: 100%; */
+	width: 380px;
+	/*     height: 280px; */
+	background: #30303A;
+	border: 1px solid #30303A;
+	/* padding: 10px; */
+	/* overflow : hidden; */
+}
+
+#cctvInfo #title-bar, #previewInfo #title-bar {
+	width: auto;
+	height: 37px;
+	background: #3e3f48;
+	/* border-bottom: 1px solid #30303A; */
+	margin: 1px;
+}
+
+#cctvInfo #title-bar .title, #previewInfo #title-bar .title {
+	color: #fff;
+	/* float: right;
+    width: 280px; */
+	float: left;
+	font-size: 16px;
+	margin: 10px 0px 0px 10px;
+}
+
+#cctvInfo #title-bar #closeBtn, #previewInfo #title-bar #closeBtn {
+	float: right;
+	width: 40px;
+	height: 33px;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	font-size: 12px;
+	font-weight: bold;
+	background: transparent;
+	margin-top: 3px;
+	margin-bottom: 2px;
+	border: none;
+}
+
+#cctvInfo table.list, #previewInfo table.list {
+	color: #666;
+	width: 100%;
+	border-spacing: 1px;
+	table-layout: fixed;
+}
+
+#cctvInfo table.list th:first-child, #cctvInfo, #previewInfo table.list td:first-child,
+	#previewInfo table.list th:first-child, #cctvInfo, #previewInfo table.list td:first-child
+	{
+	/*     border-left: none; */
+
+}
+
+#cctvInfo table.list th, #previewInfo table.list th {
+	min-width: 50px;
+	height: 35px;
+	color: white;
+	background: #3b3b3b;
+	/*     border-left: 1px solid #30303A; */
+	/*     border-bottom: 1px solid #30303A; */
+	/*     border-right: 1px solid #30303A; */
+}
+
+#cctvInfo table.list td, #previewInfo table.list td {
+	color: white;
+	height: 30px;
+	background: #333;
+	border-left: 1px solid #30303A;
+	border-bottom: 1px solid #30303A;
+    padding: 5px 10px 5px 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#cctvInfo table.option, #previewInfo table.option {
+	color: #666;
+	width: 100%;
+}
+
+#cctvInfo table.option td, #previewInfo table.option td {
+	color: white;
+	width: 65px;
+	height: 30px;
+	background: #333;
+	border: none;
+}
+
+#cctvInfo table.option td label, #previewInfo table.option td label {
+	cursor: default;
+}
+
+#cctvInfo input[type=text], #previewInfo input[type=text] {
+	color: white;
+}
+
+/*
+ * 180506 이주영
+ * CCTV 속성정보 css 추가
+ */
+#vectorInfo {
+	overflow-x: hidden;
+	overflow-y: auto;
+	margin: 0px;
+	/* border: 0px; */
+	/* height: 100%; */
+	/* width: 560px; */
+	width: auto;
+	max-height: 700px;
+	background: #30303A;
+	border: 1px solid #30303A;
+	/* padding: 10px; */
+	/* overflow : hidden; */
+}
+
+#vectorInfo th {
+	cursor: default;
+}
+
+#vectorInfo #title-bar {
+	width: auto;
+	height: 37px;
+	background: #3e3f48;
+	/*     border-bottom: 1px solid #30303A; */
+	margin: 1px;
+}
+
+#vectorInfo #title-bar .title {
+	color: #fff;
+	/* float: right;
+    width: 280px; */
+	float: left;
+	font-size: 16px;
+	margin: 10px 0px 0px 10px;
+}
+
+#vectorInfo #title-bar #closeBtn {
+	float: right;
+	width: 40px;
+	height: 33px;
+	cursor: pointer;
+	color: white;
+	outline: none;
+	font-size: 12px;
+	font-weight: bold;
+	background: transparent;
+	margin-top: 3px;
+	margin-bottom: 2px;
+	border: none;
+}
+
+#vectorInfo table.list {
+	color: #666;
+	/* width: 100%; */
+	border-spacing: 1px;
+	table-layout: fixed;
+}
+
+#vectorInfo table.list th:first-child, #vectorInfo table.list td:first-child
+	{
+	border-left: none;
+}
+
+#vectorInfo table.list th {
+	min-width: 50px;
+	height: 30px;
+	color: white;
+	background: #3b3b3b;
+	/*     border-left: 1px solid #30303A; */
+	/*     border-bottom: 1px solid #30303A; */
+}
+
+#vectorInfo table.list td {
+	color: white;
+	height: 30px;
+	background: #333;
+	border-left: 1px solid #30303A;
+	border-bottom: 1px solid #30303A;
+    padding: 5px 10px 5px 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#vectorInfo table.option {
+	color: #666;
+	width: 100%;
+}
+
+#vectorInfo table.option td {
+	color: white;
+	width: 65px;
+	height: 30px;
+	background: #333;
+	border: none;
+}
+
+#vectorInfo table.option td label {
+	cursor: default;
+}
+
+/***********************************/
+/* 하단 좌표, 주소 표시줄      	   */
+/***********************************/
+#overlay-south-side-bar {
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
+	height: 85px;
+	width: 100%;
+	display: block;
+	z-index: 0;
+	background: #3e3f48;
+	border-left: 1px solid #30303A;
+	border-right: 1px solid #30303A;
+	text-align: center;
+}
+
+#overlay-south-side-bar #coorX, #overlay-south-side-bar #coorY {
+	color: rgb(170, 170, 170);
+	font-size: 13px;
+	font-weight: bold;
+	background: transparent;
+	line-height: 40px;
+	margin: 0 5px;
+}
+
+#overlay-south-side-bar #addr {
+	position: absolute;
+	right: 100px;
+	color: rgb(170, 170, 170);
+	font-size: 13px;
+	font-weight: bold;
+	background: transparent;
+	line-height: 40px;
+	margin: 0 5px;
+}
+
+/***********************************/
+/* 상단 탭      	   				*/
+/***********************************/
+#tabs {
+	background: #3E3F48;
+	position: absolute;
+	z-index: 1;
+	top: 12px;
+	left: 315px;
+}
+
+#tabs>.tab {
+	position: relative;
+	padding: 5px 10px;
+	padding-right: 30px;
+	margin-left: 10px;
+	height: 30px;
+	outline: none;
+	cursor: pointer;
+	border-radius: 3px 0px 0px 3px;
+}
+
+#tabs>.tab>.title {
+	cursor: pointer;
+}
+
+#tabs>.tab>.ui-icon-close {
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+#tabs>.tab>.tabLeft {
+	position: absolute;
+	top: 0;
+	left: -3px;
+}
+
+#tabs>.tab>.tabRight {
+	position: absolute;
+	top: 0;
+	right: -19px;
+}
+
+#tabs>.tab>.close {
+	position: absolute;
+	cursor: pointer;
+	width: 8px;
+	height: 8px;
+	top: 11px;
+	right: 0px;
+	z-index: 2;
+	background-image: url("/xeus/res/img/tab/tab_over_x.png");
+}
+
+/* #tabs > .tab > .close:hover {
+    background-image: url("/xeus/res/img/tab/tab_over_x.png");
+} */
+#loginView {
+	position: absolute;
+	top: 0;
+	z-index: 3;
+	width: 100%;
+	height: calc(100% - 54px);
+}
+
+#loginView iframe {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+/***********************************/
+/* bPopup	      	   				*/
+/***********************************/
+.bpopup {
+	display: none;
+	border: 5px solid #222c38;
+	background: #222c38;
+}
+
+.bpopup button {
+	background: #4C535C;
+	border: 0px;
+	font-size: 13px;
+	padding: 7px 25px;
+	color: white;
+	cursor: pointer;
+}
+
+#bpop_wrap {
+	padding: 0 10px;
+}
+
+#bpop_wrap h2 {
+	text-align: center;
+	font-size: 14px;
+	margin: 20px 0px;
+	color: white;
+}
+
+#bpop_wrap table {
+	/* border-spacing: 0; */
+	border-spacing: 1px;
+	width: 580px;
+}
+
+#bpop_wrap table tr .top {
+	text-align: right;
+	font-size: 13px;
+	padding: 20px 15px 20px 15px;
+	background-color: #35404C;
+	color: white;
+}
+
+#bpop_wrap table tr th {
+	width: 20%;
+}
+
+#bpop_wrap table tr td {
+	border-bottom: 1px solid #D5D5D5;
+	border-right: 1px solid #D5D5D5;
+	/* background: #D5D5D5; */
+	background: white;
+	padding-left: 10px;
+}
+
+#bpop_wrap table tr td.lastTd {
+	background: #222c38;
+}
+
+#bpop_wrap table tr .bottom {
+	text-align: right;
+	font-size: 13px;
+	padding: 150px 15px 150px 73px;
+	background-color: #35404C;
+	color: white;
+}
+
+#bpop_wrap input {
+	height: 25px;
+	width: 95%;
+	/* background: #D5D5D5; */
+	background: white;
+	padding-left: 5px;
+}
+
+#bpop_wrap input, textarea {
+	border: 0;
+}
+
+#bpop_wrap textarea {
+	height: 250px;
+	width: 95%;
+	/* background: #D5D5D5; */
+	background: white;
+	padding: 10px 5px;
+	outline: none;
+	resize: none;
+}
+
+#bpop_wrap select {
+	height: 25px;
+	width: 95%;
+	border: 0;
+	/* background: #D5D5D5; */
+	background: white;
+}
+
+#bpop_wrap table tr td button {
+	margin: 10px 0px;
+}
+
+.arrow_box {
+	position: relative;
+	background: #000;
+	border: 1px solid #003c88;
+	font-size: 15px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.arrow_box:after, .arrow_box:before {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.arrow_box:after {
+	border-color: rgba(0, 0, 0, 0);
+	border-top-color: #000;
+	border-width: 10px;
+	margin-left: -10px;
+}
+
+.arrow_box:before {
+	border-color: rgba(0, 60, 136, 0);
+	border-top-color: #003c88;
+	border-width: 11px;
+	margin-left: -11px;
+}
+
+.arrow_box {
+	border-radius: 5px;
+	padding: 10px;
+	opacity: 0.8;
+	background-color: black;
+	color: white;
+}
+
+.arrow_box .cntnWrap {
+	padding: 5px 0px;
+	border-top: 1px solid white;
+}
+
+.arrow_box .cntnWrap table {
+	font-size: 14px;
+	color: white;
+}
+
+.ol-tooltip {
+	position: relative;
+	background: #000;
+	border: 1px solid #003c88;
+	font-size: 15px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.ol-tooltip:after, .ol-tooltip:before {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.ol-tooltip:after {
+	border-color: rgba(0, 0, 0, 0);
+	border-top-color: #000;
+	border-width: 10px;
+	margin-left: -10px;
+}
+
+.ol-tooltip:before {
+	/*   border-color: rgba(0, 60, 136, 0); */
+	border-top-color: #003c88;
+	border-width: 11px;
+	margin-left: -11px;
+}
+
+.ol-tooltip {
+	border-radius: 5px;
+	padding: 10px;
+	opacity: 0.8;
+	background-color: black;
+	color: white;
+}
+
+#downplayer {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+#downplayer:hover {
+	color: #4582ac;
+}
+
+
+#contextMenu{
+    width: 150px;
+    height: 153px;
+    position: absolute;
+    top: 50px;
+    right: 0px;
+    background: #3e3f48;
+    z-index: 99;
+    display: none;
+    border-top: 1px solid #30303A;
+    border-left: 1px solid #30303A;
+    border-bottom: 2px solid #30303A;
+    border-right: 2px solid #30303A;
+}
+
+#contextMenu .item:first-child {
+    border-top: none !important;
+}
+#contextMenu .item {
+    width: 150px;
+    height: 50px;
+    cursor: pointer;
+    color: #a7a7aa;
+    outline: none;
+    font-size: 12px;
+    font-weight: bold;
+    background: transparent;
+    margin: 0;
+    border-right: none !important;
+    border-left: none !important;
+    border-bottom: 1px #303035 solid;
+    border-top: 1px #65656d solid;
+    text-align: center;
+    line-height: 50px;
+    /* display: none; */
+}
+
+#contextMenu .item:hover {
+    color: white;
+}
+
+/*
+* 181206 장대건
+* 탭 메뉴 스크롤바 css 수정
+*/
+.tabs_scroll::-webkit-scrollbar {padding-top:2px; width:10px; height:10px;}
+.tabs_scroll::-webkit-scrollbar-track {background:none;}
+.tabs_scroll::-webkit-scrollbar-thumb {background-color:rgb(69, 130, 172); border-radius: 25px;  border: 3px #3e3f48 solid;}
+.tabs_scroll::-webkit-scrollbar-thumb:hover {background: #4582AC;}

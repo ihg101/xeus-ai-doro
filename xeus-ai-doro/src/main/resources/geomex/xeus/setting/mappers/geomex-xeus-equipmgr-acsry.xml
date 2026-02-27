@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.equipmgr.service.AcsryMapper">
+
+	<select id="getList" parameterType="HashMap" resultType="AcsryVo">
+		SELECT mgr_no, org_mgr_no, site_mgr_no, inst_dat, fcl_gbn_cd, atchd_fcl_nm,
+               maker_nm, prdt_spec, rmark
+
+               , (SELECT img.file_nm FROM xeus.asset_image AS img WHERE ref_mgr_no = mgr_no LIMIT 1)
+               , (SELECT img.mgr_seq FROM xeus.asset_image AS img WHERE ref_mgr_no = mgr_no LIMIT 1)
+
+        FROM xeus.asset_acsry
+
+		<where>
+            <if test="mgrNo != null and mgrNo != ''">
+                AND mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="siteMgrNo != null and siteMgrNo != ''">
+                AND site_mgr_no = #{siteMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND inst_dat = #{instDat}
+            </if>
+
+            <if test="fclGbnCd != null and fclGbnCd != ''">
+                AND fcl_gbn_cd = #{fclGbnCd}
+            </if>
+
+            <if test="atchdFclNm != null and atchdFclNm != ''">
+                AND atchd_fcl_nm like '%'||#{atchdFclNm}||'%'
+            </if>
+
+            <if test="makerNm != null and makerNm != ''">
+                AND maker_nm = #{makerNm}
+            </if>
+
+            <if test="prdtSpec != null and prdtSpec != ''">
+                AND prdt_spec = #{prdtSpec}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND rmark = #{rmark}
+            </if>
+        </where>
+
+		<trim prefix="ORDER BY">
+			<if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+				${sortCol} ${sortTyp}
+			</if>
+
+			<if test="sortCol == null and sortTyp == null">
+				mgr_no asc
+			</if>
+		</trim>
+
+		<if test="limit != null and limit != '' and offset != null and offset != ''">
+			LIMIT ${limit} OFFSET ${offset}
+		</if>
+	</select>
+
+
+	<select id="getItem" parameterType="HashMap" resultType="AcsryVo">
+        SELECT mgr_no, org_mgr_no, site_mgr_no, inst_dat, fcl_gbn_cd, atchd_fcl_nm,
+               maker_nm, prdt_spec, rmark
+
+               , (SELECT img.file_nm FROM xeus.asset_image AS img WHERE ref_mgr_no = mgr_no LIMIT 1)
+               , (SELECT img.mgr_seq FROM xeus.asset_image AS img WHERE ref_mgr_no = mgr_no LIMIT 1)
+
+        FROM xeus.asset_acsry
+
+        <where>
+            <if test="mgrNo != null and mgrNo != ''">
+                AND mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="siteMgrNo != null and siteMgrNo != ''">
+                AND site_mgr_no = #{siteMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND inst_dat = #{instDat}
+            </if>
+
+            <if test="fclGbnCd != null and fclGbnCd != ''">
+                AND fcl_gbn_cd = #{fclGbnCd}
+            </if>
+
+            <if test="atchdFclNm != null and atchdFclNm != ''">
+                AND atchd_fcl_nm like '%'||#{atchdFclNm}||'%'
+            </if>
+
+            <if test="makerNm != null and makerNm != ''">
+                AND maker_nm = #{makerNm}
+            </if>
+
+            <if test="prdtSpec != null and prdtSpec != ''">
+                AND prdt_spec = #{prdtSpec}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND rmark = #{rmark}
+            </if>
+        </where>
+	</select>
+
+
+	<select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+        FROM xeus.asset_acsry
+
+        <where>
+            <if test="mgrNo != null and mgrNo != ''">
+                AND mgr_no = #{mgrNo}
+            </if>
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                AND org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="siteMgrNo != null and siteMgrNo != ''">
+                AND site_mgr_no = #{siteMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                AND inst_dat = #{instDat}
+            </if>
+
+            <if test="fclGbnCd != null and fclGbnCd != ''">
+                AND fcl_gbn_cd = #{fclGbnCd}
+            </if>
+
+            <if test="atchdFclNm != null and atchdFclNm != ''">
+                AND atchd_fcl_nm like '%'||#{atchdFclNm}||'%'
+            </if>
+
+            <if test="makerNm != null and makerNm != ''">
+                AND maker_nm = #{makerNm}
+            </if>
+
+            <if test="prdtSpec != null and prdtSpec != ''">
+                AND prdt_spec = #{prdtSpec}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                AND rmark = #{rmark}
+            </if>
+        </where>
+	</select>
+
+
+	<delete id="del" parameterType="HashMap">
+		DELETE FROM xeus.asset_acsry WHERE mgr_no = #{mgrNo}
+	</delete>
+
+
+	<insert id="add" parameterType="AcsryVo">
+		INSERT INTO xeus.asset_acsry(
+            mgr_no,
+            org_mgr_no, site_mgr_no, inst_dat, fcl_gbn_cd, atchd_fcl_nm, maker_nm, prdt_spec, rmark
+        ) VALUES (
+            (SELECT
+              'ACS' ||
+              (case length((num + 1)::text)::integer
+                when 1 then '000000'
+                when 2 then '00000'
+                when 3 then '0000'
+                when 4 then '000'
+                when 5 then '00'
+                when 6 then '0'
+              end) || num + 1 AS val
+            FROM generate_series(
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_acsry),
+                (SELECT coalesce(substring(max(mgr_no), 4)::numeric, 0) FROM xeus.asset_acsry)
+            ) AS num),
+
+            #{orgMgrNo}, #{siteMgrNo}, #{instDat}, #{fclGbnCd}, #{atchdFclNm}, #{makerNm}, #{prdtSpec}, #{rmark}
+        );
+	</insert>
+
+
+	<update id="edit" parameterType="AcsryVo">
+		UPDATE xeus.asset_acsry
+
+		SET
+            mgr_no = #{mgrNo}
+
+            <if test="orgMgrNo != null and orgMgrNo != ''">
+                , org_mgr_no = #{orgMgrNo}
+            </if>
+
+            <if test="siteMgrNo != null and siteMgrNo != ''">
+                , site_mgr_no = #{siteMgrNo}
+            </if>
+
+            <if test="instDat != null and instDat != ''">
+                , inst_dat = #{instDat}
+            </if>
+
+            <if test="fclGbnCd != null and fclGbnCd != ''">
+                , fcl_gbn_cd = #{fclGbnCd}
+            </if>
+
+            <if test="atchdFclNm != null and atchdFclNm != ''">
+                , atchd_fcl_nm = #{atchdFclNm}
+            </if>
+
+            <if test="makerNm != null and makerNm != ''">
+                , maker_nm = #{makerNm}
+            </if>
+
+            <if test="prdtSpec != null and prdtSpec != ''">
+                , prdt_spec = #{prdtSpec}
+            </if>
+
+            <if test="rmark != null and rmark != ''">
+                , rmark = #{rmark}
+            </if>
+
+		WHERE mgr_no = #{mgrNo}
+	</update>
+
+</mapper>

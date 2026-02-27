@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsTransWorkMapper">
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsTransWorkVo">
+        SELECT avi_mgr_seq, rqst_mgr_seq, file_seq, file_nm, down_cnt, sec_st_dat, sec_ed_dat, bak_st_dat, bak_ed_dat, enc_st_dat, enc_ed_dat, mak_st_dat, mak_en_dat, work_stat_cd, work_rslt_msg, reenc_yn, sha_cde, md5_cde
+
+        FROM xeus.crms_trans_work
+
+        <where>
+
+            <if test="aviMgrSeq != null and aviMgrSeq != ''">
+                AND avi_mgr_seq = #{aviMgrSeq}::numeric
+            </if>
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="fileSeq != null and fileSeq != ''">
+                AND file_seq = #{fileSeq}::numeric
+            </if>
+
+            <if test="fileNm != null and fileNm != ''">
+                AND file_nm = #{fileNm}
+            </if>
+
+            <if test="downCnt != null and downCnt != ''">
+                AND down_cnt = #{downCnt}::numeric
+            </if>
+
+            <if test="secStDat != null and secStDat != ''">
+                AND sec_st_dat = #{secStDat}
+            </if>
+
+            <if test="secEdDat != null and secEdDat != ''">
+                AND sec_ed_dat = #{secEdDat}
+            </if>
+
+            <if test="bakStDat != null and bakStDat != ''">
+                AND bak_st_dat = #{bakStDat}
+            </if>
+
+            <if test="bakEdDat != null and bakEdDat != ''">
+                AND bak_ed_dat = #{bakEdDat}
+            </if>
+
+            <if test="encStDat != null and encStDat != ''">
+                AND enc_st_dat = #{encStDat}
+            </if>
+
+            <if test="encEdDat != null and encEdDat != ''">
+                AND enc_ed_dat = #{encEdDat}
+            </if>
+
+            <if test="makStDat != null and makStDat != ''">
+                AND mak_st_dat = #{makStDat}
+            </if>
+
+            <if test="makEnDat != null and makEnDat != ''">
+                AND mak_en_dat = #{makEnDat}
+            </if>
+
+            <if test="workStatCd != null and workStatCd != ''">
+                AND work_stat_cd = #{workStatCd}
+            </if>
+
+            <if test="workRsltMsg != null and workRsltMsg != ''">
+                AND work_rslt_msg = #{workRsltMsg}
+            </if>
+
+            <if test="reencYn != null and reencYn != ''">
+                AND reenc_yn = #{reencYn}
+            </if>
+
+            <if test="shaCde != null and shaCde != ''">
+                AND sha_cde = #{shaCde}
+            </if>
+
+            <if test="md5Cde != null and md5Cde != ''">
+                AND md5_cde = #{md5Cde}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                rqst_mgr_seq asc
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <select id="getItem" parameterType="HashMap" resultType="CrmsTransWorkVo">
+    	SELECT work.avi_mgr_seq, work.rqst_mgr_seq, work.file_seq, work.file_nm
+            , work.down_cnt, work.sec_st_dat, work.sec_ed_dat, work.bak_st_dat, work.bak_ed_dat
+            , work.enc_st_dat, work.enc_ed_dat, work.mak_st_dat, work.mak_en_dat
+            , work.work_stat_cd, work.work_rslt_msg, work.reenc_yn, work.sha_cde, work.md5_cde
+            , avi.cctv_mgr_no
+            , rqst.reqst_id, rqst.reqst_dat, rqst.acpt_user_id, rqst.acpt_dat
+            , cctv_no_rel.cctv_nm, cctv_model.model_nm
+            , CASE WHEN renew2.mgr_seq is not null AND renew2.acpt_yn = 'Y'
+    		    THEN renew2.play_limit_cnt
+    		    ELSE
+    			CASE WHEN renew1.mgr_seq is not null AND renew1.acpt_yn = 'Y'
+    			    THEN renew1.play_limit_cnt
+    			    ELSE avi.play_limit_cnt
+    			END
+    		    END AS play_limit_cnt
+    		, CASE WHEN renew2.mgr_seq is not null AND renew2.acpt_yn = 'Y'
+    		    THEN renew2.play_limit_dat
+    		    ELSE
+    			CASE WHEN renew1.mgr_seq is not null AND renew1.acpt_yn = 'Y'
+    			    THEN renew1.play_limit_dat
+    			    ELSE avi.play_limit_dat
+    			END
+    		    END AS play_limit_dat
+
+        FROM xeus.crms_trans_work       AS work
+        LEFT JOIN xeus.crms_trans_avi   AS avi          ON work.avi_mgr_seq = avi.mgr_seq
+	                                                        AND work.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.crms_trans_rqst	AS rqst	        ON rqst.mgr_seq = avi.rqst_mgr_seq
+                                                            AND avi.mgr_seq = work.avi_mgr_seq
+        LEFT JOIN xeus.asset_cctv       AS cctv_no_rel	ON cctv_no_rel.mgr_no = avi.cctv_mgr_no
+        LEFT JOIN xeus.asset_cctv_model	AS cctv_model	ON cctv_no_rel.md_mgr_no = cctv_model.mgr_no
+        LEFT JOIN xeus.crms_rqst_renew  AS renew1       ON renew1.rqst_mgr_seq = work.rqst_mgr_seq
+                                                            AND renew1.avi_mgr_seq = work.avi_mgr_seq
+                                                            AND renew1.file_seq = work.file_seq
+                                                            AND renew1.renew_typ = '11'
+        LEFT JOIN xeus.crms_rqst_renew  AS renew2       ON renew2.rqst_mgr_seq = work.rqst_mgr_seq
+                                                            AND renew2.avi_mgr_seq = work.avi_mgr_seq
+                                                            AND renew2.file_seq = work.file_seq
+                                                            AND renew2.renew_typ = '12'
+
+        <where>
+
+            <if test="aviMgrSeq != null and aviMgrSeq != ''">
+                AND avi_mgr_seq = #{aviMgrSeq}::numeric
+            </if>
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="fileSeq != null and fileSeq != ''">
+                AND file_seq = #{fileSeq}::numeric
+            </if>
+
+            <if test="fileNm != null and fileNm != ''">
+                AND file_nm = #{fileNm}
+            </if>
+
+            <if test="downCnt != null and downCnt != ''">
+                AND down_cnt = #{downCnt}::numeric
+            </if>
+
+            <if test="secStDat != null and secStDat != ''">
+                AND sec_st_dat = #{secStDat}
+            </if>
+
+            <if test="secEdDat != null and secEdDat != ''">
+                AND sec_ed_dat = #{secEdDat}
+            </if>
+
+            <if test="bakStDat != null and bakStDat != ''">
+                AND bak_st_dat = #{bakStDat}
+            </if>
+
+            <if test="bakEdDat != null and bakEdDat != ''">
+                AND bak_ed_dat = #{bakEdDat}
+            </if>
+
+            <if test="encStDat != null and encStDat != ''">
+                AND enc_st_dat = #{encStDat}
+            </if>
+
+            <if test="encEdDat != null and encEdDat != ''">
+                AND enc_ed_dat = #{encEdDat}
+            </if>
+
+            <if test="makStDat != null and makStDat != ''">
+                AND mak_st_dat = #{makStDat}
+            </if>
+
+            <if test="makEnDat != null and makEnDat != ''">
+                AND mak_en_dat = #{makEnDat}
+            </if>
+
+            <if test="workStatCd != null and workStatCd != ''">
+                AND work_stat_cd = #{workStatCd}
+            </if>
+
+            <if test="workRsltMsg != null and workRsltMsg != ''">
+                AND work_rslt_msg = #{workRsltMsg}
+            </if>
+
+            <if test="reencYn != null and reencYn != ''">
+                AND reenc_yn = #{reencYn}
+            </if>
+
+            <if test="shaCde != null and shaCde != ''">
+                AND sha_cde = #{shaCde}
+            </if>
+
+            <if test="md5Cde != null and md5Cde != ''">
+                AND md5_cde = #{md5Cde}
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+        SELECT count(*)
+
+        FROM xeus.crms_trans_work
+
+        <where>
+
+            <if test="aviMgrSeq != null and aviMgrSeq != ''">
+                AND avi_mgr_seq = #{aviMgrSeq}::numeric
+            </if>
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="fileSeq != null and fileSeq != ''">
+                AND file_seq = #{fileSeq}::numeric
+            </if>
+
+            <if test="fileNm != null and fileNm != ''">
+                AND file_nm = #{fileNm}
+            </if>
+
+            <if test="downCnt != null and downCnt != ''">
+                AND down_cnt = #{downCnt}::numeric
+            </if>
+
+            <if test="secStDat != null and secStDat != ''">
+                AND sec_st_dat = #{secStDat}
+            </if>
+
+            <if test="secEdDat != null and secEdDat != ''">
+                AND sec_ed_dat = #{secEdDat}
+            </if>
+
+            <if test="bakStDat != null and bakStDat != ''">
+                AND bak_st_dat = #{bakStDat}
+            </if>
+
+            <if test="bakEdDat != null and bakEdDat != ''">
+                AND bak_ed_dat = #{bakEdDat}
+            </if>
+
+            <if test="encStDat != null and encStDat != ''">
+                AND enc_st_dat = #{encStDat}
+            </if>
+
+            <if test="encEdDat != null and encEdDat != ''">
+                AND enc_ed_dat = #{encEdDat}
+            </if>
+
+            <if test="makStDat != null and makStDat != ''">
+                AND mak_st_dat = #{makStDat}
+            </if>
+
+            <if test="makEnDat != null and makEnDat != ''">
+                AND mak_en_dat = #{makEnDat}
+            </if>
+
+            <if test="workStatCd != null and workStatCd != ''">
+                AND work_stat_cd = #{workStatCd}
+            </if>
+
+            <if test="workRsltMsg != null and workRsltMsg != ''">
+                AND work_rslt_msg = #{workRsltMsg}
+            </if>
+
+            <if test="reencYn != null and reencYn != ''">
+                AND reenc_yn = #{reencYn}
+            </if>
+
+            <if test="shaCde != null and shaCde != ''">
+                AND sha_cde = #{shaCde}
+            </if>
+
+            <if test="md5Cde != null and md5Cde != ''">
+                AND md5_cde = #{md5Cde}
+            </if>
+
+        </where>
+    </select>
+
+
+     <select id="getDelListByUseRsCd" parameterType="HashMap" resultType="CrmsTransWorkVo">
+    	SELECT work.avi_mgr_seq, work.rqst_mgr_seq, work.file_seq, work.file_nm
+            , work.down_cnt, work.sec_st_dat, work.sec_ed_dat, work.bak_st_dat, work.bak_ed_dat
+            , work.enc_st_dat, work.enc_ed_dat, work.mak_st_dat, work.mak_en_dat
+            , work.work_stat_cd, work.work_rslt_msg, work.reenc_yn, work.sha_cde, work.md5_cde
+            , avi.cctv_mgr_no
+            , rqst.reqst_id, rqst.reqst_dat, rqst.acpt_user_id, rqst.acpt_dat
+            , cctv_no_rel.cctv_nm
+            , rqst.use_rs_cd
+
+
+        FROM xeus.crms_trans_work       AS work
+        LEFT JOIN xeus.crms_trans_avi   AS avi          ON work.avi_mgr_seq = avi.mgr_seq
+	                                                        AND work.rqst_mgr_seq = avi.rqst_mgr_seq
+        LEFT JOIN xeus.crms_trans_rqst	AS rqst	        ON rqst.mgr_seq = avi.rqst_mgr_seq
+                                                            AND avi.mgr_seq = work.avi_mgr_seq
+        LEFT JOIN xeus.asset_cctv       AS cctv_no_rel	ON cctv_no_rel.mgr_no = avi.cctv_mgr_no
+        LEFT JOIN xeus.asset_cctv_model	AS cctv_model	ON cctv_no_rel.md_mgr_no = cctv_model.mgr_no
+
+        WHERE rqst.use_rs_cd = #{useRsCd}
+<!-- 		AND TO_DATE(enc_ed_dat,'YYYYMMDDHH24MISS') <![CDATA[ < ]]> (CURRENT_DATE - INTERVAL '3 DAYS')::DATE -->
+		AND TO_DATE(enc_ed_dat,'YYYYMMDDHH24MISS') <![CDATA[ < ]]> (CURRENT_DATE - INTERVAL '1 MONTHS')::DATE
+
+    </select>
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.crms_trans_work
+
+        <where>
+            rqst_mgr_seq = ${rqstMgrSeq}::numeric
+
+            <if test="aviMgrSeq != null and aviMgrSeq != ''">
+                AND avi_mgr_seq = ${aviMgrSeq}::numeric
+            </if>
+
+            <if test="fileSeq != null and fileSeq != ''">
+                AND file_seq = ${fileSeq}::numeric
+            </if>
+        </where>
+    </delete>
+
+    <insert id="add" parameterType="CrmsTransWorkVo">
+        INSERT INTO xeus.crms_trans_work(
+            avi_mgr_seq, rqst_mgr_seq, file_seq, file_nm, down_cnt, sec_st_dat, sec_ed_dat, bak_st_dat, bak_ed_dat, enc_st_dat, enc_ed_dat, mak_st_dat, mak_en_dat, work_stat_cd, work_rslt_msg, reenc_yn, sha_cde, md5_cde
+        ) VALUES (
+            #{aviMgrSeq}::numeric, #{rqstMgrSeq}::numeric, #{fileSeq}::numeric, #{fileNm}, #{downCnt}::numeric, #{secStDat}, #{secEdDat}, #{bakStDat}, #{bakEdDat}, #{encStDat}, #{encEdDat}, #{makStDat}, #{makEnDat}, #{workStatCd}, #{workRsltMsg}, #{reencYn}, #{shaCde}, #{md5Cde}
+        );
+    </insert>
+
+    <update id="edit" parameterType="CrmsTransWorkVo">
+        UPDATE xeus.crms_trans_work SET
+
+            avi_mgr_seq = #{aviMgrSeq}::numeric
+            , rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            , file_seq = #{fileSeq}::numeric
+
+            <if test="fileNm != null and fileNm != ''">
+                , file_nm = #{fileNm}
+            </if>
+
+            <if test="downCnt != null and downCnt != ''">
+                , down_cnt = #{downCnt}::numeric
+            </if>
+
+            <if test="secStDat != null and secStDat != ''">
+                , sec_st_dat = #{secStDat}
+            </if>
+
+            <if test="secEdDat != null and secEdDat != ''">
+                , sec_ed_dat = #{secEdDat}
+            </if>
+
+            <if test="bakStDat != null and bakStDat != ''">
+                , bak_st_dat = #{bakStDat}
+            </if>
+
+            <if test="bakEdDat != null and bakEdDat != ''">
+                , bak_ed_dat = #{bakEdDat}
+            </if>
+
+            <if test="encStDat != null and encStDat != ''">
+                , enc_st_dat = #{encStDat}
+            </if>
+
+            <if test="encEdDat != null and encEdDat != ''">
+                , enc_ed_dat = #{encEdDat}
+            </if>
+
+            <if test="makStDat != null and makStDat != ''">
+                , mak_st_dat = #{makStDat}
+            </if>
+
+            <if test="makEnDat != null and makEnDat != ''">
+                , mak_en_dat = #{makEnDat}
+            </if>
+
+            <if test="workStatCd != null and workStatCd != ''">
+                , work_stat_cd = #{workStatCd}
+            </if>
+
+            <if test="workRsltMsg != null and workRsltMsg != ''">
+                , work_rslt_msg = #{workRsltMsg}
+            </if>
+
+            <if test="reencYn != null and reencYn != ''">
+                , reenc_yn = #{reencYn}
+            </if>
+
+            <if test="shaCde != null and shaCde != ''">
+                , sha_cde = #{shaCde}
+            </if>
+
+            <if test="md5Cde != null and md5Cde != ''">
+                , md5_cde = #{md5Cde}
+            </if>
+
+        WHERE avi_mgr_seq = #{aviMgrSeq}::numeric
+	            AND rqst_mgr_seq = #{rqstMgrSeq}::numeric
+                AND file_seq = #{fileSeq}::numeric
+
+    </update>
+
+    <update id="editWorkInfo" parameterType="HashMap">
+        UPDATE xeus.crms_trans_work SET
+
+            rqst_mgr_seq = #{rqstMgrSeq}::numeric
+
+            <if test="workStatCd != null and workStatCd != ''">
+                , work_stat_cd = #{workStatCd}
+            </if>
+
+            <if test="workRsltMsg != null and workRsltMsg != ''">
+                , work_rslt_msg = #{workRsltMsg}
+            </if>
+
+        WHERE rqst_mgr_seq = #{rqstMgrSeq}::numeric
+
+    </update>
+
+</mapper>

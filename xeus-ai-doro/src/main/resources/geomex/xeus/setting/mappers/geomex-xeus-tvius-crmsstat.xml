@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsStatMapper">
+
+    <select id="getListUse" parameterType="HashMap" resultType="CrmsStatVo">
+
+        SELECT   '전체신청' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+
+                ) AS r
+
+        UNION ALL
+
+        SELECT   '미입력' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+        WHERE (use_rs_cd IS NULL OR use_rs_cd = '' )
+
+        <!-- UNION ALL
+
+        SELECT   '입력전체' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%'
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+        WHERE NOT ( use_rs_cd = '11' OR use_rs_cd IS NULL ) -->
+
+        UNION ALL
+
+        SELECT   'CCTV미활용' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+        WHERE use_rs_cd NOT IN ('11')
+
+        UNION ALL
+
+        SELECT   'CCTV활용' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+        WHERE use_rs_cd = '11'
+
+        <!-- UNION ALL
+
+        SELECT   'NE-BOARD' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT
+        			  substring(from_dt, 1, 4) AS yy, substring(from_dt, 6, 2) AS mm
+                  FROM xeus.v_tvius_heatmap
+
+                  <where>
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND CASE WHEN #{reqGbnCd} = '11' THEN req_type LIKE '%반출%'
+                        		 WHEN #{reqGbnCd} = '12' THEN req_type LIKE '%열람%'
+                        	END
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND from_dt LIKE #{year}||'%'
+                    </if>
+                  </where>
+                ) AS r -->
+
+    </select>
+
+    <select id="getListSolve" parameterType="HashMap" resultType="CrmsStatVo">
+
+        SELECT   '전체신청' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+
+        UNION ALL
+
+        SELECT   'CCTV활용' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+        WHERE use_rs_cd = '11'
+
+    </select>
+
+    <select id="getListCrime" parameterType="HashMap" resultType="CrmsStatVo">
+        SELECT   '범죄총계' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , crime_typ
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+
+        UNION ALL
+
+        SELECT   cod.cde_nm AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , crime_typ
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+        LEFT JOIN xeus.mt_cmm_cde AS cod ON cod.grp_cde = 'C51' AND cod.cde_cde = r.crime_typ
+        GROUP BY cod.cde_nm
+
+    </select>
+    <select id="getListNoUse" parameterType="HashMap" resultType="CrmsStatVo">
+
+        SELECT   '전체미사용' AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+        WHERE use_rs_cd = '' OR use_rs_cd IS NULL
+
+        UNION ALL
+
+        SELECT
+            (SELECT cde_nm
+             FROM xeus.mt_cmm_cde AS code
+             WHERE code.grp_cde = 'C55' AND code.cde_cde = use_rs_cd
+            ) AS "gbn"
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+            , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+            , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+            , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+            , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+            , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+            , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+            , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+            , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+            , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+            , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+            , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+        FROM    ( SELECT mgr_seq
+                    , use_rs_cd
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                  FROM xeus.crms_trans_rqst
+                  <!-- WHERE req_gbn_cd = '%' AND reqst_dat LIKE '2017%' -->
+                  <where>
+                  	req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                  </where>
+                ) AS r
+        WHERE  use_rs_cd NOT IN ('11')
+        GROUP BY use_rs_cd
+
+    </select>
+
+   <select id="getListView" parameterType="HashMap" resultType="CrmsStatVo">
+      SELECT * FROM (
+         SELECT '총 반출건' as "gbn"
+
+            , COALESCE(SUM(1), 0) AS "all"
+            , COALESCE(SUM(case dd when '01' then 1 else 0 end), 0) as "one"
+            , COALESCE(SUM(case dd when '02' then 1 else 0 end), 0) as "two"
+            , COALESCE(SUM(case dd when '03' then 1 else 0 end), 0) as "three"
+            , COALESCE(SUM(case dd when '04' then 1 else 0 end), 0) as "four"
+            , COALESCE(SUM(case dd when '05' then 1 else 0 end), 0) as "five"
+            , COALESCE(SUM(case dd when '06' then 1 else 0 end), 0) as "six"
+            , COALESCE(SUM(case dd when '07' then 1 else 0 end), 0) as "seven"
+            , COALESCE(SUM(case dd when '08' then 1 else 0 end), 0) as "eight"
+            , COALESCE(SUM(case dd when '09' then 1 else 0 end), 0) as "nine"
+            , COALESCE(SUM(case dd when '10' then 1 else 0 end), 0) as "ten"
+            , COALESCE(SUM(case dd when '11' then 1 else 0 end), 0) as "eleven"
+            , COALESCE(SUM(case dd when '12' then 1 else 0 end), 0) as "twelve"
+            , COALESCE(SUM(case dd when '13' then 1 else 0 end), 0) as "thirteen"
+            , COALESCE(SUM(case dd when '14' then 1 else 0 end), 0) as "fourteen"
+            , COALESCE(SUM(case dd when '15' then 1 else 0 end), 0) as "fifteen"
+            , COALESCE(SUM(case dd when '16' then 1 else 0 end), 0) as "sixteen"
+            , COALESCE(SUM(case dd when '17' then 1 else 0 end), 0) as "seventeen"
+            , COALESCE(SUM(case dd when '18' then 1 else 0 end), 0) as "eighteen"
+            , COALESCE(SUM(case dd when '19' then 1 else 0 end), 0) as "nineteen"
+            , COALESCE(SUM(case dd when '20' then 1 else 0 end), 0) as "twenty"
+            , COALESCE(SUM(case dd when '21' then 1 else 0 end), 0) as "twentyOne"
+            , COALESCE(SUM(case dd when '22' then 1 else 0 end), 0) as "twentyTwo"
+            , COALESCE(SUM(case dd when '23' then 1 else 0 end), 0) as "twentyThree"
+            , COALESCE(SUM(case dd when '24' then 1 else 0 end), 0) as "twentyFour"
+            , COALESCE(SUM(case dd when '25' then 1 else 0 end), 0) as "twentyFive"
+            , COALESCE(SUM(case dd when '26' then 1 else 0 end), 0) as "twentySix"
+            , COALESCE(SUM(case dd when '27' then 1 else 0 end), 0) as "twentySeven"
+            , COALESCE(SUM(case dd when '28' then 1 else 0 end), 0) as "twentyEight"
+            , COALESCE(SUM(case dd when '29' then 1 else 0 end), 0) as "twentyNine"
+            , COALESCE(SUM(case dd when '30' then 1 else 0 end), 0) as "thirty"
+            , COALESCE(SUM(case dd when '31' then 1 else 0 end), 0) as "thirtyOne"
+
+         FROM(
+               SELECT cctv.cctv_nm
+                    , substring(reqst_dat, 1, 4) AS yy
+                    , substring(reqst_dat, 5, 2) AS mm
+                    , substring(reqst_dat, 7, 2) AS dd
+                FROM xeus.crms_trans_rqst as rqst, xeus.asset_cctv as cctv, xeus.crms_trans_avi as avi
+                <!-- WHERE req_gbn_cd = '11' AND reqst_dat LIKE '2021%' -->
+
+                     <where>
+                     req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND rqst.req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND rqst.reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                    <if test="month != null and month != ''">
+                     AND rqst.reqst_dat LIKE '____'||#{month}||'%'
+                    </if>
+                    AND cctv.mgr_no = avi.cctv_mgr_no
+                    AND avi.rqst_mgr_seq = rqst.mgr_seq
+                </where>
+
+         ) AS r
+
+         UNION ALL
+
+         SELECT cctv.cctv_nm as "gbn"
+
+             ,COALESCE(SUM(1), 0) AS "all"
+             , COALESCE(SUM(case dd when '01' then 1 else 0 end), 0) as "one"
+             , COALESCE(SUM(case dd when '02' then 1 else 0 end), 0) as "two"
+             , COALESCE(SUM(case dd when '03' then 1 else 0 end), 0) as "three"
+             , COALESCE(SUM(case dd when '04' then 1 else 0 end), 0) as "four"
+             , COALESCE(SUM(case dd when '05' then 1 else 0 end), 0) as "five"
+             , COALESCE(SUM(case dd when '06' then 1 else 0 end), 0) as "six"
+             , COALESCE(SUM(case dd when '07' then 1 else 0 end), 0) as "seven"
+             , COALESCE(SUM(case dd when '08' then 1 else 0 end), 0) as "eight"
+             , COALESCE(SUM(case dd when '09' then 1 else 0 end), 0) as "nine"
+             , COALESCE(SUM(case dd when '10' then 1 else 0 end), 0) as "ten"
+             , COALESCE(SUM(case dd when '11' then 1 else 0 end), 0) as "eleven"
+             , COALESCE(SUM(case dd when '12' then 1 else 0 end), 0) as "twelve"
+             , COALESCE(SUM(case dd when '13' then 1 else 0 end), 0) as "thirteen"
+             , COALESCE(SUM(case dd when '14' then 1 else 0 end), 0) as "fourteen"
+             , COALESCE(SUM(case dd when '15' then 1 else 0 end), 0) as "fifteen"
+             , COALESCE(SUM(case dd when '16' then 1 else 0 end), 0) as "sixteen"
+             , COALESCE(SUM(case dd when '17' then 1 else 0 end), 0) as "seventeen"
+             , COALESCE(SUM(case dd when '18' then 1 else 0 end), 0) as "eighteen"
+             , COALESCE(SUM(case dd when '19' then 1 else 0 end), 0) as "nineteen"
+             , COALESCE(SUM(case dd when '20' then 1 else 0 end), 0) as "twenty"
+             , COALESCE(SUM(case dd when '21' then 1 else 0 end), 0) as "twentyOne"
+             , COALESCE(SUM(case dd when '22' then 1 else 0 end), 0) as "twentyTwo"
+             , COALESCE(SUM(case dd when '23' then 1 else 0 end), 0) as "twentyThree"
+             , COALESCE(SUM(case dd when '24' then 1 else 0 end), 0) as "twentyFour"
+             , COALESCE(SUM(case dd when '25' then 1 else 0 end), 0) as "twentyFive"
+             , COALESCE(SUM(case dd when '26' then 1 else 0 end), 0) as "twentySix"
+             , COALESCE(SUM(case dd when '27' then 1 else 0 end), 0) as "twentySeven"
+             , COALESCE(SUM(case dd when '28' then 1 else 0 end), 0) as "twentyEight"
+             , COALESCE(SUM(case dd when '29' then 1 else 0 end), 0) as "twentyNine"
+             , COALESCE(SUM(case dd when '30' then 1 else 0 end), 0) as "thirty"
+             , COALESCE(SUM(case dd when '31' then 1 else 0 end), 0) as "thirtyOne"
+
+         FROM(
+               SELECT cctv.cctv_nm
+               , substring(rqst.reqst_dat, 1, 4) AS  yy
+               , substring(rqst.reqst_dat, 5, 2) AS mm
+               , substring(rqst.reqst_dat, 7, 2) AS dd
+               FROM xeus.crms_trans_rqst as rqst, xeus.asset_cctv as cctv, xeus.crms_trans_avi as avi
+                <!-- WHERE rqst.req_gbn_cd <> '15' and rqst.reqst_dat LIKE '202111%'
+                AND cctv.mgr_no = avi.cctv_mgr_no and avi.rqst_mgr_seq = rqst.mgr_seq -->
+                <where>
+                     req_gbn_cd <![CDATA[ <> ]]> '15'
+                    <if test="reqGbnCd != null and reqGbnCd != ''">
+                        AND rqst.req_gbn_cd = #{reqGbnCd}
+                    </if>
+
+                    <if test="year != null and year != ''">
+                        AND rqst.reqst_dat LIKE #{year}||'%'
+                    </if>
+
+                    <if test="month != null and month != ''">
+                     AND rqst.reqst_dat LIKE '____'||#{month}||'%'
+                    </if>
+                    AND cctv.mgr_no = avi.cctv_mgr_no
+                    AND avi.rqst_mgr_seq = rqst.mgr_seq
+
+                </where>
+         ) AS cctv
+
+         GROUP BY "gbn"
+      ) AS A
+
+      ORDER BY (CASE WHEN "gbn" = '총 반출건' THEN 1 ELSE 2 END), "gbn" DESC;
+   </select>
+   <select id="getListOrg" parameterType="HashMap" resultType="CrmsStatVo">
+         SELECT * FROM (
+            SELECT '총계' AS "gbn"
+                     , COALESCE(SUM(1), 0) AS "all"
+                     , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+                     , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+                     , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+                     , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+                     , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+                     , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+                     , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+                     , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+                     , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+                     , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+                     , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+                     , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+            FROM(
+               SELECT org.org_nm
+               , substring(reqst_dat, 1, 4) AS  yy
+               , substring(reqst_dat, 5, 2) AS mm
+               , substring(reqst_dat, 7, 2) AS dd
+               FROM xeus.crms_trans_rqst as rqst, xeus.mt_usr_desc as usr, xeus.mt_orgz_desc as org
+               <where>
+                        req_gbn_cd <![CDATA[ <> ]]> '15'
+                     <if test="reqGbnCd != null and reqGbnCd != ''">
+                           AND req_gbn_cd = #{reqGbnCd}
+                     </if>
+                     <if test="year != null and year != ''">
+                           AND reqst_dat LIKE #{year}||'%'
+                     </if>
+                  AND rqst.reqst_id = usr.user_id
+                  AND usr.org_mgr_no = org.org_mgr_no
+               </where>
+            ) AS r
+
+            UNION ALL
+
+            SELECT org_nm AS "gbn"
+                  , COALESCE(SUM(1), 0) AS "all"
+                  , COALESCE(SUM(CASE mm WHEN '01' THEN 1 ELSE 0 END), 0) AS "jan"
+                  , COALESCE(SUM(CASE mm WHEN '02' THEN 1 ELSE 0 END), 0) AS "feb"
+                  , COALESCE(SUM(CASE mm WHEN '03' THEN 1 ELSE 0 END), 0) AS "mar"
+                  , COALESCE(SUM(CASE mm WHEN '04' THEN 1 ELSE 0 END), 0) AS "apr"
+                  , COALESCE(SUM(CASE mm WHEN '05' THEN 1 ELSE 0 END), 0) AS "may"
+                  , COALESCE(SUM(CASE mm WHEN '06' THEN 1 ELSE 0 END), 0) AS "jun"
+                  , COALESCE(SUM(CASE mm WHEN '07' THEN 1 ELSE 0 END), 0) AS "jul"
+                  , COALESCE(SUM(CASE mm WHEN '08' THEN 1 ELSE 0 END), 0) AS "aug"
+                  , COALESCE(SUM(CASE mm WHEN '09' THEN 1 ELSE 0 END), 0) AS "sep"
+                  , COALESCE(SUM(CASE mm WHEN '10' THEN 1 ELSE 0 END), 0) AS "oct"
+                  , COALESCE(SUM(CASE mm WHEN '11' THEN 1 ELSE 0 END), 0) AS "nov"
+                  , COALESCE(SUM(CASE mm WHEN '12' THEN 1 ELSE 0 END), 0) AS "dec"
+            FROM(
+               SELECT org.org_nm
+               , substring(reqst_dat, 1, 4) AS  yy
+               , substring(reqst_dat, 5, 2) AS mm
+               , substring(reqst_dat, 7, 2) AS dd
+               FROM xeus.crms_trans_rqst as rqst, xeus.mt_usr_desc as usr, xeus.mt_orgz_desc as org
+               <where>
+                        req_gbn_cd <![CDATA[ <> ]]> '15'
+                     <if test="reqGbnCd != null and reqGbnCd != ''">
+                           AND req_gbn_cd = #{reqGbnCd}
+                     </if>
+                     <if test="year != null and year != ''">
+                           AND reqst_dat LIKE #{year}||'%'
+                     </if>
+                  AND rqst.reqst_id = usr.user_id
+                  AND usr.org_mgr_no = org.org_mgr_no
+               </where>
+            ) AS r
+
+            GROUP BY org_nm
+         ) AS A
+         ORDER BY (CASE WHEN "gbn" = '총계' THEN 1 ELSE 2 END), "gbn" ASC;
+   </select>
+</mapper>

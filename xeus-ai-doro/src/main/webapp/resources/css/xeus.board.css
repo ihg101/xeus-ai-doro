@@ -1,0 +1,604 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	/* 	background : #212424; */
+}
+body {
+	color: white;
+	background: #212424;
+}
+
+body ::-webkit-input-placeholder {
+	color: white;
+	opacity: 1;
+	font-weight: 300;
+}
+
+.ui-dialog-titlebar-newwin {
+	display: none !important;
+}
+
+#allWrap {
+	/* 	background-image: url(../img/bg.png); */
+	/* 	background-repeat: no-repeat; */
+	/* 	background-size: 100% 100%; */
+	position: absolute;
+	top: 0%;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	padding: 10px 10px;
+}
+
+#top {
+	float: left;
+	display: block;
+	height: 40px;
+	width: 100%;
+}
+
+#top_left {
+	/* 	padding-top : 10px; */
+	/* padding-left: 10px; */
+	display: block;
+	float: left;
+	display: block;
+}
+
+#top_left #returnBtn {
+	position: absolute;
+    width: 110px;
+    height: 35px;
+    cursor: pointer;
+}
+
+#top_center {
+	display: block;
+	float: left;
+	height: 40px;
+	width: 800px;
+	/* 	padding: 10px; */
+	padding-right: 30px;
+	text-align: right;
+	cursor: default;
+}
+
+#weatherInfoBox img {
+	vertical-align: middle;
+}
+
+#top_right {
+	display: block;
+	float: left;
+	height: 40px;
+	width: 270px;
+	font-size: 25px;
+	text-align: center;
+	cursor: default;
+}
+/* 상단 */
+#left {
+	float: left;
+	display: block;
+	border-top: 1px solid #4B4B4B;
+	/* margin: 10px; */
+	box-shadow: 0px 0px 10px black;
+	/* margin-top: 15px; */
+}
+
+#left_top {
+	float: left;
+	display: block;
+	height: 30px;
+	cursor: default;
+	background-image: url(../img/board/alram_bg.png);
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	margin-left: 80px;
+	/* margin-top: 5px; */
+	/* margin-bottom: 5px; */
+}
+
+.block {
+	overflow: hidden;
+	/* 	font-size:40px; */
+	text-align: left;
+}
+
+.block ul {
+	/* margin-left: 35px; */
+	padding: 6px;
+	list-style: none;
+	height: 30px;
+}
+
+.block li span {
+	cursor: default;
+	font-size: 15px;
+	/* 	display: inline-block; */
+	height: 30px;
+	/* 	line-height: 50px; */
+	color: #fff;
+	text-decoration: none;
+}
+
+.block li a {
+	cursor: default;
+	font-size: 20px;
+	margin-left: 10px;
+	display: inline-block;
+	height: 30px;
+	margin-top: 5px;
+	/* 	line-height: 50px; */
+	color: #f00;
+	text-decoration: none;
+}
+
+/* 전광판 */
+#left_left {
+	float: left;
+	display: block;
+	width: 80px;
+}
+
+#left_left button {
+	cursor: pointer;
+	border: none;
+	background: none;
+	/* 	border-bottom: 1px solid white; */
+	color: white;
+	width: 80px;
+	height: 80px;
+	/* 	background-repeat: no-repeat; */
+	background-size: 100% 100%;
+	/* 	background-position: -7px 2px; */
+	/* 	font-size: 15px; */
+}
+
+
+#left_left button:HOVER {
+	background: #009a9a;
+	background-size: 100% 100%;
+}
+
+#left_left button[active=active] {
+	background: #009a9a;
+}
+
+.map-target {
+	position: relative;
+	float: left;
+	display: block;
+	/* margin-left: 2px; */
+}
+
+/* #layerWrap { */
+/* 	position: absolute; */
+/* 	display: block; */
+/* 	height: 120px; */
+/* 	width: 100%; */
+/* 	z-index: 2; */
+/* 	background: #444; */
+/* 	opacity: 0.5; */
+/* } */
+/* 왼쪽 */
+#right {
+	float: left;
+	display: block;
+	width: 590px;
+	margin-left: 5px;
+}
+
+.chart {
+	text-align: left;
+	width: 100%;
+	height: 120px;
+}
+
+.chooseChartTop {
+	display: none;
+	position: absolute;
+	z-index: 99;
+	width: 150px;
+	height: 150px;
+	/* 	top: 55px; */
+	top: 75px;
+	border-top: 1px solid #4B4B4B;
+	box-shadow: 0px 0px 10px black;
+	background: #333;
+	/* 	background-image: url(../img/bg.png); */
+	/* 	background-repeat: no-repeat; */
+	/* 	background-size: 100% 100%; */
+	text-align: left;
+	overflow-y: auto;
+}
+
+.chooseChart {
+	display: none;
+	position: absolute;
+	z-index: 99;
+	width: 150px;
+	height: 150px;
+/* 	top: 220px; */
+	top: 240px;
+	border-top: 1px solid #4B4B4B;
+	box-shadow: 0px 0px 10px black;
+	background: #333;
+	/* 	background-image: url(../img/bg.png); */
+	/* 	background-repeat: no-repeat; */
+	/* 	background-size: 100% 100%; */
+	text-align: left;
+	overflow-y: auto;
+}
+
+.chooseChartSpan {
+	cursor: pointer;
+	display: block;
+	margin-top: 3px;
+	margin-bottom: 8px;
+	padding-left: 8px;
+}
+
+.chooseChartSpan:HOVER {
+	background: #555;
+}
+
+#rightChartTop {
+	float: left;
+	display: block;
+	width: 580px;
+	height: 150px;
+	margin-left: 10px;
+	border-top: 1px solid #4B4B4B;
+	box-shadow: 0px 0px 10px black;
+}
+
+#rightChartLeft {
+	width: 285px;
+	height: 150px;
+	float: left;
+	margin-left: 10px;
+	border-top: 1px solid #4B4B4B;
+	box-shadow: 0px 0px 10px black;
+	margin-top: 15px;
+}
+
+.changeChartButton {
+	position: absolute;
+	z-index: 99;
+	width: 30px;
+	height: 30px;
+	background: none;
+	border: none;
+	background-image: url(../img/board/setup_w.png);
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	display: none;
+}
+
+.changeChartButton:HOVER {
+	background-image: url(../img/board/setting_over.png);
+}
+
+/* .changeChartButton:ACTIVE { */
+/* 	border: none; */
+/* 	background : none; */
+/* } */
+#rightChartRight {
+	width: 285px;
+	height: 150px;
+	float: left;
+	margin-left: 10px;
+	border-top: 1px solid #4B4B4B;
+	box-shadow: 0px 0px 10px black;
+	margin-top: 15px;
+}
+
+#rightEventList {
+	float: left;
+	display: block;
+	width: 580px;
+	height: 200px;
+	margin-top: 15px;
+	margin-left: 10px;
+	border-top: 1px solid #4B4B4B;
+	box-shadow: 0px 0px 10px black;
+	text-align: center;
+}
+
+#EventTop {
+	height: 33px;
+	padding: 10px;
+}
+
+#tableTitle {
+	height: 33px;
+	text-align: left;
+	font-size: 15px;
+}
+
+#rightEventList tr {
+	cursor: default;
+	display: block;
+	border-bottom: 1px solid #333333;
+	height: 33px;
+}
+
+.table_data tr:HOVER {
+	background: #3b3b3b;
+}
+
+#rightEventList th {
+/* 	border-right : 1px solid #333333; */
+	height: 33px;
+}
+
+#rightEventList td {
+	color: #88878C;
+	height: 33px;
+}
+
+.table_other {
+	border-right : 1px solid #333333;
+	width: 70px;
+}
+
+.table_message {
+	text-align:left;
+	border-right : none;
+	padding-left : 5px;
+	width: 335px;
+}
+
+html {
+	scrollbar-arrow-color: #3b3b3b;
+	scrollbar-Face-Color: #3b3b3b;
+	scrollbar-Track-Color: #131313;
+	scrollbar-DarkShadow-Color: #111;
+	scrollbar-Highlight-Color: #111;
+	scrollbar-Shadow-Color: #111
+}
+/* 스크롤 */
+::-webkit-scrollbar {
+	width: 19px;
+	height: 8px;
+	border: 0px solid #000;
+}
+
+::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment
+	{
+	display: block;
+	height: 1px;
+}
+
+::-webkit-scrollbar-track {
+	background: #131313;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	height: 50px;
+	width: 50px;
+	background: #3b3b3b;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	-webkit-box-shadow: inset 0 0 4px rgba(5, 5, 5, 1);
+	-webkit-border-radius: 8px;
+}
+/* 스크롤 */
+#rightEtc {
+	float: left;
+	display: block;
+	width: 580px;
+	border-top: 1px solid #4B4B4B;
+	box-shadow: 0px 0px 10px black;
+	margin-top: 15px;
+	margin-left: 10px;
+	overflow: auto;
+}
+/****************************************************/
+html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+    /* font-family: '맑은고딕', 'Malgun Gothic'; */
+    font-size: 14px;
+}
+
+/***************************************/
+/* 화면 위쪽 North Pane 설정
+/***************************************/
+
+/* 지도영역 */
+.map-target {
+    width: 100%;
+    height: 100%;
+/*     border-left: 1px solid #c0c0c0; */
+    background: #f2f2f2;
+}
+
+/**********************************/
+/* CCTV 오버레이 CSS */
+/**********************************/
+
+/* CSS2까지는 콜론(:)이 하나이고, CSS3에서는 콜론이 2개가 된것이다 */
+.cctv-overlay {
+    position: absolute;
+    background-color: #3b3b3b;
+    padding: 0px;
+    border-radius: 1px;
+    border: 1px solid #c0c0c0;
+    bottom: 2px;
+    left: -48px;
+    min-width: 280px;
+}
+
+.cctv-overlay::after, .cctv-overlay::before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.cctv-overlay::after {
+    border-top-color: #3b3b3b;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+    border-width: 10px;
+}
+
+.cctv-overlay::before {
+    border-top-color: #3b3b3b;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+}
+
+.cctv-overlay-closer {
+    text-decoration: none;
+    position: absolute;
+    top: 2px;
+    right: 8px;
+}
+
+.cctv-overlay-closer:hover::after {
+    color: #06A6E1;
+    content: "✖";
+}
+
+.cctv-overlay-closer::after {
+    color: #ffffff;
+    content: "✖";
+}
+
+/***********************************/
+/* 팝업에서 CCTV 목록 보여주기 CSS */
+/***********************************/
+.cctv-overlay-content-item {
+    padding: 0 0 0 0;
+    display: table;
+    height: 34px;
+    vertical-align: middle;
+    border-top: 1px solid #cccccc;
+}
+
+.cctv-overlay-content-item:first-child {
+    border-top: 0px solid #cccccc;
+}
+
+.cctv-overlay-content-img-div {
+    margin: 2px;
+    border: 0;
+    padding: 0;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.cctv-overlay-content-img {
+    margin: 2px;
+    border: 0;
+    padding: 0;
+    vertical-align: middle;
+    -webkit-filter: sepia(0);
+    filter: sepia(0);
+    width: 34px;
+    height: 34px;
+}
+
+.cctv-overlay-content-img:hover {
+    -webkit-filter: sepia(100%);
+    filter: sepia(100%);
+}
+
+.cctv-overlay-content-txt-div {
+    width: 100%;
+    /* border-left: 1px solid #cccccc; */
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.cctv-overlay-content-txt {
+    margin: 0;
+    margin-left: 5px;
+    color: #ffffff;
+    line-height: 1.15em;
+}
+
+.cctv-overlay-content-txt:hover {
+    color: #06A6E1;
+}
+
+
+/***********************************/
+/* CCTV영상보기 Dialog 타이틀      */
+/***********************************/
+.xeus-dialog-title-div {
+    margin: 0;
+    padding: 0 0 0 0;
+    display: table;
+}
+
+.xeus-dialog-title-icon {
+    margin: 0;
+    border: 0;
+    width: 30px;
+    height: 30px;
+    display: table-cell;
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.xeus-dialog-title-txt {
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    margin: 0;
+    border: 0;
+    margin-left: 10px;
+}
+
+/* Jquery Dialog Hack.....*/
+.ui-dialog .ui-dialog-titlebar {
+    padding: 2px;
+}
+/* Jquery Dialog Hack.....*/
+.ui-dialog .ui-dialog-title {
+    padding: 0;
+}
+/* Jquery Dialog Hack.....*/
+.ui-dialog .ui-dialog-content {
+    padding: 0;
+}
+/* Jquery Dialog Hack.....*/
+.ui-draggable-helper {
+    z-index: 5000;
+}
+/* Jquery round Hack ....*/
+.ui-corner-all {
+    border-radius: 3px;
+    -moz-border-radius-bottomright: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-topleft: 3px;
+}
+
+/************************************************************/
+#overlay-east-contents {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#overlay-east-contents>.gridster>ul {
+    list-style-type: none;
+    margin: 0;
+}
+

@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="geomex.xeus.tvius.service.CrmsImageRqstMapper">
+
+    <select id="getCount" parameterType="HashMap" resultType="int">
+		SELECT count(*)
+
+		FROM xeus.crms_image_rqst rqst
+        LEFT JOIN xeus.mt_usr_desc rqstusr ON rqst.reqst_id = rqstusr.user_id
+        LEFT JOIN xeus.mt_usr_desc acptusr ON rqst.acpt_user_id = acptusr.user_id
+
+		<where>
+
+			<if test="mgrSeq != null and mgrSeq != ''">
+				AND rqst.mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="reqstId != null and reqstId != ''">
+				AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+			</if>
+
+            <if test="reqstUsrNm != null and reqstUsrNm != ''">
+                AND rqstusr.user_nm LIKE '%'||#{reqstUsrNm}||'%'
+            </if>
+
+			<if test="reqstDat != null and reqstDat != ''">
+				AND rqst.reqst_dat = #{reqstDat}
+			</if>
+
+			<if test="reqstDetail != null and reqstDetail != ''">
+				AND rqst.reqst_detail = #{reqstDetail}
+			</if>
+
+			<if test="docNo != null and docNo != ''">
+				AND rqst.doc_no = #{docNo}
+			</if>
+
+			<if test="docFileNm != null and docFileNm != ''">
+				AND rqst.doc_file_nm = #{docFileNm}
+			</if>
+
+			<if test="docFilePath != null and docFilePath != ''">
+				AND rqst.doc_file_path = #{docFilePath}
+			</if>
+
+			<if test="procStatCd != null and procStatCd != ''">
+				AND rqst.proc_stat_cd = #{procStatCd}
+			</if>
+
+			<if test="acptUserId != null and acptUserId != ''">
+				AND rqst.acpt_user_id = #{acptUserId}
+			</if>
+
+			<if test="acptDat != null and acptDat != ''">
+				AND rqst.acpt_dat = #{acptDat}
+			</if>
+
+			<if test="rejtResn != null and rejtResn != ''">
+				AND rqst.rejt_resn = #{rejtResn}
+			</if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <if test="docChngYn != null and docChngYn != ''">
+                AND rqst.doc_chng_yn = #{docChngYn}
+            </if>
+
+		</where>
+	</select>
+
+    <select id="getList" parameterType="HashMap" resultType="CrmsImageRqstVo">
+
+        SELECT rqst.mgr_seq, rqst.reqst_id, rqstusr.user_nm reqst_usr_nm, rqst.reqst_dat, rqst.reqst_detail, rqst.doc_no, rqst.doc_file_nm, rqst.doc_file_path
+                , rqst.proc_stat_cd, rqst.acpt_user_id, acptusr.user_nm acpt_usr_nm, rqst.acpt_dat, rqst.rejt_resn, rqst.doc_chng_yn,
+                proc_stat_cd_rel.cde_nm AS proc_stat_cd_rel_cde_nm
+
+        FROM xeus.crms_image_rqst rqst
+        LEFT JOIN xeus.mt_usr_desc rqstusr ON rqst.reqst_id = rqstusr.user_id
+        LEFT JOIN xeus.mt_usr_desc acptusr ON rqst.acpt_user_id = acptusr.user_id
+
+		LEFT JOIN xeus.mt_cmm_cde proc_stat_cd_rel ON proc_stat_cd_rel.grp_cde = 'C52' AND proc_stat_cd_rel.cde_cde = rqst.proc_stat_cd
+        <where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+				AND rqst.mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="reqstId != null and reqstId != ''">
+				AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+			</if>
+
+            <if test="reqstUsrNm != null and reqstUsrNm != ''">
+                AND rqstusr.user_nm LIKE '%'||#{reqstUsrNm}||'%'
+            </if>
+
+			<if test="reqstDat != null and reqstDat != ''">
+				AND rqst.reqst_dat = #{reqstDat}
+			</if>
+
+			<if test="reqstDetail != null and reqstDetail != ''">
+				AND rqst.reqst_detail = #{reqstDetail}
+			</if>
+
+			<if test="docNo != null and docNo != ''">
+				AND rqst.doc_no = #{docNo}
+			</if>
+
+			<if test="docFileNm != null and docFileNm != ''">
+				AND rqst.doc_file_nm = #{docFileNm}
+			</if>
+
+			<if test="docFilePath != null and docFilePath != ''">
+				AND rqst.doc_file_path = #{docFilePath}
+			</if>
+
+			<if test="procStatCd != null and procStatCd != ''">
+				AND rqst.proc_stat_cd = #{procStatCd}
+			</if>
+
+			<if test="acptUserId != null and acptUserId != ''">
+				AND rqst.acpt_user_id = #{acptUserId}
+			</if>
+
+			<if test="acptDat != null and acptDat != ''">
+				AND rqst.acpt_dat = #{acptDat}
+			</if>
+
+			<if test="rejtResn != null and rejtResn != ''">
+				AND rqst.rejt_resn = #{rejtResn}
+			</if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <if test="docChngYn != null and docChngYn != ''">
+                AND rqst.doc_chng_yn = #{docChngYn}
+            </if>
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                rqst.mgr_seq DESC
+            </if>
+        </trim>
+
+        <if test="limit != null and limit != '' and offset != null and offset != ''">
+            LIMIT ${limit} OFFSET ${offset}
+        </if>
+
+    </select>
+
+    <select id="getItem" parameterType="HashMap" resultType="CrmsImageRqstVo">
+
+        SELECT rqst.mgr_seq, rqst.reqst_id, rqstusr.user_nm reqst_usr_nm, rqst.reqst_dat, rqst.reqst_detail, rqst.doc_no, rqst.doc_file_nm, rqst.doc_file_path
+                , rqst.proc_stat_cd, rqst.acpt_user_id, acptusr.user_nm acpt_usr_nm, rqst.acpt_dat, rqst.rejt_resn, rqst.doc_chng_yn
+
+        FROM xeus.crms_image_rqst rqst
+        LEFT JOIN xeus.mt_usr_desc rqstusr ON rqst.reqst_id = rqstusr.user_id
+        LEFT JOIN xeus.mt_usr_desc acptusr ON rqst.acpt_user_id = acptusr.user_id
+
+        <where>
+            <if test="mgrSeq != null and mgrSeq != ''">
+				AND rqst.mgr_seq = #{mgrSeq}::numeric
+			</if>
+
+			<if test="reqstId != null and reqstId != ''">
+				AND rqst.reqst_id LIKE '%'||#{reqstId}||'%'
+			</if>
+
+            <if test="reqstUsrNm != null and reqstUsrNm != ''">
+                AND rqstusr.user_nm LIKE '%'||#{reqstUsrNm}||'%'
+            </if>
+
+			<if test="reqstDat != null and reqstDat != ''">
+				AND rqst.reqst_dat = #{reqstDat}
+			</if>
+
+			<if test="reqstDetail != null and reqstDetail != ''">
+				AND rqst.reqst_detail = #{reqstDetail}
+			</if>
+
+			<if test="docNo != null and docNo != ''">
+				AND rqst.doc_no = #{docNo}
+			</if>
+
+			<if test="docFileNm != null and docFileNm != ''">
+				AND rqst.doc_file_nm = #{docFileNm}
+			</if>
+
+			<if test="docFilePath != null and docFilePath != ''">
+				AND rqst.doc_file_path = #{docFilePath}
+			</if>
+
+			<if test="procStatCd != null and procStatCd != ''">
+				AND rqst.proc_stat_cd = #{procStatCd}
+			</if>
+
+			<if test="acptUserId != null and acptUserId != ''">
+				AND rqst.acpt_user_id = #{acptUserId}
+			</if>
+
+			<if test="acptDat != null and acptDat != ''">
+				AND rqst.acpt_dat = #{acptDat}
+			</if>
+
+			<if test="rejtResn != null and rejtResn != ''">
+				AND rqst.rejt_resn = #{rejtResn}
+			</if>
+
+            <if test="startDat!= null and startDat != ''">
+                AND rqst.reqst_dat <![CDATA[ >= ]]> #{startDat}
+            </if>
+
+            <if test="endDat != null and endDat != ''">
+                AND rqst.reqst_dat <![CDATA[ <= ]]> #{endDat}
+            </if>
+
+            <if test="docChngYn != null and docChngYn != ''">
+                AND rqst.doc_chng_yn = #{docChngYn}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getImgList" parameterType="HashMap" resultType="CrmsImageVo">
+
+        SELECT image.mgr_seq, image.reg_id, image.reg_dat, image.img_desc, image.img_nm, image.img_path
+
+        FROM xeus.crms_image_rqst rqst
+        LEFT JOIN xeus.crms_image_join imgjoin ON rqst.mgr_seq = imgjoin.rqst_mgr_seq
+        LEFT JOIN xeus.crms_image image ON imgjoin.img_mgr_seq = image.mgr_seq
+
+        <where>
+            image.mgr_seq = imgjoin.img_mgr_seq
+
+            <if test="rqstMgrSeq != null and rqstMgrSeq != ''">
+                AND imgjoin.rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            </if>
+
+            <if test="mgrSeq != null and mgrSeq != ''">
+                AND image.mgr_seq = #{mgrSeq}::numeric
+            </if>
+
+            <if test="regId != null and regId != ''">
+                AND image.reg_id LIKE '%'||#{regId}||'%'
+            </if>
+
+            <if test="regDat != null and regDat != ''">
+                AND image.reg_dat = #{regDat}
+            </if>
+
+            <if test="imgDesc != null and imgDesc != ''">
+                AND image.img_desc = #{imgDesc}
+            </if>
+
+            <if test="imgNm != null and imgNm != ''">
+                AND image.img_nm = #{imgNm}
+            </if>
+
+            <if test="imgPath != null and imgPath != ''">
+                AND image.img_path = #{imgPath}
+            </if>
+
+        </where>
+
+        <trim prefix="ORDER BY">
+            <if test="sortCol != null and sortCol != '' and sortTyp != null and sortTyp != ''">
+                ${sortCol} ${sortTyp}
+            </if>
+            <if test="sortCol == null and sortTyp == null">
+                image.mgr_seq ASC
+            </if>
+        </trim>
+
+    </select>
+
+    <insert id="add" parameterType="CrmsImageRqstVo">
+        INSERT INTO xeus.crms_image_rqst(
+			mgr_seq, reqst_id, reqst_dat, reqst_detail, doc_no, doc_file_nm, doc_file_path, proc_stat_cd, acpt_user_id, acpt_dat, rejt_resn
+		) VALUES (
+			#{mgrSeq}::numeric, #{reqstId}, #{reqstDat}, #{reqstDetail}, #{docNo}, #{docFileNm}, #{docFilePath}, #{procStatCd}, #{acptUserId}, #{acptDat}, #{rejtResn}
+		);
+    </insert>
+
+    <update id="update" parameterType="CrmsImageRqstVo">
+        UPDATE xeus.crms_image_rqst SET
+			mgr_seq = #{mgrSeq}::numeric
+
+			<if test="reqstId != null and reqstId != ''">
+				, reqst_id = #{reqstId}
+			</if>
+
+			<if test="reqstDat != null and reqstDat != ''">
+				, reqst_dat = #{reqstDat}
+			</if>
+
+			<if test="reqstDetail != null and reqstDetail != ''">
+				, reqst_detail = #{reqstDetail}
+			</if>
+
+			<if test="docNo != null and docNo != ''">
+				, doc_no = #{docNo}
+			</if>
+
+			<if test="docFileNm != null and docFileNm != ''">
+				, doc_file_nm = #{docFileNm}
+			</if>
+
+			<if test="docFilePath != null and docFilePath != ''">
+				, doc_file_path = #{docFilePath}
+			</if>
+
+			<if test="procStatCd != null and procStatCd != ''">
+				, proc_stat_cd = #{procStatCd}
+			</if>
+
+			<if test="acptUserId != null and acptUserId != ''">
+				, acpt_user_id = #{acptUserId}
+			</if>
+
+			<if test="acptDat != null and acptDat != ''">
+				, acpt_dat = #{acptDat}
+			</if>
+
+			<if test="rejtResn != null and rejtResn != ''">
+				, rejt_resn = #{rejtResn}
+			</if>
+
+			<if test="docChngYn != null and docChngYn != ''">
+				, doc_chng_yn = #{docChngYn}
+			</if>
+
+		WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <delete id="del" parameterType="HashMap">
+        DELETE FROM xeus.crms_image_rqst WHERE mgr_seq = #{mgrSeq}::numeric
+    </delete>
+
+    <insert id="addJoin" parameterType="CrmsImageRqstVo">
+        INSERT INTO xeus.crms_image_join(
+            rqst_mgr_seq, img_mgr_seq
+        ) VALUES (
+            #{rqstMgrSeq}::numeric, #{imgMgrSeq}::numeric
+        );
+    </insert>
+
+    <delete id="delJoin" parameterType="HashMap">
+        DELETE FROM xeus.crms_image_join
+
+        <where>
+            rqst_mgr_seq = #{rqstMgrSeq}::numeric
+            <if test="imgMgrSeq != null and imgMgrSeq != ''">
+                AND img_mgr_seq = #{imgMgrSeq}::numeric
+            </if>
+        </where>
+
+    </delete>
+
+    <update id="updateProcStatCd" parameterType="HashMap">
+        UPDATE xeus.crms_image_rqst
+
+        <set>
+            <if test="procStatCd != null and procStatCd != ''">
+                proc_stat_cd = #{procStatCd},
+            </if>
+            <if test="acptUserId != null and acptUserId != ''">
+                acpt_user_id = #{acptUserId},
+            </if>
+            <if test="acptDat != null and acptDat != ''">
+                acpt_dat = #{acptDat},
+            </if>
+            <if test="rejtResn != null and rejtResn != ''">
+                rejt_resn = #{rejtResn},
+            </if>
+        </set>
+
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateDocNo" parameterType="HashMap">
+        UPDATE xeus.crms_image_rqst
+        SET
+        	doc_no = #{docNo}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateDocFileInfo" parameterType="HashMap">
+        UPDATE xeus.crms_image_rqst
+        SET
+        	doc_file_nm = #{docFileNm}
+			, doc_file_path = #{docFilePath}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+    <update id="updateDocChngYn" parameterType="HashMap">
+        UPDATE xeus.crms_image_rqst
+        SET
+        	doc_chng_yn = #{docChngYn}
+        WHERE mgr_seq = #{mgrSeq}::numeric
+
+    </update>
+
+</mapper>
